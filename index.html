@@ -65,6 +65,88 @@
 
   document.onmouseup = () => active = null;
 </script>
+<!-- 🔥 Firebase temps réel -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+  import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCHg35Sghd5O4oNypF6SNVh5jFDXz2TsxU",
+    authDomain: "battlemap-dnd.firebaseapp.com",
+    projectId: "battlemap-dnd",
+    storageBucket: "battlemap-dnd.firebasestorage.app",
+    messagingSenderId: "118091329664",
+    appId: "1:118091329664:web:c7072920354d41d9a77665"
+  };
+  
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  const roomId = "salle1";
+  const roomRef = doc(db, "rooms", roomId);
+
+  const board = document.getElementById("board");
+  const tokens = [...document.querySelectorAll(".token")];
+
+  let active = null;
+  let activeTokenId = null;
+  let dx = 0, dy = 0;
+
+  function readPositions() {
+    const pos = {};
+    tokens.forEach(t => {
+      pos[t.dataset.id] = {
+        left: parseInt(t.style.left || "0", 10),
+        top: parseInt(t.style.top || "0", 10)
+      };
+    });
+    return pos;
+  }
+
+  async function savePositions() {
+    await setDoc(roomRef, { tokens: readPositions() }, { merge: true });
+  }
+
+  onSnapshot(roomRef, (snap) => {
+    const data = snap.data();
+    if (!data || !data.tokens) return;
+
+    tokens.forEach(t => {
+      const id = t.dataset.id;
+      if (!data.tokens[id]) return;
+      if (activeTokenId === id) return;
+
+      t.style.left = data.tokens[id].left + "px";
+      t.style.top  = data.tokens[id].top + "px";
+    });
+  });
+
+  tokens.forEach(t => {
+    t.onmousedown = e => {
+      active = t;
+      activeTokenId = t.dataset.id;
+      dx = e.offsetX;
+      dy = e.offsetY;
+    };
+  });
+
+  document.onmousemove = e => {
+    if (!active) return;
+    active.style.left = (e.pageX - dx - board.offsetLeft) + "px";
+    active.style.top  = (e.pageY - dy - board.offsetTop) + "px";
+  };
+
+  document.onmouseup = async () => {
+    if (!active) return;
+    active = null;
+    activeTokenId = null;
+    await savePositions();
+  };
+
+  savePositions();
+</script>
 
 </body>
 </html>
