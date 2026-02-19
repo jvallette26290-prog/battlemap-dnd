@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Battlemap D&D</title>
+  <style>
+    body { margin:0; background:#111; color:#eee; font-family:Arial; }
+    #board {
+      width:1000px;
+      height:650px;
+      background:url("map.jpg") center/cover no-repeat;
+      position:relative;
+      margin:20px auto;
+      border:2px solid #333;
+    }
+    .token {
+      width:60px;
+      height:60px;
+      border-radius:50%;
+      background:#3498db;
+      position:absolute;
+      cursor:grab;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:white;
+      font-weight:bold;
+    }
+  </style>
+</head>
+<body>
+
+<div id="board">
+  <div class="token" style="left:100px; top:100px;">PJ1</div>
+  <div class="token" style="left:200px; top:150px;">PJ2</div>
+  <div class="token" style="left:400px; top:300px;">PNJ</div>
+</div>
+
+<script>
+  const tokens = document.querySelectorAll('.token');
+  const board = document.getElementById('board');
+  let active = null, dx = 0, dy = 0;
+
+  tokens.forEach(t => {
+    t.onmousedown = e => {
+      active = t;
+      dx = e.offsetX;
+      dy = e.offsetY;
+    };
+  });
+
+  document.onmousemove = e => {
+    if (!active) return;
+    active.style.left = (e.pageX - dx - board.offsetLeft) + 'px';
+    active.style.top  = (e.pageY - dy - board.offsetTop) + 'px';
+  };
+
+  document.onmouseup = () => active = null;
+</script>
+
+</body>
+</html>
