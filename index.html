@@ -54,7 +54,6 @@
   border-radius: 10px;
   background: #151515;
 }
-<div id="diceMsg"></div>
     
 #diceMsg{
   min-width: 220px;
@@ -125,6 +124,7 @@
 <div id="dicePanel">
   <button id="rollD20" title="Lancer un D20">🎲 D20</button>
   <div id="diceResult">—</div>
+  <div id="diceMsg"></div>
 </div>
 
 
@@ -276,14 +276,7 @@ tokens.forEach(t => {
       await savePositions();
     });
 // ===== D20 local =====
-const rollBtn = document.getElementById("rollD20");
-const diceRes = document.getElementById("diceResult");
 
-function randInt(min, max){
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-rollBtn.addEventListener("click", () => {
   // bloque les double-clics pendant l’animation
   if (rollBtn.disabled) return;
 
@@ -308,19 +301,25 @@ rollBtn.addEventListener("click", () => {
   }, 60);
 });
 
-   // ===== D20 synchronisé Firestore (tout le monde peut lancer) =====
+// ===== D20 synchronisé + cooldown partagé =====
 const rollBtn = document.getElementById("rollD20");
 const diceRes = document.getElementById("diceResult");
+const diceMsg = document.getElementById("diceMsg");
 
-// identifiant local (pour reconnaître son propre client)
+const COOLDOWN_MS = 5000;
+let lastRollId = null;
+
 const clientId = localStorage.getItem("battlemap_clientId") || (() => {
-  const id = crypto.randomUUID();
+  const id = (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random());
   localStorage.setItem("battlemap_clientId", id);
   return id;
 })();
 
+function showMsg(txt){
+  if (diceMsg) diceMsg.textContent = txt || "";
+}
+
 function randIntCrypto(min, max) {
-  // random plus “propre” que Math.random()
   const range = max - min + 1;
   const arr = new Uint32Array(1);
   crypto.getRandomValues(arr);
@@ -328,13 +327,12 @@ function randIntCrypto(min, max) {
 }
 
 function playRollAnimation(finalValue) {
-  // empêche de relancer pendant qu'une animation se joue
   rollBtn.disabled = true;
   rollBtn.classList.add("rolling");
   diceRes.textContent = "…";
 
   const start = Date.now();
-  const duration = 900; // ms
+  const duration = 900;
   const ticker = setInterval(() => {
     diceRes.textContent = randIntCrypto(1, 20);
     if (Date.now() - start > duration) {
@@ -346,73 +344,7 @@ function playRollAnimation(finalValue) {
   }, 60);
 }
 
-// On garde en mémoire le dernier lancer vu, pour ne pas rejouer 2 fois
-let lastRollId = null;
-
-// 1) Quand quelqu'un lance, on écrit le résultat dans Firestore
-const diceMsg = document.getElementById("diceMsg");
-const COOLDOWN_MS = 5000;
-
-function showMsg(txt){
-  if (!diceMsg) return;
-  diceMsg.textContent = txt || "";
-}
-
-rollBtn.addEventListener("click", async () => {
-  if (rollBtn.disabled) return;
-
-  rollBtn.disabled = true; // anti double-clic local
-  showMsg("");
-
-  const value = randIntCrypto(1, 20);
-  const rollId = crypto.randomUUID();
-
-  try {
-    await runTransaction(db, async (tx) => {
-      const snap = await tx.get(diceRef);
-      const data = snap.exists() ? snap.data() : null;
-
-      const now = Date.now();
-
-      // lastRollMs = timestamp (ms) du dernier jet accepté
-      const lastRollMs = data && Number.isFinite(Number(data.lastRollMs)) ? Number(data.lastRollMs) : 0;
-
-      if (now - lastRollMs < COOLDOWN_MS) {
-        const remain = Math.ceil((COOLDOWN_MS - (now - lastRollMs)) / 1000);
-        throw new Error("COOLDOWN_" + remain);
-      }
-
-      // ✅ On accepte le jet et on “verrouille” pour 5s
-      tx.set(diceRef, {
-        type: "d20",
-        value,
-        rollId,
-        by: clientId,
-        lastRollMs: now,          // <-- verrou partagé
-        at: serverTimestamp(),
-      }, { merge: true });
-    });
-
-    // pas besoin d'afficher ici : le onSnapshot déclenche l’animation chez tout le monde
-  } catch (err) {
-    const msg = String(err?.message || err);
-
-    if (msg.startsWith("COOLDOWN_")) {
-      const remain = msg.split("_")[1] || "5";
-      showMsg(`⏳ Cooldown : attends encore ${remain}s`);
-    } else {
-      showMsg("❌ Erreur de lancer (permissions / réseau ?)");
-      console.error(err);
-    }
-  } finally {
-    // On réactive au bout d’un court délai :
-    // - si le jet est accepté, snapshot anime et on pourra relancer après 5s (mais le bouton peut rester cliquable, Firestore bloquera)
-    // - si jet refusé, on réactive tout de suite pour que le joueur réessaie après
-    rollBtn.disabled = false;
-  }
-});
-
-// 2) Tous les clients écoutent Firestore : nouveau lancer => animation + affichage du même résultat
+// écoute Firestore : tout le monde voit le même résultat
 onSnapshot(diceRef, (snap) => {
   const data = snap.data();
   if (!data || data.type !== "d20") return;
@@ -423,8 +355,53 @@ onSnapshot(diceRef, (snap) => {
   const v = Number(data.value);
   if (!Number.isFinite(v) || v < 1 || v > 20) return;
 
+  showMsg("");
   playRollAnimation(v);
-}); 
+});
+
+// clic = tente un nouveau jet (verrou 5s partagé)
+rollBtn.addEventListener("click", async () => {
+  if (rollBtn.disabled) return;
+
+  showMsg("");
+
+  const value = randIntCrypto(1, 20);
+  const rollId = (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random());
+
+  try {
+    await runTransaction(db, async (tx) => {
+      const snap = await tx.get(diceRef);
+      const data = snap.exists() ? snap.data() : null;
+
+      const now = Date.now();
+      const lastRollMs = data && Number.isFinite(Number(data.lastRollMs)) ? Number(data.lastRollMs) : 0;
+
+      if (now - lastRollMs < COOLDOWN_MS) {
+        const remain = Math.ceil((COOLDOWN_MS - (now - lastRollMs)) / 1000);
+        throw new Error("COOLDOWN_" + remain);
+      }
+
+      tx.set(diceRef, {
+        type: "d20",
+        value,
+        rollId,
+        by: clientId,
+        lastRollMs: now,
+        at: serverTimestamp(),
+      }, { merge: true });
+    });
+  } catch (err) {
+    const msg = String(err?.message || err);
+
+    if (msg.startsWith("COOLDOWN_")) {
+      const remain = msg.split("_")[1] || "5";
+      showMsg(`⏳ Cooldown : attends encore ${remain}s`);
+    } else {
+      showMsg("❌ Erreur de lancer (permissions / réseau ?)");
+      console.error(err);
+    }
+  }
+});
   </script>
 </body>
 </html>
