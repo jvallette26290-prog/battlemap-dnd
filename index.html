@@ -127,18 +127,6 @@ const IS_MJ = params.get("dm") === "1";
 fog.style.pointerEvents = "none";      // joueur : pas de clic sur fog
 if (IS_MJ) fog.style.pointerEvents = "auto";  // MJ : clic autorisé
 
-
-  // ===== FOG OF WAR =====
-  
-const fog = document.getElementById("fog");
-  // Le fog ne bloque pas la souris par défaut
-fog.style.pointerEvents = "none";
-
-// Si on est MJ (lien ?dm=1), on autorise le clic sur le fog
-if (IS_MJ) {
-  fog.style.pointerEvents = "auto";
-}
-
 const ctx = fog.getContext("2d");
 
 function resizeFog(){
