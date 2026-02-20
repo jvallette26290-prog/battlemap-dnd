@@ -150,7 +150,11 @@ fog.addEventListener("mousemove", e => {
   if (erasing) erase(e);
 });
   
-document.addEventListener("mouseup", () => erasing = false);
+document.addEventListener("mouseup", async () => {
+  if (!erasing) return;
+  erasing = false;
+  await saveFog();
+});
 
 function erase(e){
   const rect = fog.getBoundingClientRect();
@@ -220,6 +224,28 @@ function erase(e){
   };
 
  // savePositions(); // désactivé pour ne pas écraser au chargement
+
+  // ===== LOAD FOG =====
+onSnapshot(roomRef, snap => {
+  const data = snap.data();
+  if (!data || !data.fog) return;
+
+  const img = new Image();
+  img.onload = () => {
+    ctx.clearRect(0, 0, fog.width, fog.height);
+    ctx.drawImage(img, 0, 0, fog.width, fog.height);
+  };
+  img.src = data.fog;
+});
+  
+  // ===== SAVE FOG =====
+async function saveFog(){
+  if (!IS_MJ) return;
+
+  const dataURL = fog.toDataURL("image/png");
+  await setDoc(roomRef, { fog: dataURL }, { merge: true });
+}
+
 </script>
 
 </body>
