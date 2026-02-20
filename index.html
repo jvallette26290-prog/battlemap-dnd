@@ -245,6 +245,45 @@ function clampPosition(el, x, y){
 
 // Écoute temps réel : on “redessine” la liste
 onSnapshot(tokensCol, (snap) => {
+
+  // ===== Étape 5 : Ajout de token via le panneau =====
+const tName = document.getElementById("tName");
+const tImg  = document.getElementById("tImg");
+const tType = document.getElementById("tType");
+const addBtn = document.getElementById("addToken");
+
+// Option : cacher le panneau aux joueurs (décommente si tu veux MJ only)
+// if (!IS_MJ) document.getElementById("tokenPanel").style.display = "none";
+
+addBtn.addEventListener("click", async () => {
+  const name = (tName.value || "").trim() || "TOKEN";
+  const img  = (tImg.value  || "").trim();   // ex: "gob.png" ou URL
+  const type = tType.value;                  // "pj" ou "pnj"
+
+  // Spawn au centre de la map
+  const x = Math.floor(board.clientWidth / 2) - 25; // 25 = moitié de 50px
+  const y = Math.floor(board.clientHeight / 2) - 25;
+
+  try {
+    await addDoc(tokensCol, {
+      name,
+      img,
+      type,
+      x,
+      y,
+      createdAt: serverTimestamp(),
+    });
+
+    // reset des champs
+    tName.value = "";
+    tImg.value = "";
+    tName.focus();
+  } catch (err) {
+    console.error("Erreur addDoc token:", err);
+    alert("Impossible d'ajouter le token (permissions Firestore ?)");
+  }
+});
+  
   // On reconstruit proprement (simple et fiable)
   board.querySelectorAll(".token").forEach(t => t.remove());
 
