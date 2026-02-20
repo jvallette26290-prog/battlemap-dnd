@@ -125,8 +125,18 @@ const IS_MJ = params.get("dm") === "1";
   const tokens = [...document.querySelectorAll(".token")];
   
   const fog = document.getElementById("fog");
-fog.style.pointerEvents = "none";      // joueur : pas de clic sur fog
-if (IS_MJ) fog.style.pointerEvents = "auto";  // MJ : clic autorisé
+// Par défaut : le fog ne bloque pas la souris (donc tokens OK)
+fog.style.pointerEvents = "none";
+
+// MJ : on active le clic sur le fog seulement quand on maintient SHIFT
+if (IS_MJ) {
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Shift") fog.style.pointerEvents = "auto";
+  });
+  document.addEventListener("keyup", (e) => {
+    if (e.key === "Shift") fog.style.pointerEvents = "none";
+  });
+}
 
 const ctx = fog.getContext("2d");
 
@@ -146,12 +156,14 @@ let erasing = false;
 
 fog.addEventListener("mousedown", e => {
   if (!IS_MJ) return;   // ⛔ joueur bloqué
+   if (!e.shiftKey) return;   // ✅ seulement si Shift
   erasing = true;
   erase(e);
 });
 
 fog.addEventListener("mousemove", e => {
   if (!IS_MJ) return;   // ⛔ joueur bloqué
+  if (!e.shiftKey) return;   // ✅ seulement si Shift
   if (erasing) erase(e);
 });
   
