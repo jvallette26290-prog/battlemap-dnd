@@ -130,13 +130,23 @@ fog.style.pointerEvents = "none";
 
 // MJ : on active le clic sur le fog seulement quand on maintient SHIFT
 if (IS_MJ) {
+
   document.addEventListener("keydown", (e) => {
-    if (e.key === "Shift") fog.style.pointerEvents = "auto";
+    if (e.key === "Shift") {
+      fog.style.pointerEvents = "auto";
+      fog.style.cursor = "crosshair";
+    }
   });
+
   document.addEventListener("keyup", (e) => {
-    if (e.key === "Shift") fog.style.pointerEvents = "none";
+    if (e.key === "Shift") {
+      fog.style.pointerEvents = "none";
+      fog.style.cursor = "default";
+    }
   });
+
 }
+
 
 const ctx = fog.getContext("2d");
 
