@@ -123,6 +123,7 @@ const IS_MJ = params.get("dm") === "1";
 
   const board = document.getElementById("board");
   const tokens = [...document.querySelectorAll(".token")];
+  
   const fog = document.getElementById("fog");
 fog.style.pointerEvents = "none";      // joueur : pas de clic sur fog
 if (IS_MJ) fog.style.pointerEvents = "auto";  // MJ : clic autorisé
