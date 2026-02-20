@@ -38,33 +38,12 @@
 <body>
 
 <div id="board">
-  <div class="token" style="left:100px; top:100px;">PJ1</div>
-  <div class="token" style="left:200px; top:150px;">PJ2</div>
-  <div class="token" style="left:200px; top:150px;">PJ3</div>
-  <div class="token" style="left:400px; top:300px;">PNJ</div>
+  <div class="token pj1" data-id="pj1" style="left:100px; top:100px;">PJ1</div>
+  <div class="token pj2" data-id="pj2" style="left:200px; top:150px;">PJ2</div>
+  <div class="token pj3" data-id="pj3" style="left:260px; top:220px;">PJ3</div>
+  <div class="token pnj" data-id="pnj1" style="left:400px; top:300px;">PNJ</div>
 </div>
 
-<script>
-  const tokens = document.querySelectorAll('.token');
-  const board = document.getElementById('board');
-  let active = null, dx = 0, dy = 0;
-
-  tokens.forEach(t => {
-    t.onmousedown = e => {
-      active = t;
-      dx = e.offsetX;
-      dy = e.offsetY;
-    };
-  });
-
-  document.onmousemove = e => {
-    if (!active) return;
-    active.style.left = (e.pageX - dx - board.offsetLeft) + 'px';
-    active.style.top  = (e.pageY - dy - board.offsetTop) + 'px';
-  };
-
-  document.onmouseup = () => active = null;
-</script>
 <!-- 🔥 Firebase temps réel -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
@@ -143,7 +122,7 @@
     await savePositions();
   };
 
-  savePositions();
+ // savePositions(); // désactivé pour ne pas écraser au chargement
 </script>
 
 </body>
