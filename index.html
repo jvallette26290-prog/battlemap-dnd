@@ -110,8 +110,8 @@
   // ===== QUI EST MJ ? =====
 const params = new URLSearchParams(window.location.search);
 const IS_MJ = params.get("dm") === "1";
-const roomId = params.get("room") || "salle1";  
 
+const roomId = "salle1"; // ✅ salle unique, tout le monde sera dedans
 const FOG_SCALE = 0.25;
   
   const firebaseConfig = {
