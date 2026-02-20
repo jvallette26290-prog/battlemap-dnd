@@ -91,6 +91,7 @@
        WEREN </div>
   <div class="token pnj" data-id="pnj1" style="left:400px; top:300px;background-image:url('pnj1.png');">
        FANATICS </div>
+  
   <canvas id="fog"></canvas>
 </div>
 
@@ -104,10 +105,6 @@
 const params = new URLSearchParams(window.location.search);
 const IS_MJ = params.get("dm") === "1";
 
-  // Autoriser le clic sur le fog UNIQUEMENT pour le MJ
-if (IS_MJ) {
-  fog.style.pointerEvents = "auto";
-} 
   
   const firebaseConfig = {
     apiKey: "AIzaSyCHg35Sghd5O4oNypF6SNVh5jFDXz2TsxU",
@@ -126,6 +123,10 @@ if (IS_MJ) {
 
   const board = document.getElementById("board");
   const tokens = [...document.querySelectorAll(".token")];
+  const fog = document.getElementById("fog");
+fog.style.pointerEvents = "none";      // joueur : pas de clic sur fog
+if (IS_MJ) fog.style.pointerEvents = "auto";  // MJ : clic autorisé
+
 
   // ===== FOG OF WAR =====
   
