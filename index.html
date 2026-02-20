@@ -296,22 +296,6 @@ addBtn.addEventListener("click", async () => {
     alert("Impossible d'ajouter le token (permissions Firestore ?)");
   }
 });
-  
-  // On reconstruit proprement (simple et fiable)
-  board.querySelectorAll(".token").forEach(t => t.remove());
-
-  snap.forEach((docSnap) => {
-    const id = docSnap.id;
-    const data = docSnap.data();
-
-    const el = createTokenElement(id, data);
-
-    // évite que Firestore recolle pendant que TU le drags
-    if (activeId === id) return;
-
-    board.appendChild(el);
-  });
-});
 
 // Déplacement souris
 document.addEventListener("mousemove", (e) => {
