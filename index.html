@@ -61,6 +61,32 @@
   color: #bbb;
   text-align: left;
 }
+
+#tokenPanel{
+  width: 1200px;
+  margin: 10px auto 30px;
+  display:flex;
+  gap:10px;
+  justify-content:center;
+  align-items:center;
+}
+
+#tokenPanel input, #tokenPanel select{
+  padding:8px 10px;
+  border-radius:8px;
+  border:1px solid #333;
+  background:#151515;
+  color:#eee;
+}
+
+#addToken{
+  padding:8px 12px;
+  border-radius:8px;
+  border:1px solid #333;
+  background:#222;
+  color:#eee;
+  cursor:pointer;
+}    
     
 /* Animation “ça tourne” */
 .rolling{
@@ -111,14 +137,7 @@
 
 <body>
 
-  <div id="board">
-    <!-- ✅ Tes tokens (avec portraits via background-image) -->
-    <div class="token pj1" data-id="pj1" style="left:100px; top:100px; background-image:url('pj1.png');">ODRAN</div>
-    <div class="token pj2" data-id="pj2" style="left:200px; top:150px; background-image:url('pj2.png');">BARADUR</div>
-    <div class="token pj3" data-id="pj3" style="left:260px; top:220px; background-image:url('pj3.png');">WEREN</div>
-    <div class="token pnj" data-id="pnj1" style="left:400px; top:300px; background-image:url('pnj1.png');">FANATICS</div>
-    <div class="token pj1" data-id="pj4" style="left:320px; top:120px; background-image:url('pj4.png');">DWARFEN</div>
-    
+  <div id="board"> 
   </div>
 
 <div id="dicePanel">
@@ -127,11 +146,23 @@
   <div id="diceMsg"></div>
 </div>
 
+  <div id="tokenPanel">
+  <input id="tName" placeholder="Nom (ex: GOBELIN)" />
+  <input id="tImg" placeholder="Image (ex: gob.png ou URL)" />
+  <select id="tType">
+    <option value="pj">PJ</option>
+    <option value="pnj">PNJ</option>
+  </select>
+  <button id="addToken">+ Ajouter token</button>
+</div>
 
   <!-- Firebase temps réel (TOKENS UNIQUEMENT) -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-    import { getFirestore, doc, setDoc, onSnapshot, serverTimestamp, runTransaction } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+    import {
+  getFirestore, doc, setDoc, onSnapshot, serverTimestamp, runTransaction,
+  collection, addDoc, deleteDoc, updateDoc
+} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
     
     // ===== QUI EST MJ ? (on le garde, même si fog supprimé) =====
     const params = new URLSearchParams(window.location.search);
@@ -150,10 +181,135 @@
   };
 
     const app = initializeApp(firebaseConfig);
-    const db  = getFirestore(app);
+    const board = document.getElementById("board");
 
-    // ✅ Doc unique tokens
-    const tokensRef = doc(db, "rooms", roomId, "sync", "tokens");
+// 🔥 Collection de tokens (un doc = un token)
+const tokensCol = collection(db, "rooms", roomId, "tokens");
+
+// Pour gérer le drag
+let activeEl = null;
+let activeId = null;
+let dx = 0, dy = 0;
+
+// Crée un élément token HTML
+function createTokenElement(id, data){
+  const el = document.createElement("div");
+  el.className = "token " + (data.type === "pnj" ? "pnj" : "pj1"); // couleur fallback
+  el.dataset.id = id;
+  el.style.left = (data.x ?? 0) + "px";
+  el.style.top  = (data.y ?? 0) + "px";
+
+  if (data.img) el.style.backgroundImage = `url('${data.img}')`;
+  el.textContent = data.name || id;
+
+  // 🧲 Drag souris
+  el.addEventListener("mousedown", (e) => {
+    activeEl = el;
+    activeId = id;
+    dx = e.offsetX;
+    dy = e.offsetY;
+  });
+
+  // 🧲 Drag tactile
+  el.addEventListener("touchstart", (e) => {
+    const touch = e.touches[0];
+    const rect = el.getBoundingClientRect();
+    activeEl = el;
+    activeId = id;
+    dx = touch.clientX - rect.left;
+    dy = touch.clientY - rect.top;
+  }, { passive: true });
+
+  // Bouton suppression (MJ seulement si tu veux)
+  // (si tu veux que tout le monde puisse supprimer, enlève la condition IS_MJ)
+  if (IS_MJ) {
+    el.addEventListener("dblclick", async () => {
+      if (confirm("Supprimer ce token ?")) {
+        await deleteDoc(doc(db, "rooms", roomId, "tokens", id));
+      }
+    });
+  }
+
+  return el;
+}
+
+// Clamp dans le board
+function clampPosition(el, x, y){
+  const maxX = board.clientWidth - el.offsetWidth;
+  const maxY = board.clientHeight - el.offsetHeight;
+  x = Math.max(0, Math.min(x, maxX));
+  y = Math.max(0, Math.min(y, maxY));
+  return {x, y};
+}
+
+// Écoute temps réel : on “redessine” la liste
+onSnapshot(tokensCol, (snap) => {
+  // On reconstruit proprement (simple et fiable)
+  board.querySelectorAll(".token").forEach(t => t.remove());
+
+  snap.forEach((docSnap) => {
+    const id = docSnap.id;
+    const data = docSnap.data();
+
+    const el = createTokenElement(id, data);
+
+    // évite que Firestore recolle pendant que TU le drags
+    if (activeId === id) return;
+
+    board.appendChild(el);
+  });
+});
+
+// Déplacement souris
+document.addEventListener("mousemove", (e) => {
+  if (!activeEl) return;
+  const r = board.getBoundingClientRect();
+  let x = e.clientX - r.left - dx;
+  let y = e.clientY - r.top  - dy;
+  const p = clampPosition(activeEl, x, y);
+  activeEl.style.left = p.x + "px";
+  activeEl.style.top  = p.y + "px";
+});
+
+document.addEventListener("mouseup", async () => {
+  if (!activeEl) return;
+  const id = activeId;
+  const el = activeEl;
+
+  activeEl = null;
+  activeId = null;
+
+  const x = parseInt(el.style.left || "0", 10);
+  const y = parseInt(el.style.top  || "0", 10);
+
+  await updateDoc(doc(db, "rooms", roomId, "tokens", id), { x, y });
+});
+
+// Déplacement tactile
+document.addEventListener("touchmove", (e) => {
+  if (!activeEl) return;
+  const touch = e.touches[0];
+  const r = board.getBoundingClientRect();
+  let x = touch.clientX - r.left - dx;
+  let y = touch.clientY - r.top  - dy;
+  const p = clampPosition(activeEl, x, y);
+  activeEl.style.left = p.x + "px";
+  activeEl.style.top  = p.y + "px";
+}, { passive: true });
+
+document.addEventListener("touchend", async () => {
+  if (!activeEl) return;
+  const id = activeId;
+  const el = activeEl;
+
+  activeEl = null;
+  activeId = null;
+
+  const x = parseInt(el.style.left || "0", 10);
+  const y = parseInt(el.style.top  || "0", 10);
+
+  await updateDoc(doc(db, "rooms", roomId, "tokens", id), { x, y });
+}, { passive: true });
     
     const diceRef = doc(db, "rooms", roomId, "sync", "dice");
     
