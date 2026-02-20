@@ -55,8 +55,8 @@
   top:0;
   width:100%;
   height:100%;
-  z-index: 50;
-  pointer-events: auto;
+  z-index:50;
+  pointer-events:none; /* IMPORTANT */
 }
 
 #dmTools{
@@ -103,6 +103,11 @@
   // ===== QUI EST MJ ? =====
 const params = new URLSearchParams(window.location.search);
 const IS_MJ = params.get("dm") === "1";
+
+  // Autoriser le clic sur le fog UNIQUEMENT pour le MJ
+if (IS_MJ) {
+  fog.style.pointerEvents = "auto";
+} 
   
   const firebaseConfig = {
     apiKey: "AIzaSyCHg35Sghd5O4oNypF6SNVh5jFDXz2TsxU",
