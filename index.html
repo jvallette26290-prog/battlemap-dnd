@@ -247,9 +247,9 @@ function erase(e){
     return pos;
   }
 
-  async function savePositions() {
-    await setDoc(tokenRef, { tokens: readPositions() }, { merge: true });
-  }
+ async function savePositions() {
+  await setDoc(tokensRef, { positions: readPositions() }, { merge: true });
+}
 
   onSnapshot(tokensRef, (snap) => {
   const data = snap.data();
