@@ -275,31 +275,6 @@ tokens.forEach(t => {
       activeTokenId = null;
       await savePositions();
     });
-// ===== D20 local =====
-
-  // bloque les double-clics pendant l’animation
-  if (rollBtn.disabled) return;
-
-  rollBtn.disabled = true;
-  rollBtn.classList.add("rolling");
-  diceRes.textContent = "…";
-
-  // petite “roue” : on affiche des nombres qui changent vite
-  const start = Date.now();
-  const duration = 900; // ms
-  const ticker = setInterval(() => {
-    diceRes.textContent = randInt(1, 20);
-    if (Date.now() - start > duration){
-      clearInterval(ticker);
-      const final = randInt(1, 20);
-
-      rollBtn.classList.remove("rolling");
-      diceRes.textContent = final;
-
-      rollBtn.disabled = false;
-    }
-  }, 60);
-});
 
 // ===== D20 synchronisé + cooldown partagé =====
 const rollBtn = document.getElementById("rollD20");
