@@ -64,18 +64,6 @@
     <div class="token pj2" data-id="pj2" style="left:200px; top:150px; background-image:url('pj2.png');">BARADUR</div>
     <div class="token pj3" data-id="pj3" style="left:260px; top:220px; background-image:url('pj3.png');">WEREN</div>
     <div class="token pnj" data-id="pnj1" style="left:400px; top:300px; background-image:url('pnj1.png');">FANATICS</div>
-
-<div style="
-  position:absolute;
-  left:50px;
-  top:50px;
-  width:80px;
-  height:80px;
-  background:red;
-  border-radius:50%;
-  z-index:99999;
-">
-</div>
     
   </div>
 
@@ -135,16 +123,30 @@
         return;
       }
 
-      tokens.forEach(t => {
-        const id = t.dataset.id;
-        if (!data.positions[id]) return;
+tokens.forEach(t => {
+  const id = t.dataset.id;
+  if (!data.positions[id]) return;
 
-        // si c'est moi qui le déplace, on évite de le "recoller" pendant le drag
-        if (activeTokenId === id) return;
+  // évite de recoller le token pendant que tu le déplaces
+  if (activeTokenId === id) return;
 
-        t.style.left = data.positions[id].left + "px";
-        t.style.top  = data.positions[id].top  + "px";
-      });
+  // positions reçues
+  let x = Number(data.positions[id].left);
+  let y = Number(data.positions[id].top);
+
+  // si Firestore contient n'importe quoi, on ignore
+  if (!Number.isFinite(x) || !Number.isFinite(y)) return;
+
+  // ✅ bloque dans le cadre du board
+  const maxX = board.clientWidth - t.offsetWidth;
+  const maxY = board.clientHeight - t.offsetHeight;
+
+  x = Math.max(0, Math.min(x, maxX));
+  y = Math.max(0, Math.min(y, maxY));
+
+  t.style.left = x + "px";
+  t.style.top  = y + "px";
+});
     });
 
     // --- Drag & drop (souris) ---
@@ -162,10 +164,21 @@
     });
 
     document.addEventListener("mousemove", (e) => {
-      if (!active) return;
-      active.style.left = (e.pageX - dx - board.offsetLeft) + "px";
-      active.style.top  = (e.pageY - dy - board.offsetTop) + "px";
-    });
+  if (!active) return;
+
+  const r = board.getBoundingClientRect();
+  let x = e.clientX - r.left - dx;
+  let y = e.clientY - r.top  - dy;
+
+  const maxX = board.clientWidth - active.offsetWidth;
+  const maxY = board.clientHeight - active.offsetHeight;
+
+  x = Math.max(0, Math.min(x, maxX));
+  y = Math.max(0, Math.min(y, maxY));
+
+  active.style.left = x + "px";
+  active.style.top  = y + "px";
+});
 
     document.addEventListener("mouseup", async () => {
       if (!active) return;
