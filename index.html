@@ -49,44 +49,16 @@
   position: relative;
 }
 
-#fog{
-  position:absolute;
-  left:0;
-  top:0;
-  width:100%;
-  height:100%;
-  z-index:50;
-  pointer-events:none; /* IMPORTANT */
-}
-
-#dmTools{
-  position: fixed;
-  top: 10px;
-  left: 10px;
-  z-index: 1000;
-  display: none;
-  gap: 8px;
-}
-
   #roomLabel{
   font-weight: bold;
   margin-bottom: 6px;
   font-size: 14px;
-}
-
-#dmTools button{
-  padding: 8px 10px;
-  border-radius: 10px;
-  border: 1px solid #333;
-  background: #fff;
-  cursor: pointer;
 }
   </style>
 </head>
 <body>
   <div id="dmTools">
   <div id="roomLabel"></div>
-  <button id="resetFog">RESET FOG</button>
 </div>
 <div id="board">
   <div class="token pj1" data-id="pj1" style="left:100px; top:100px;background-image:url('pj1.png');">
@@ -98,7 +70,6 @@
   <div class="token pnj" data-id="pnj1" style="left:400px; top:300px;background-image:url('pnj1.png');">
        FANATICS </div>
   
-  <canvas id="fog"></canvas>
 </div>
 
 <!-- 🔥 Firebase temps réel -->
@@ -129,14 +100,12 @@ const FOG_SCALE = 0.25;
   const roomRef = doc(db, "rooms", roomId);
 
   const tokensRef = doc(db, "rooms", roomId, "sync", "tokens");
-  const fogRef    = doc(db, "rooms", roomId, "sync", "fog");
+  
   
   const board = document.getElementById("board");
   const tokens = [...document.querySelectorAll(".token")];
   
-  const fog = document.getElementById("fog");
-// Par défaut : le fog ne bloque pas la souris (donc tokens OK)
-fog.style.pointerEvents = "none";
+
 
   /* ===== AFFICHAGE DE LA SALLE ===== */
   const roomLabel = document.getElementById("roomLabel");
@@ -144,86 +113,11 @@ if (roomLabel) {
   roomLabel.textContent = "Salle : " + roomId;
 }
 
-// MJ : on active le clic sur le fog seulement quand on maintient SHIFT
-if (IS_MJ) {
-
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Shift") {
-      fog.style.pointerEvents = "auto";
-      fog.style.cursor = "crosshair";
-    }
-  });
-
-  document.addEventListener("keyup", (e) => {
-    if (e.key === "Shift") {
-      fog.style.pointerEvents = "none";
-      fog.style.cursor = "default";
-    }
-  });
-
-}
-const ctx = fog.getContext("2d");
   
-// ===== OUTILS MJ : AFFICHAGE + RESET FOG =====
-const dmTools = document.getElementById("dmTools");
-const resetBtn = document.getElementById("resetFog");
 
 // Afficher les outils seulement pour le MJ
 if (IS_MJ && dmTools) dmTools.style.display = "flex";
 
-// Remettre le fog entièrement noir
-function resetFog() {
-  ctx.globalCompositeOperation = "source-over";
-  ctx.fillStyle = "black";
-  ctx.fillRect(0, 0, fog.width, fog.height);
-}
-
-// Clic sur RESET
-if (resetBtn) {
-resetBtn.addEventListener("click", async () => {
-  if (!IS_MJ) return;
-  resetFog();       // remet noir
-  await saveFog();  // ✅ envoie à Firestore => joueurs voient en direct
-});
-}
-
-function resizeFog(){
-  fog.width = Math.round(board.offsetWidth * FOG_SCALE);
-  fog.height = Math.round(board.offsetHeight * FOG_SCALE);
-
-  ctx.globalCompositeOperation = "source-over";
-ctx.fillStyle = "black";
-ctx.fillRect(0, 0, fog.width, fog.height);
-}
-resizeFog();
-window.addEventListener("resize", resizeFog);
-
-// Effacer le fog à la souris (MJ)
-let erasing = false;
-
-fog.addEventListener("mousedown", e => {
-  if (!IS_MJ) return;   // ⛔ joueur bloqué
-   if (!e.shiftKey) return;   // ✅ seulement si Shift
-  erasing = true;
-  erase(e);
-});
-
-fog.addEventListener("mousemove", e => {
-  if (!IS_MJ) return;   // ⛔ joueur bloqué
-  if (!e.shiftKey) return;   // ✅ seulement si Shift
-  if (erasing) erase(e);
-});
-  
-document.addEventListener("mouseup", async () => {
-  if (!erasing) return;
-  erasing = false;
-  await saveFog();
-});
-
-function erase(e){
-  const rect = fog.getBoundingClientRect();
-  const x = e.clientX - rect.left;
-  const y = e.clientY - rect.top;
 
   ctx.globalCompositeOperation = "destination-out";
   ctx.beginPath();
@@ -287,28 +181,8 @@ function erase(e){
     await savePositions();
   };
 
- // savePositions(); // désactivé pour ne pas écraser au chargement
+ // savePositions(); // désactivé pour ne pas écraser au chargement  
 
-  // ===== LOAD FOG =====
-onSnapshot(fogRef, (snap) => {
-  const data = snap.data();
-  if (!data || !data.image) return;
-
-  const img = new Image();
-  img.onload = () => {
-    ctx.globalCompositeOperation = "source-over";
-    ctx.clearRect(0, 0, fog.width, fog.height);
-    ctx.drawImage(img, 0, 0, fog.width, fog.height);
-  };
-  img.src = data.image;
-});
-  
-  // ===== SAVE FOG =====
-async function saveFog(){
-  if (!IS_MJ) return;
-
-  const dataURL = fog.toDataURL("image/png");
-  await setDoc(fogRef, { fog: dataURL }, { merge: true });
 }
 
 </script>
