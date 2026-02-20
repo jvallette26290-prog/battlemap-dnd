@@ -168,6 +168,10 @@
     const params = new URLSearchParams(window.location.search);
     const IS_MJ = params.get("dm") === "1";
 
+    if (!IS_MJ) {
+  document.getElementById("tokenPanel").style.display = "none";
+}
+
     // ✅ Salle unique : tout le monde synchronisé ici
     const roomId = "salle1";
 
@@ -256,6 +260,9 @@ const addBtn = document.getElementById("addToken");
 // if (!IS_MJ) document.getElementById("tokenPanel").style.display = "none";
 
 addBtn.addEventListener("click", async () => {
+  if (!IS_MJ) return; // ✅ les joueurs ne peuvent pas ajouter même s'ils bidouillent l'UI
+  ...
+});
   const name = (tName.value || "").trim() || "TOKEN";
   const img  = (tImg.value  || "").trim();   // ex: "gob.png" ou URL
   const type = tType.value;                  // "pj" ou "pnj"
