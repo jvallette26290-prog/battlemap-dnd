@@ -104,6 +104,7 @@
 const params = new URLSearchParams(window.location.search);
 const IS_MJ = params.get("dm") === "1";
 
+const FOG_SCALE = 0.25;
   
   const firebaseConfig = {
     apiKey: "AIzaSyCHg35Sghd5O4oNypF6SNVh5jFDXz2TsxU",
@@ -120,6 +121,9 @@ const IS_MJ = params.get("dm") === "1";
   const roomId = "salle1";
   const roomRef = doc(db, "rooms", roomId);
 
+  const tokensRef = doc(db, "rooms", roomId, "sync", "tokens");
+  const fogRef    = doc(db, "rooms", roomId, "sync", "fog");
+  
   const board = document.getElementById("board");
   const tokens = [...document.querySelectorAll(".token")];
   
@@ -171,13 +175,13 @@ resetBtn.addEventListener("click", async () => {
 }
 
 function resizeFog(){
-  fog.width = board.offsetWidth;
-  fog.height = board.offsetHeight;
+  fog.width = Math.round(board.offsetWidth * FOG_SCALE);
+  fog.height = Math.round(board.offsetHeight * FOG_SCALE);
 
-  ctx.fillStyle = "black";
-  ctx.fillRect(0, 0, fog.width, fog.height);
+  ctx.globalCompositeOperation = "source-over";
+ctx.fillStyle = "black";
+ctx.fillRect(0, 0, fog.width, fog.height);
 }
-
 resizeFog();
 window.addEventListener("resize", resizeFog);
 
@@ -231,22 +235,22 @@ function erase(e){
   }
 
   async function savePositions() {
-    await setDoc(roomRef, { tokens: readPositions() }, { merge: true });
+    await setDoc(tokenRef, { tokens: readPositions() }, { merge: true });
   }
 
-  onSnapshot(roomRef, (snap) => {
-    const data = snap.data();
-    if (!data || !data.tokens) return;
+  onSnapshot(tokensRef, (snap) => {
+  const data = snap.data();
+  if (!data || !data.positions) return;
 
-    tokens.forEach(t => {
-      const id = t.dataset.id;
-      if (!data.tokens[id]) return;
-      if (activeTokenId === id) return;
+  tokens.forEach(t => {
+    const id = t.dataset.id;
+    if (!data.positions[id]) return;
+    if (activeTokenId === id) return;
 
-      t.style.left = data.tokens[id].left + "px";
-      t.style.top  = data.tokens[id].top + "px";
-    });
+    t.style.left = data.positions[id].left + "px";
+    t.style.top  = data.positions[id].top  + "px";
   });
+});
 
   tokens.forEach(t => {
     t.onmousedown = e => {
@@ -273,17 +277,17 @@ function erase(e){
  // savePositions(); // désactivé pour ne pas écraser au chargement
 
   // ===== LOAD FOG =====
-onSnapshot(roomRef, snap => {
+onSnapshot(fogRef, (snap) => {
   const data = snap.data();
-  if (!data || !data.fog) return;
+  if (!data || !data.image) return;
 
   const img = new Image();
   img.onload = () => {
-  ctx.globalCompositeOperation = "source-over"; // important
-  ctx.clearRect(0, 0, fog.width, fog.height);
-  ctx.drawImage(img, 0, 0, fog.width, fog.height);
-};
-  img.src = data.fog;
+    ctx.globalCompositeOperation = "source-over";
+    ctx.clearRect(0, 0, fog.width, fog.height);
+    ctx.drawImage(img, 0, 0, fog.width, fog.height);
+  };
+  img.src = data.image;
 });
   
   // ===== SAVE FOG =====
@@ -291,7 +295,7 @@ async function saveFog(){
   if (!IS_MJ) return;
 
   const dataURL = fog.toDataURL("image/png");
-  await setDoc(roomRef, { fog: dataURL }, { merge: true });
+  await setDoc(fogRef, { fog: dataURL }, { merge: true });
 }
 
 </script>
