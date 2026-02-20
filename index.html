@@ -95,12 +95,14 @@
 </div>
 
 <!-- 🔥 Firebase temps réel -->
+  
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
   import { getFirestore, doc, setDoc, onSnapshot, collection, addDoc, serverTimestamp, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
-  // ===== MODE MJ =====
-const IS_MJ = true; // ← MJ = true / Joueur = false
+  // ===== QUI EST MJ ? =====
+const params = new URLSearchParams(window.location.search);
+const IS_MJ = params.get("dm") === "1";
   
   const firebaseConfig = {
     apiKey: "AIzaSyCHg35Sghd5O4oNypF6SNVh5jFDXz2TsxU",
@@ -140,13 +142,13 @@ window.addEventListener("resize", resizeFog);
 let erasing = false;
 
 fog.addEventListener("mousedown", e => {
-  if (!IS_MJ) return;
+  if (!IS_MJ) return;   // ⛔ joueur bloqué
   erasing = true;
   erase(e);
 });
 
 fog.addEventListener("mousemove", e => {
-  if (!IS_MJ) return;
+  if (!IS_MJ) return;   // ⛔ joueur bloqué
   if (erasing) erase(e);
 });
   
