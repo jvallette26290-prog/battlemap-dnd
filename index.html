@@ -181,7 +181,7 @@
   };
 
     const app = initializeApp(firebaseConfig);
-    const board = document.getElementById("board");
+
 
 // 🔥 Collection de tokens (un doc = un token)
 const tokensCol = collection(db, "rooms", roomId, "tokens");
@@ -313,124 +313,6 @@ document.addEventListener("touchend", async () => {
     
     const diceRef = doc(db, "rooms", roomId, "sync", "dice");
     
-    const board  = document.getElementById("board");
-    const tokens = [...document.querySelectorAll(".token")];
-
-    // --- Lecture positions depuis la page (pour sauvegarder) ---
-    function readPositions(){
-      const pos = {};
-      tokens.forEach(t => {
-        pos[t.dataset.id] = {
-          left: parseInt(t.style.left || "0", 10),
-          top:  parseInt(t.style.top  || "0", 10),
-        };
-      });
-      return pos;
-    }
-
-    // --- Sauvegarde dans Firestore ---
-    async function savePositions(){
-      await setDoc(tokensRef, { positions: readPositions() }, { merge: true });
-    }
-
-    // --- Réception en temps réel ---
-    onSnapshot(tokensRef, (snap) => {
-      const data = snap.data();
-      if (!data || !data.positions) {
-        // Option : si doc vide, le MJ peut “initialiser” une fois
-        if (IS_MJ) setDoc(tokensRef, { positions: readPositions() }, { merge: true });
-        return;
-      }
-
-tokens.forEach(t => {
-  const id = t.dataset.id;
-  if (!data.positions[id]) return;
-
-  // évite de recoller le token pendant que tu le déplaces
-  if (activeTokenId === id) return;
-
-  // positions reçues
-  let x = Number(data.positions[id].left);
-  let y = Number(data.positions[id].top);
-
-  // si Firestore contient n'importe quoi, on ignore
-  if (!Number.isFinite(x) || !Number.isFinite(y)) return;
-
-  // ✅ bloque dans le cadre du board
-  const maxX = board.clientWidth - t.offsetWidth;
-  const maxY = board.clientHeight - t.offsetHeight;
-
-  x = Math.max(0, Math.min(x, maxX));
-  y = Math.max(0, Math.min(y, maxY));
-
-  t.style.left = x + "px";
-  t.style.top  = y + "px";
-});
-    });
-
-    // --- Drag & drop (souris) ---
-    let active = null;
-    let activeTokenId = null;
-    let dx = 0, dy = 0;
-
-    tokens.forEach(t => {
-      t.addEventListener("mousedown", (e) => {
-        active = t;
-        activeTokenId = t.dataset.id;
-        dx = e.offsetX;
-        dy = e.offsetY;
-      });
-    });
-
-    document.addEventListener("mousemove", (e) => {
-  if (!active) return;
-
-  const r = board.getBoundingClientRect();
-  let x = e.clientX - r.left - dx;
-  let y = e.clientY - r.top  - dy;
-
-  const maxX = board.clientWidth - active.offsetWidth;
-  const maxY = board.clientHeight - active.offsetHeight;
-
-  x = Math.max(0, Math.min(x, maxX));
-  y = Math.max(0, Math.min(y, maxY));
-
-  active.style.left = x + "px";
-  active.style.top  = y + "px";
-});
-
-    document.addEventListener("mouseup", async () => {
-      if (!active) return;
-      active = null;
-      activeTokenId = null;
-      await savePositions();
-    });
-
-    // --- Drag & drop (mobile / trackpad tactile) ---
-    tokens.forEach(t => {
-      t.addEventListener("touchstart", (e) => {
-        const touch = e.touches[0];
-        const rect = t.getBoundingClientRect();
-        active = t;
-        activeTokenId = t.dataset.id;
-        dx = touch.clientX - rect.left;
-        dy = touch.clientY - rect.top;
-      }, { passive: true });
-    });
-
-    document.addEventListener("touchmove", (e) => {
-      if (!active) return;
-      const touch = e.touches[0];
-      active.style.left = (touch.pageX - dx - board.offsetLeft) + "px";
-      active.style.top  = (touch.pageY - dy - board.offsetTop) + "px";
-    }, { passive: true });
-
-    document.addEventListener("touchend", async () => {
-      if (!active) return;
-      active = null;
-      activeTokenId = null;
-      await savePositions();
-    });
 
 // ===== D20 synchronisé + cooldown partagé =====
 const rollBtn = document.getElementById("rollD20");
