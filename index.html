@@ -249,26 +249,33 @@ function clampPosition(el, x, y){
 
 // Écoute temps réel : on “redessine” la liste
 onSnapshot(tokensCol, (snap) => {
+  board.querySelectorAll(".token").forEach(t => t.remove());
 
-  // ===== Étape 5 : Ajout de token via le panneau =====
+  snap.forEach((docSnap) => {
+    const id = docSnap.id;
+    const data = docSnap.data();
+
+    const el = createTokenElement(id, data);
+    if (activeId === id) return;
+
+    board.appendChild(el);
+  });
+});
+
+// ===== Étape 5 : Ajout de token via le panneau (MJ ONLY) =====
 const tName = document.getElementById("tName");
 const tImg  = document.getElementById("tImg");
 const tType = document.getElementById("tType");
 const addBtn = document.getElementById("addToken");
 
-// Option : cacher le panneau aux joueurs (décommente si tu veux MJ only)
-// if (!IS_MJ) document.getElementById("tokenPanel").style.display = "none";
-
 addBtn.addEventListener("click", async () => {
-  if (!IS_MJ) return; // ✅ les joueurs ne peuvent pas ajouter même s'ils bidouillent l'UI
-  ...
-});
-  const name = (tName.value || "").trim() || "TOKEN";
-  const img  = (tImg.value  || "").trim();   // ex: "gob.png" ou URL
-  const type = tType.value;                  // "pj" ou "pnj"
+  if (!IS_MJ) return;
 
-  // Spawn au centre de la map
-  const x = Math.floor(board.clientWidth / 2) - 25; // 25 = moitié de 50px
+  const name = (tName.value || "").trim() || "TOKEN";
+  const img  = (tImg.value  || "").trim();
+  const type = tType.value;
+
+  const x = Math.floor(board.clientWidth / 2) - 25;
   const y = Math.floor(board.clientHeight / 2) - 25;
 
   try {
@@ -281,7 +288,6 @@ addBtn.addEventListener("click", async () => {
       createdAt: serverTimestamp(),
     });
 
-    // reset des champs
     tName.value = "";
     tImg.value = "";
     tName.focus();
