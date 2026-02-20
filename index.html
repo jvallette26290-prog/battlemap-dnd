@@ -163,10 +163,11 @@ function resetFog() {
 
 // Clic sur RESET
 if (resetBtn) {
-  resetBtn.addEventListener("click", () => {
-    if (!IS_MJ) return;
-    resetFog();
-  });
+resetBtn.addEventListener("click", async () => {
+  if (!IS_MJ) return;
+  resetFog();       // remet noir
+  await saveFog();  // ✅ envoie à Firestore => joueurs voient en direct
+});
 }
 
 function resizeFog(){
@@ -278,9 +279,10 @@ onSnapshot(roomRef, snap => {
 
   const img = new Image();
   img.onload = () => {
-    ctx.clearRect(0, 0, fog.width, fog.height);
-    ctx.drawImage(img, 0, 0, fog.width, fog.height);
-  };
+  ctx.globalCompositeOperation = "source-over"; // important
+  ctx.clearRect(0, 0, fog.width, fog.height);
+  ctx.drawImage(img, 0, 0, fog.width, fog.height);
+};
   img.src = data.fog;
 });
   
