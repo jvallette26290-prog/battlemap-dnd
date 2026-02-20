@@ -56,7 +56,7 @@
   width:100%;
   height:100%;
   z-index: 50;
-  pointer-events: auto; /* joueurs */
+  pointer-events: auto;
 }
 
 #dmTools{
@@ -99,6 +99,9 @@
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
   import { getFirestore, doc, setDoc, onSnapshot, collection, addDoc, serverTimestamp, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
+  // ===== MODE MJ =====
+const IS_MJ = true; // ← MJ = true / Joueur = false
+  
   const firebaseConfig = {
     apiKey: "AIzaSyCHg35Sghd5O4oNypF6SNVh5jFDXz2TsxU",
     authDomain: "battlemap-dnd.firebaseapp.com",
@@ -116,7 +119,9 @@
 
   const board = document.getElementById("board");
   const tokens = [...document.querySelectorAll(".token")];
-// ===== FOG OF WAR =====
+
+  // ===== FOG OF WAR =====
+  
 const fog = document.getElementById("fog");
 const ctx = fog.getContext("2d");
 
@@ -135,14 +140,16 @@ window.addEventListener("resize", resizeFog);
 let erasing = false;
 
 fog.addEventListener("mousedown", e => {
+  if (!IS_MJ) return;
   erasing = true;
   erase(e);
 });
 
 fog.addEventListener("mousemove", e => {
+  if (!IS_MJ) return;
   if (erasing) erase(e);
 });
-
+  
 document.addEventListener("mouseup", () => erasing = false);
 
 function erase(e){
