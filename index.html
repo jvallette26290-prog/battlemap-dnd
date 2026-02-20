@@ -79,6 +79,7 @@
 </head>
 <body>
   <div id="dmTools">
+  <div id="roomLabel"></div>
   <button id="resetFog">RESET FOG</button>
 </div>
 <div id="board">
@@ -103,6 +104,7 @@
   // ===== QUI EST MJ ? =====
 const params = new URLSearchParams(window.location.search);
 const IS_MJ = params.get("dm") === "1";
+const roomId = params.get("room") || "salle1";  
 
 const FOG_SCALE = 0.25;
   
@@ -118,7 +120,6 @@ const FOG_SCALE = 0.25;
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
 
-  const roomId = "salle1";
   const roomRef = doc(db, "rooms", roomId);
 
   const tokensRef = doc(db, "rooms", roomId, "sync", "tokens");
@@ -130,6 +131,12 @@ const FOG_SCALE = 0.25;
   const fog = document.getElementById("fog");
 // Par défaut : le fog ne bloque pas la souris (donc tokens OK)
 fog.style.pointerEvents = "none";
+
+  /* ===== AFFICHAGE DE LA SALLE ===== */
+  const roomLabel = document.getElementById("roomLabel");
+if (roomLabel) {
+  roomLabel.textContent = "Salle : " + roomId;
+}
 
 // MJ : on active le clic sur le fog seulement quand on maintient SHIFT
 if (IS_MJ) {
