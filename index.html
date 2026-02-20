@@ -130,6 +130,14 @@ if (IS_MJ) {
   // ===== FOG OF WAR =====
   
 const fog = document.getElementById("fog");
+  // Le fog ne bloque pas la souris par défaut
+fog.style.pointerEvents = "none";
+
+// Si on est MJ (lien ?dm=1), on autorise le clic sur le fog
+if (IS_MJ) {
+  fog.style.pointerEvents = "auto";
+}
+
 const ctx = fog.getContext("2d");
 
 function resizeFog(){
