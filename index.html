@@ -4,88 +4,80 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Battlemap D&D</title>
+
   <style>
-    body { margin:0; background:#111; color:#eee; font-family:Arial; }
-    #board {
-      width:1000px;
-      height:650px;
-      background:url("map.jpg") center/cover no-repeat;
-      position:relative;
-      margin:20px auto;
-      border:2px solid #333;
+    body { margin:0; background:#111; color:#eee; font-family: Arial, sans-serif; }
+
+    /* Zone map */
+    #board{
+      width: 1000px;
+      height: 650px;
+      background: url("map.jpg") center/cover no-repeat;
+      position: relative;
+      margin: 20px auto;
+      border: 2px solid #333;
+      overflow: hidden; /* évite de “perdre” les tokens hors cadre */
     }
-    .token {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  position: absolute;
-  cursor: grab;
 
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+    /* Tokens */
+    .token{
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      position: absolute;
+      cursor: grab;
 
-  border: 2px solid white;
-  box-shadow: 0 0 6px rgba(0,0,0,0.6);
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
 
-  display: flex;
-  align-items: end;
-  justify-content: center;
+      border: 2px solid white;
+      box-shadow: 0 0 6px rgba(0,0,0,0.6);
 
-  color: white;
-  font-size: 11px;
-  font-weight: bold;
-  text-shadow: 0 0 4px black;
-  padding-bottom: 2px;
-}
-  .pj1 { background-color:#3498db; }  /* bleu */
-  .pj2 { background-color:#2ecc71; }  /* vert */
-  .pj3 { background-color:#e67e22; }  /* orange */
-  .pnj1 { background-color:#e74c3c; }  /* rouge */
+      display: flex;
+      align-items: end;
+      justify-content: center;
 
-    /* ===== FOG OF WAR ===== */
+      color: white;
+      font-size: 11px;
+      font-weight: bold;
+      text-shadow: 0 0 4px black;
+      padding-bottom: 2px;
+      user-select: none;
+    }
+    .token:active { cursor: grabbing; }
 
-#board {
-  position: relative;
-}
-
-  #roomLabel{
-  font-weight: bold;
-  margin-bottom: 6px;
-  font-size: 14px;
-}
+    /* Couleurs si pas d'image */
+    .pj1 { background-color:#3498db; }
+    .pj2 { background-color:#2ecc71; }
+    .pj3 { background-color:#e67e22; }
+    .pnj { background-color:#e74c3c; }
   </style>
 </head>
+
 <body>
-  <div id="dmTools">
-  <div id="roomLabel"></div>
-</div>
-<div id="board">
-  <div class="token pj1" data-id="pj1" style="left:100px; top:100px;background-image:url('pj1.png');">
-       ODRAN </div>
-  <div class="token pj2" data-id="pj2" style="left:200px; top:150px;background-image:url('pj2.png');">
-       BARADUR </div>
-  <div class="token pj3" data-id="pj3" style="left:260px; top:220px;background-image:url('pj3.png');">
-       WEREN </div>
-  <div class="token pnj" data-id="pnj1" style="left:400px; top:300px;background-image:url('pnj1.png');">
-       FANATICS </div>
-  
-</div>
 
-<!-- 🔥 Firebase temps réel -->
-  
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-  import { getFirestore, doc, setDoc, onSnapshot, collection, addDoc, serverTimestamp, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+  <div id="board">
+    <!-- ✅ Tes tokens (avec portraits via background-image) -->
+    <div class="token pj1" data-id="pj1" style="left:100px; top:100px; background-image:url('pj1.png');">ODRAN</div>
+    <div class="token pj2" data-id="pj2" style="left:200px; top:150px; background-image:url('pj2.png');">BARADUR</div>
+    <div class="token pj3" data-id="pj3" style="left:260px; top:220px; background-image:url('pj3.png');">WEREN</div>
+    <div class="token pnj" data-id="pnj1" style="left:400px; top:300px; background-image:url('pnj1.png');">FANATICS</div>
+  </div>
 
-  // ===== QUI EST MJ ? =====
-const params = new URLSearchParams(window.location.search);
-const IS_MJ = params.get("dm") === "1";
+  <!-- Firebase temps réel (TOKENS UNIQUEMENT) -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+    import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
-const roomId = "salle1"; // ✅ salle unique, tout le monde sera dedans
-const FOG_SCALE = 0.25;
-  
-  const firebaseConfig = {
+    // ===== QUI EST MJ ? (on le garde, même si fog supprimé) =====
+    const params = new URLSearchParams(window.location.search);
+    const IS_MJ = params.get("dm") === "1";
+
+    // ✅ Salle unique : tout le monde synchronisé ici
+    const roomId = "salle1";
+
+    const firebaseConfig = {
     apiKey: "AIzaSyCHg35Sghd5O4oNypF6SNVh5jFDXz2TsxU",
     authDomain: "battlemap-dnd.firebaseapp.com",
     projectId: "battlemap-dnd",
@@ -94,98 +86,105 @@ const FOG_SCALE = 0.25;
     appId: "1:118091329664:web:c7072920354d41d9a77665"
   };
 
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
+    const app = initializeApp(firebaseConfig);
+    const db  = getFirestore(app);
 
-  const roomRef = doc(db, "rooms", roomId);
+    // ✅ Doc unique tokens
+    const tokensRef = doc(db, "rooms", roomId, "sync", "tokens");
 
-  const tokensRef = doc(db, "rooms", roomId, "sync", "tokens");
-  
-  
-  const board = document.getElementById("board");
-  const tokens = [...document.querySelectorAll(".token")];
-  
+    const board  = document.getElementById("board");
+    const tokens = [...document.querySelectorAll(".token")];
 
+    // --- Lecture positions depuis la page (pour sauvegarder) ---
+    function readPositions(){
+      const pos = {};
+      tokens.forEach(t => {
+        pos[t.dataset.id] = {
+          left: parseInt(t.style.left || "0", 10),
+          top:  parseInt(t.style.top  || "0", 10),
+        };
+      });
+      return pos;
+    }
 
-  /* ===== AFFICHAGE DE LA SALLE ===== */
-  const roomLabel = document.getElementById("roomLabel");
-if (roomLabel) {
-  roomLabel.textContent = "Salle : " + roomId;
-}
+    // --- Sauvegarde dans Firestore ---
+    async function savePositions(){
+      await setDoc(tokensRef, { positions: readPositions() }, { merge: true });
+    }
 
-  
+    // --- Réception en temps réel ---
+    onSnapshot(tokensRef, (snap) => {
+      const data = snap.data();
+      if (!data || !data.positions) {
+        // Option : si doc vide, le MJ peut “initialiser” une fois
+        if (IS_MJ) setDoc(tokensRef, { positions: readPositions() }, { merge: true });
+        return;
+      }
 
-// Afficher les outils seulement pour le MJ
-if (IS_MJ && dmTools) dmTools.style.display = "flex";
+      tokens.forEach(t => {
+        const id = t.dataset.id;
+        if (!data.positions[id]) return;
 
+        // si c'est moi qui le déplace, on évite de le "recoller" pendant le drag
+        if (activeTokenId === id) return;
 
-  ctx.globalCompositeOperation = "destination-out";
-  ctx.beginPath();
-  ctx.arc(x, y, 60, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.globalCompositeOperation = "source-over";
-}
-  
-  let active = null;
-  let activeTokenId = null;
-  let dx = 0, dy = 0;
-
-  function readPositions() {
-    const pos = {};
-    tokens.forEach(t => {
-      pos[t.dataset.id] = {
-        left: parseInt(t.style.left || "0", 10),
-        top: parseInt(t.style.top || "0", 10)
-      };
+        t.style.left = data.positions[id].left + "px";
+        t.style.top  = data.positions[id].top  + "px";
+      });
     });
-    return pos;
-  }
 
- async function savePositions() {
-  await setDoc(tokensRef, { positions: readPositions() }, { merge: true });
-}
+    // --- Drag & drop (souris) ---
+    let active = null;
+    let activeTokenId = null;
+    let dx = 0, dy = 0;
 
-  onSnapshot(tokensRef, (snap) => {
-  const data = snap.data();
-  if (!data || !data.positions) return;
+    tokens.forEach(t => {
+      t.addEventListener("mousedown", (e) => {
+        active = t;
+        activeTokenId = t.dataset.id;
+        dx = e.offsetX;
+        dy = e.offsetY;
+      });
+    });
 
-  tokens.forEach(t => {
-    const id = t.dataset.id;
-    if (!data.positions[id]) return;
-    if (activeTokenId === id) return;
+    document.addEventListener("mousemove", (e) => {
+      if (!active) return;
+      active.style.left = (e.pageX - dx - board.offsetLeft) + "px";
+      active.style.top  = (e.pageY - dy - board.offsetTop) + "px";
+    });
 
-    t.style.left = data.positions[id].left + "px";
-    t.style.top  = data.positions[id].top  + "px";
-  });
-});
+    document.addEventListener("mouseup", async () => {
+      if (!active) return;
+      active = null;
+      activeTokenId = null;
+      await savePositions();
+    });
 
-  tokens.forEach(t => {
-    t.onmousedown = e => {
-      active = t;
-      activeTokenId = t.dataset.id;
-      dx = e.offsetX;
-      dy = e.offsetY;
-    };
-  });
+    // --- Drag & drop (mobile / trackpad tactile) ---
+    tokens.forEach(t => {
+      t.addEventListener("touchstart", (e) => {
+        const touch = e.touches[0];
+        const rect = t.getBoundingClientRect();
+        active = t;
+        activeTokenId = t.dataset.id;
+        dx = touch.clientX - rect.left;
+        dy = touch.clientY - rect.top;
+      }, { passive: true });
+    });
 
-  document.onmousemove = e => {
-    if (!active) return;
-    active.style.left = (e.pageX - dx - board.offsetLeft) + "px";
-    active.style.top  = (e.pageY - dy - board.offsetTop) + "px";
-  };
+    document.addEventListener("touchmove", (e) => {
+      if (!active) return;
+      const touch = e.touches[0];
+      active.style.left = (touch.pageX - dx - board.offsetLeft) + "px";
+      active.style.top  = (touch.pageY - dy - board.offsetTop) + "px";
+    }, { passive: true });
 
-  document.onmouseup = async () => {
-    if (!active) return;
-    active = null;
-    activeTokenId = null;
-    await savePositions();
-  };
-
- // savePositions(); // désactivé pour ne pas écraser au chargement  
-
-}
-
-</script>
-
+    document.addEventListener("touchend", async () => {
+      if (!active) return;
+      active = null;
+      activeTokenId = null;
+      await savePositions();
+    });
+  </script>
 </body>
 </html>
