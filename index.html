@@ -10,8 +10,8 @@
 
     /* Zone map */
     #board{
-      width: 2000px;
-      height: 1600px;
+      width: 1200px;
+      height: 800px;
       background: url("map2.png") center/cover no-repeat;
       position: relative;
       margin: 20px auto;
@@ -19,6 +19,52 @@
       overflow: hidden; /* évite de “perdre” les tokens hors cadre */
     }
 
+#dicePanel{
+  width: 1000px;
+  margin: 10px auto 30px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: center;
+}
+
+#rollD20{
+  padding: 10px 16px;
+  font-size: 16px;
+  border-radius: 10px;
+  border: 1px solid #333;
+  background: #222;
+  color: #eee;
+  cursor: pointer;
+}
+
+#rollD20:active{
+  transform: scale(0.98);
+}
+
+#diceResult{
+  width: 80px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 20px;
+  border: 1px solid #333;
+  border-radius: 10px;
+  background: #151515;
+}
+
+/* Animation “ça tourne” */
+.rolling{
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin{
+  from{ transform: rotate(0deg); }
+  to{ transform: rotate(360deg); }
+}
+    
     /* Tokens */
     .token{
       width: 50px;
@@ -67,6 +113,12 @@
     <div class="token pj1" data-id="pj4" style="left:320px; top:120px; background-image:url('pj4.png');">DWARFEN</div>
     
   </div>
+
+<div id="dicePanel">
+  <button id="rollD20" title="Lancer un D20">🎲 D20</button>
+  <div id="diceResult">—</div>
+</div>
+
 
   <!-- Firebase temps réel (TOKENS UNIQUEMENT) -->
   <script type="module">
@@ -213,6 +265,39 @@ tokens.forEach(t => {
       activeTokenId = null;
       await savePositions();
     });
+// ===== D20 local =====
+const rollBtn = document.getElementById("rollD20");
+const diceRes = document.getElementById("diceResult");
+
+function randInt(min, max){
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+rollBtn.addEventListener("click", () => {
+  // bloque les double-clics pendant l’animation
+  if (rollBtn.disabled) return;
+
+  rollBtn.disabled = true;
+  rollBtn.classList.add("rolling");
+  diceRes.textContent = "…";
+
+  // petite “roue” : on affiche des nombres qui changent vite
+  const start = Date.now();
+  const duration = 900; // ms
+  const ticker = setInterval(() => {
+    diceRes.textContent = randInt(1, 20);
+    if (Date.now() - start > duration){
+      clearInterval(ticker);
+      const final = randInt(1, 20);
+
+      rollBtn.classList.remove("rolling");
+      diceRes.textContent = final;
+
+      rollBtn.disabled = false;
+    }
+  }, 60);
+});
+    
   </script>
 </body>
 </html>
