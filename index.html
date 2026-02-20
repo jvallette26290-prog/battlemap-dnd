@@ -54,7 +54,15 @@
   border-radius: 10px;
   background: #151515;
 }
-
+<div id="diceMsg"></div>
+    
+#diceMsg{
+  min-width: 220px;
+  font-size: 13px;
+  color: #bbb;
+  text-align: left;
+}
+    
 /* Animation “ça tourne” */
 .rolling{
   animation: spin 0.6s linear infinite;
@@ -123,8 +131,7 @@
   <!-- Firebase temps réel (TOKENS UNIQUEMENT) -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-    import { getFirestore, doc, setDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
-    
+    import { getFirestore, doc, setDoc, onSnapshot, serverTimestamp, runTransaction } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
     
     // ===== QUI EST MJ ? (on le garde, même si fog supprimé) =====
     const params = new URLSearchParams(window.location.search);
@@ -343,24 +350,66 @@ function playRollAnimation(finalValue) {
 let lastRollId = null;
 
 // 1) Quand quelqu'un lance, on écrit le résultat dans Firestore
+const diceMsg = document.getElementById("diceMsg");
+const COOLDOWN_MS = 5000;
+
+function showMsg(txt){
+  if (!diceMsg) return;
+  diceMsg.textContent = txt || "";
+}
+
 rollBtn.addEventListener("click", async () => {
-  // petit anti-spam local
   if (rollBtn.disabled) return;
+
+  rollBtn.disabled = true; // anti double-clic local
+  showMsg("");
 
   const value = randIntCrypto(1, 20);
   const rollId = crypto.randomUUID();
 
-  // Option : feedback immédiat (animation), mais le vrai affichage final reste synchro via snapshot
-  // -> si tu préfères attendre Firestore avant d'animer, supprime la ligne ci-dessous.
-  // playRollAnimation(value);
+  try {
+    await runTransaction(db, async (tx) => {
+      const snap = await tx.get(diceRef);
+      const data = snap.exists() ? snap.data() : null;
 
-  await setDoc(diceRef, {
-    type: "d20",
-    value,
-    rollId,
-    by: clientId,
-    at: serverTimestamp(),
-  }, { merge: true });
+      const now = Date.now();
+
+      // lastRollMs = timestamp (ms) du dernier jet accepté
+      const lastRollMs = data && Number.isFinite(Number(data.lastRollMs)) ? Number(data.lastRollMs) : 0;
+
+      if (now - lastRollMs < COOLDOWN_MS) {
+        const remain = Math.ceil((COOLDOWN_MS - (now - lastRollMs)) / 1000);
+        throw new Error("COOLDOWN_" + remain);
+      }
+
+      // ✅ On accepte le jet et on “verrouille” pour 5s
+      tx.set(diceRef, {
+        type: "d20",
+        value,
+        rollId,
+        by: clientId,
+        lastRollMs: now,          // <-- verrou partagé
+        at: serverTimestamp(),
+      }, { merge: true });
+    });
+
+    // pas besoin d'afficher ici : le onSnapshot déclenche l’animation chez tout le monde
+  } catch (err) {
+    const msg = String(err?.message || err);
+
+    if (msg.startsWith("COOLDOWN_")) {
+      const remain = msg.split("_")[1] || "5";
+      showMsg(`⏳ Cooldown : attends encore ${remain}s`);
+    } else {
+      showMsg("❌ Erreur de lancer (permissions / réseau ?)");
+      console.error(err);
+    }
+  } finally {
+    // On réactive au bout d’un court délai :
+    // - si le jet est accepté, snapshot anime et on pourra relancer après 5s (mais le bouton peut rester cliquable, Firestore bloquera)
+    // - si jet refusé, on réactive tout de suite pour que le joueur réessaie après
+    rollBtn.disabled = false;
+  }
 });
 
 // 2) Tous les clients écoutent Firestore : nouveau lancer => animation + affichage du même résultat
