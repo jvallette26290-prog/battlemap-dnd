@@ -123,8 +123,9 @@
   <!-- Firebase temps réel (TOKENS UNIQUEMENT) -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-    import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
-
+    import { getFirestore, doc, setDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+    
+    
     // ===== QUI EST MJ ? (on le garde, même si fog supprimé) =====
     const params = new URLSearchParams(window.location.search);
     const IS_MJ = params.get("dm") === "1";
@@ -146,7 +147,9 @@
 
     // ✅ Doc unique tokens
     const tokensRef = doc(db, "rooms", roomId, "sync", "tokens");
-
+    
+    const diceRef = doc(db, "rooms", roomId, "sync", "dice");
+    
     const board  = document.getElementById("board");
     const tokens = [...document.querySelectorAll(".token")];
 
@@ -297,7 +300,82 @@ rollBtn.addEventListener("click", () => {
     }
   }, 60);
 });
-    
+
+   // ===== D20 synchronisé Firestore (tout le monde peut lancer) =====
+const rollBtn = document.getElementById("rollD20");
+const diceRes = document.getElementById("diceResult");
+
+// identifiant local (pour reconnaître son propre client)
+const clientId = localStorage.getItem("battlemap_clientId") || (() => {
+  const id = crypto.randomUUID();
+  localStorage.setItem("battlemap_clientId", id);
+  return id;
+})();
+
+function randIntCrypto(min, max) {
+  // random plus “propre” que Math.random()
+  const range = max - min + 1;
+  const arr = new Uint32Array(1);
+  crypto.getRandomValues(arr);
+  return min + (arr[0] % range);
+}
+
+function playRollAnimation(finalValue) {
+  // empêche de relancer pendant qu'une animation se joue
+  rollBtn.disabled = true;
+  rollBtn.classList.add("rolling");
+  diceRes.textContent = "…";
+
+  const start = Date.now();
+  const duration = 900; // ms
+  const ticker = setInterval(() => {
+    diceRes.textContent = randIntCrypto(1, 20);
+    if (Date.now() - start > duration) {
+      clearInterval(ticker);
+      rollBtn.classList.remove("rolling");
+      diceRes.textContent = String(finalValue);
+      rollBtn.disabled = false;
+    }
+  }, 60);
+}
+
+// On garde en mémoire le dernier lancer vu, pour ne pas rejouer 2 fois
+let lastRollId = null;
+
+// 1) Quand quelqu'un lance, on écrit le résultat dans Firestore
+rollBtn.addEventListener("click", async () => {
+  // petit anti-spam local
+  if (rollBtn.disabled) return;
+
+  const value = randIntCrypto(1, 20);
+  const rollId = crypto.randomUUID();
+
+  // Option : feedback immédiat (animation), mais le vrai affichage final reste synchro via snapshot
+  // -> si tu préfères attendre Firestore avant d'animer, supprime la ligne ci-dessous.
+  // playRollAnimation(value);
+
+  await setDoc(diceRef, {
+    type: "d20",
+    value,
+    rollId,
+    by: clientId,
+    at: serverTimestamp(),
+  }, { merge: true });
+});
+
+// 2) Tous les clients écoutent Firestore : nouveau lancer => animation + affichage du même résultat
+onSnapshot(diceRef, (snap) => {
+  const data = snap.data();
+  if (!data || data.type !== "d20") return;
+  if (!data.rollId || data.rollId === lastRollId) return;
+
+  lastRollId = data.rollId;
+
+  const v = Number(data.value);
+  if (!Number.isFinite(v) || v < 1 || v > 20) return;
+
+  playRollAnimation(v);
+}); 
   </script>
 </body>
 </html>
