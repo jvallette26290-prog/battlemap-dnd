@@ -233,6 +233,52 @@
   border-top: 1px solid rgba(255,255,255,0.08);
 }
 
+    /* ===== Caracs / Skills ===== */
+.statGrid{
+  display:grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap:10px;
+}
+.statItem{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:8px 10px;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,0.10);
+  background: rgba(255,255,255,0.04);
+}
+.statItem span{
+  width:38px;
+  font-weight:800;
+  font-size:12px;
+  color: rgba(255,255,255,0.8);
+}
+.statItem input{
+  width:100%;
+}
+
+.skillGrid{
+  display:grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap:8px 10px;
+  padding:8px 10px;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,0.10);
+  background: rgba(255,255,255,0.04);
+}
+.chk{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-size:13px;
+  color: rgba(255,255,255,0.85);
+}
+.chk input{
+  width:16px;
+  height:16px;
+}
+
 #mInfo{
   font-size: 12px;
   color: rgba(255,255,255,0.65);
@@ -313,6 +359,40 @@
       <label>CA</label>
       <input id="mAc" type="number" min="0" />
 
+      <!-- ===== D&D : Caractéristiques ===== -->
+<label>Caracs</label>
+<div class="statGrid">
+  <div class="statItem"><span>FOR</span><input id="mStr" type="number" min="1" max="30"></div>
+  <div class="statItem"><span>DEX</span><input id="mDex" type="number" min="1" max="30"></div>
+  <div class="statItem"><span>CON</span><input id="mCon" type="number" min="1" max="30"></div>
+  <div class="statItem"><span>INT</span><input id="mInt" type="number" min="1" max="30"></div>
+  <div class="statItem"><span>SAG</span><input id="mWis" type="number" min="1" max="30"></div>
+  <div class="statItem"><span>CHA</span><input id="mCha" type="number" min="1" max="30"></div>
+</div>
+
+<!-- ===== D&D : Compétences ===== -->
+<label>Comp.</label>
+<div class="skillGrid">
+  <label class="chk"><input id="mSkillAcro" type="checkbox"> Acrobaties</label>
+  <label class="chk"><input id="mSkillAnim" type="checkbox"> Dressage</label>
+  <label class="chk"><input id="mSkillArca" type="checkbox"> Arcanes</label>
+  <label class="chk"><input id="mSkillAthl" type="checkbox"> Athlétisme</label>
+  <label class="chk"><input id="mSkillDece" type="checkbox"> Tromperie</label>
+  <label class="chk"><input id="mSkillHist" type="checkbox"> Histoire</label>
+  <label class="chk"><input id="mSkillInsi" type="checkbox"> Intuition</label>
+  <label class="chk"><input id="mSkillInti" type="checkbox"> Intimidation</label>
+  <label class="chk"><input id="mSkillInve" type="checkbox"> Investigation</label>
+  <label class="chk"><input id="mSkillMedi" type="checkbox"> Médecine</label>
+  <label class="chk"><input id="mSkillNatu" type="checkbox"> Nature</label>
+  <label class="chk"><input id="mSkillPerc" type="checkbox"> Perception</label>
+  <label class="chk"><input id="mSkillPers" type="checkbox"> Persuasion</label>
+  <label class="chk"><input id="mSkillReli" type="checkbox"> Religion</label>
+  <label class="chk"><input id="mSkillSlei" type="checkbox"> Escamotage</label>
+  <label class="chk"><input id="mSkillStea" type="checkbox"> Discrétion</label>
+  <label class="chk"><input id="mSkillSurv" type="checkbox"> Survie</label>
+  <label class="chk"><input id="mSkillPerf" type="checkbox"> Représentation</label>
+</div>
+
       <label>Statuts</label>
       <input id="mStatus" placeholder="ex: poison, prone" />
 
@@ -392,6 +472,33 @@ const mAc     = document.getElementById("mAc");
 const mStatus = document.getElementById("mStatus");
 const mNotes  = document.getElementById("mNotes");
 
+// ===== Caractéristiques =====
+const mStr = document.getElementById("mStr");
+const mDex = document.getElementById("mDex");
+const mCon = document.getElementById("mCon");
+const mInt = document.getElementById("mInt");
+const mWis = document.getElementById("mWis");
+const mCha = document.getElementById("mCha");
+
+// ===== Compétences =====
+const mSkillAcro = document.getElementById("mSkillAcro");
+const mSkillAnim = document.getElementById("mSkillAnim");
+const mSkillArca = document.getElementById("mSkillArca");
+const mSkillAthl = document.getElementById("mSkillAthl");
+const mSkillDece = document.getElementById("mSkillDece");
+const mSkillHist = document.getElementById("mSkillHist");
+const mSkillInsi = document.getElementById("mSkillInsi");
+const mSkillInti = document.getElementById("mSkillInti");
+const mSkillInve = document.getElementById("mSkillInve");
+const mSkillMedi = document.getElementById("mSkillMedi");
+const mSkillNatu = document.getElementById("mSkillNatu");
+const mSkillPerc = document.getElementById("mSkillPerc");
+const mSkillPers = document.getElementById("mSkillPers");
+const mSkillReli = document.getElementById("mSkillReli");
+const mSkillSlei = document.getElementById("mSkillSlei");
+const mSkillStea = document.getElementById("mSkillStea");
+const mSkillSurv = document.getElementById("mSkillSurv");
+const mSkillPerf = document.getElementById("mSkillPerf");    
 let openedTokenId = null;
 
 function openModal(){
@@ -462,6 +569,36 @@ async function loadTokenToModal(tokenId){
   mStatus.value = Array.isArray(t.status) ? t.status.join(", ") : (t.status ?? "");
   mNotes.value  = t.notes ?? "";
 
+  // Caracs (objet)
+const a = t.abilities || {};
+mStr.value = a.str ?? "";
+mDex.value = a.dex ?? "";
+mCon.value = a.con ?? "";
+mInt.value = a.int ?? "";
+mWis.value = a.wis ?? "";
+mCha.value = a.cha ?? "";
+
+// Skills (objet de bool)
+const s = t.skills || {};
+mSkillAcro.checked = !!s.acrobatics;
+mSkillAnim.checked = !!s.animalHandling;
+mSkillArca.checked = !!s.arcana;
+mSkillAthl.checked = !!s.athletics;
+mSkillDece.checked = !!s.deception;
+mSkillHist.checked = !!s.history;
+mSkillInsi.checked = !!s.insight;
+mSkillInti.checked = !!s.intimidation;
+mSkillInve.checked = !!s.investigation;
+mSkillMedi.checked = !!s.medicine;
+mSkillNatu.checked = !!s.nature;
+mSkillPerc.checked = !!s.perception;
+mSkillPers.checked = !!s.persuasion;
+mSkillReli.checked = !!s.religion;
+mSkillSlei.checked = !!s.sleightOfHand;
+mSkillStea.checked = !!s.stealth;
+mSkillSurv.checked = !!s.survival;
+mSkillPerf.checked = !!s.performance;
+
   // ✅ on met à jour la barre APRES avoir rempli les champs
   updateHpBar();
 
@@ -489,6 +626,35 @@ mSave.addEventListener("click", async () => {
       status: parseStatus(mStatus.value),
       notes: (mNotes.value || "").trim(),
       updatedAt: serverTimestamp(),
+      abilities: {
+  str: mStr.value === "" ? null : Number(mStr.value),
+  dex: mDex.value === "" ? null : Number(mDex.value),
+  con: mCon.value === "" ? null : Number(mCon.value),
+  int: mInt.value === "" ? null : Number(mInt.value),
+  wis: mWis.value === "" ? null : Number(mWis.value),
+  cha: mCha.value === "" ? null : Number(mCha.value),
+},
+
+skills: {
+  acrobatics: mSkillAcro.checked,
+  animalHandling: mSkillAnim.checked,
+  arcana: mSkillArca.checked,
+  athletics: mSkillAthl.checked,
+  deception: mSkillDece.checked,
+  history: mSkillHist.checked,
+  insight: mSkillInsi.checked,
+  intimidation: mSkillInti.checked,
+  investigation: mSkillInve.checked,
+  medicine: mSkillMedi.checked,
+  nature: mSkillNatu.checked,
+  perception: mSkillPerc.checked,
+  persuasion: mSkillPers.checked,
+  religion: mSkillReli.checked,
+  sleightOfHand: mSkillSlei.checked,
+  stealth: mSkillStea.checked,
+  survival: mSkillSurv.checked,
+  performance: mSkillPerf.checked,
+},
     });
     mInfo.textContent = "✅ Enregistré";
   } catch (err) {
