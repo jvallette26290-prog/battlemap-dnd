@@ -7,7 +7,10 @@
 
   <style>
     body { margin:0; background:#111; color:#eee; font-family: Arial, sans-serif; }
-
+/* ✅ Empêche les inputs de déborder (padding + border inclus dans width) */
+*, *::before, *::after{
+  box-sizing: border-box;
+}
     /* Zone map */
     #board{
       width: 800px;
@@ -199,14 +202,16 @@
 }
 
 .modalGrid input, .modalGrid textarea{
-  width:100%;
-  padding:10px 12px;
+  width: 100%;
+  max-width: 100%;
+  padding: 10px 12px;
   border-radius: 14px;
   border: 1px solid rgba(255,255,255,0.10);
   background: rgba(255,255,255,0.05);
   color:#eee;
   outline: none;
 }
+    
 .modalGrid input:focus, .modalGrid textarea:focus{
   border-color: rgba(120,180,255,0.55);
   box-shadow: 0 0 0 4px rgba(120,180,255,0.12);
