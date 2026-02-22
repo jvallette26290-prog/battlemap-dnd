@@ -369,6 +369,10 @@ document.addEventListener("keyup", (e) => {
   }
 });
 
+  window.addEventListener("blur", () => {
+  isFPressed = false;
+});
+    
     // ===== FICHE TOKEN (modal) =====
 const modal = document.getElementById("tokenModal");
 const mClose = document.getElementById("mClose");
@@ -378,7 +382,12 @@ const mInfo  = document.getElementById("mInfo");
 
 const mName   = document.getElementById("mName");
 const mHp     = document.getElementById("mHp");
-    function updateHpBar(){
+const mHpMax  = document.getElementById("mHpMax");
+const mAc     = document.getElementById("mAc");
+const mStatus = document.getElementById("mStatus");
+const mNotes  = document.getElementById("mNotes");
+
+function updateHpBar(){
   const hpFill = document.getElementById("hpFill");
   if (!hpFill) return;
 
@@ -392,29 +401,10 @@ const mHp     = document.getElementById("mHp");
     hpFill.style.width = "0%";
   }
 }
-const mHpMax  = document.getElementById("mHpMax");
-const mAc     = document.getElementById("mAc");
-const mStatus = document.getElementById("mStatus");
-const mNotes  = document.getElementById("mNotes");
 
-let openedTokenId = null;
-
-function openModal(){ modal.classList.remove("modalHidden"); }
-function closeModal(){
-  modal.classList.add("modalHidden");
-  openedTokenId = null;
-  mInfo.textContent = "";
-}
-
-mClose.addEventListener("click", closeModal);
-modal.addEventListener("click", (e) => { if (e.target === modal) closeModal(); });
-
-function parseStatus(str){
-  return (str || "")
-    .split(",")
-    .map(s => s.trim())
-    .filter(Boolean);
-}
+// ✅ ICI : on branche les listeners UNE SEULE FOIS (pas dans loadTokenToModal)
+mHp.addEventListener("input", updateHpBar);
+mHpMax.addEventListener("input", updateHpBar);
 
 async function loadTokenToModal(tokenId){
   openedTokenId = tokenId;
@@ -435,16 +425,13 @@ async function loadTokenToModal(tokenId){
   mName.value   = t.name ?? "";
   mHp.value     = (t.hp ?? "");
   mHpMax.value  = (t.hpMax ?? "");
-
-updateHpBar();
-  mHp.addEventListener("input", updateHpBar);
-mHpMax.addEventListener("input", updateHpBar);
-  
   mAc.value     = (t.ac ?? "");
   mStatus.value = Array.isArray(t.status) ? t.status.join(", ") : (t.status ?? "");
   mNotes.value  = t.notes ?? "";
 
-  // MJ-only : joueurs en lecture seule
+  // ✅ on met à jour la barre APRES avoir rempli les champs
+  updateHpBar();
+
   const canEdit = IS_MJ;
   [mName,mHp,mHpMax,mAc,mStatus,mNotes,mSave].forEach(el => el.disabled = !canEdit);
   mInfo.textContent = canEdit ? "Modifiable (MJ)" : "Lecture seule";
