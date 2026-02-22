@@ -237,11 +237,9 @@
   </select>
   <button id="addToken">+ Ajouter token</button>
 </div>
-
-  <!-- Firebase temps réel (TOKENS UNIQUEMENT) -->
-  <script type="module">
-    <!-- ===== FICHE TOKEN (modal) ===== -->
-<div id="tokenModal" class="modalHidden">
+  
+// ===== FICHE TOKEN (modal) =====
+  <div id="tokenModal" class="modalHidden">
   <div class="modalCard">
     <div class="modalHeader">
       <div id="mTitle">Fiche token</div>
@@ -274,6 +272,9 @@
     </div>
   </div>
 </div>
+  
+  <!-- Firebase temps réel (TOKENS UNIQUEMENT) -->
+  <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
     import {
   getFirestore, doc, setDoc, onSnapshot, serverTimestamp, runTransaction,
