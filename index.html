@@ -240,6 +240,28 @@
   gap:10px;
 }
 
+/* ===== Ligne PV (3 champs) ===== */
+.hpRow{
+  display: grid;
+  grid-template-columns:
+    auto 70px
+    auto 70px
+    auto 70px;
+  align-items: center;
+  gap: 8px 10px;
+}
+
+.hpRow span{
+  font-size: 12px;
+  color: rgba(255,255,255,0.75);
+  white-space: nowrap;
+}
+
+.hpRow input{
+  width: 100%;
+  text-align: center;
+}
+    
 .modalFooter{
   display:flex;
   align-items:center;
@@ -366,10 +388,16 @@
       <input id="mName" />
 
       <label>PV</label>
-      <div class="row2">
-        <input id="mHp" type="number" min="0" placeholder="actuels" />
-        <input id="mHpMax" type="number" min="0" placeholder="max" />
-      </div>
+<div class="hpRow">
+  <span>Actuels</span>
+  <input id="mHp" type="number" min="0" />
+
+  <span>Temp.</span>
+  <input id="mHpTemp" type="number" min="0" />
+
+  <span>Max</span>
+  <input id="mHpMax" type="number" min="0" />
+</div>
       
       <div></div>
 <div class="hpBar"><div id="hpFill"></div></div>
@@ -485,6 +513,7 @@ const mInfo  = document.getElementById("mInfo");
 
 const mName   = document.getElementById("mName");
 const mHp     = document.getElementById("mHp");
+const mHpTemp = document.getElementById("mHpTemp");    
 const mHpMax  = document.getElementById("mHpMax");
 const mAc     = document.getElementById("mAc");
 const mStatus = document.getElementById("mStatus");
@@ -582,6 +611,9 @@ async function loadTokenToModal(tokenId){
 
   mName.value   = t.name ?? "";
   mHp.value     = (t.hp ?? "");
+  mHp.value     = (t.hp ?? "");
+mHpTemp.value = (t.hpTemp ?? "");
+mHpMax.value  = (t.hpMax ?? "");
   mHpMax.value  = (t.hpMax ?? "");
   mAc.value     = (t.ac ?? "");
   mStatus.value = Array.isArray(t.status) ? t.status.join(", ") : (t.status ?? "");
@@ -631,7 +663,7 @@ mSave.addEventListener("click", async () => {
 
   const ref = doc(db, "rooms", roomId, "tokens", openedTokenId);
 
-  const hp = mHp.value === "" ? null : Number(mHp.value);
+  const hp = Number(mHp.value) + Number(mHpTemp.value || 0);
   const hpMax = mHpMax.value === "" ? null : Number(mHpMax.value);
   const ac = mAc.value === "" ? null : Number(mAc.value);
 
@@ -639,6 +671,7 @@ mSave.addEventListener("click", async () => {
     await updateDoc(ref, {
       name: (mName.value || "").trim(),
       hp: Number.isFinite(hp) ? hp : null,
+      hpTemp: mHpTemp.value === "" ? null : Number(mHpTemp.value),
       hpMax: Number.isFinite(hpMax) ? hpMax : null,
       ac: Number.isFinite(ac) ? ac : null,
       status: parseStatus(mStatus.value),
