@@ -623,6 +623,26 @@ const mWis = document.getElementById("mWis");
 const mCha = document.getElementById("mCha");
 
 // ===== Compétences =====
+// ===== Checkboxes maîtrise des compétences =====
+const mSkillAcro = document.getElementById("mSkillAcro");
+const mSkillAnim = document.getElementById("mSkillAnim");
+const mSkillArca = document.getElementById("mSkillArca");
+const mSkillAthl = document.getElementById("mSkillAthl");
+const mSkillDece = document.getElementById("mSkillDece");
+const mSkillHist = document.getElementById("mSkillHist");
+const mSkillInsi = document.getElementById("mSkillInsi");
+const mSkillInti = document.getElementById("mSkillInti");
+const mSkillInve = document.getElementById("mSkillInve");
+const mSkillMedi = document.getElementById("mSkillMedi");
+const mSkillNatu = document.getElementById("mSkillNatu");
+const mSkillPerc = document.getElementById("mSkillPerc");
+const mSkillPers = document.getElementById("mSkillPers");
+const mSkillReli = document.getElementById("mSkillReli");
+const mSkillSlei = document.getElementById("mSkillSlei");
+const mSkillStea = document.getElementById("mSkillStea");
+const mSkillSurv = document.getElementById("mSkillSurv");
+const mSkillPerf = document.getElementById("mSkillPerf");
+    
 // ===== Valeurs numériques des compétences =====
 const mSkillAcroVal = document.getElementById("mSkillAcroVal");
 const mSkillAnimVal = document.getElementById("mSkillAnimVal");
@@ -669,7 +689,66 @@ function parseStatus(str){
     .map(s => s.trim())
     .filter(Boolean);
 }
+function abilityMod(score){
+  const n = Number(score);
+  if (!Number.isFinite(n)) return 0;
+  return Math.floor((n - 10) / 2);
+}
 
+function signed(n){
+  return (n >= 0 ? "+" : "") + n;
+}
+
+function autoCalcSkills(){
+  // bonus de maîtrise
+  const prof = Number(mProf.value);
+  const profBonus = Number.isFinite(prof) ? prof : 0;
+
+  // mods de caracs
+  const mods = {
+    str: abilityMod(mStr.value),
+    dex: abilityMod(mDex.value),
+    con: abilityMod(mCon.value),
+    int: abilityMod(mInt.value),
+    wis: abilityMod(mWis.value),
+    cha: abilityMod(mCha.value),
+  };
+
+  // Helper : calcule total = modCarac + (maitrise ? prof : 0)
+  const calc = (abilKey, isProf) => mods[abilKey] + (isProf ? profBonus : 0);
+
+  // --- DEX ---
+  mSkillAcroVal.value = signed(calc("dex", mSkillAcro.checked));
+  mSkillSleiVal.value = signed(calc("dex", mSkillSlei.checked));
+  mSkillSteaVal.value = signed(calc("dex", mSkillStea.checked));
+
+  // --- WIS ---
+  mSkillAnimVal.value = signed(calc("wis", mSkillAnim.checked));
+  mSkillInsiVal.value = signed(calc("wis", mSkillInsi.checked));
+  mSkillMediVal.value = signed(calc("wis", mSkillMedi.checked));
+  mSkillPercVal.value = signed(calc("wis", mSkillPerc.checked));
+  mSkillSurvVal.value = signed(calc("wis", mSkillSurv.checked));
+
+  // --- INT ---
+  mSkillArcaVal.value = signed(calc("int", mSkillArca.checked));
+  mSkillHistVal.value = signed(calc("int", mSkillHist.checked));
+  mSkillInveVal.value = signed(calc("int", mSkillInve.checked));
+  mSkillNatuVal.value = signed(calc("int", mSkillNatu.checked));
+  mSkillReliVal.value = signed(calc("int", mSkillReli.checked));
+
+  // --- CHA ---
+  mSkillDeceVal.value = signed(calc("cha", mSkillDece.checked));
+  mSkillIntiVal.value = signed(calc("cha", mSkillInti.checked));
+  mSkillPersVal.value = signed(calc("cha", mSkillPers.checked));
+  mSkillPerfVal.value = signed(calc("cha", mSkillPerf.checked));
+
+  // --- STR ---
+  mSkillAthlVal.value = signed(calc("str", mSkillAthl.checked));
+}
+    mAuto.addEventListener("click", () => {
+  if (!IS_MJ) return; // optionnel
+  autoCalcSkills();
+});
 
 // ✅ ICI : on branche les listeners UNE SEULE FOIS (pas dans loadTokenToModal)
 
@@ -709,25 +788,26 @@ mWis.value = a.wis ?? "";
 mCha.value = a.cha ?? "";
 
 // Skills (objet de bool)
+// ===== Checkboxes maîtrise des compétences =====
 const s = t.skills || {};
-mSkillAcroVal.value = (s.acrobaticsVal ?? "");
-mSkillAnimVal.value = (s.animalHandlingVal ?? "");
-mSkillArcaVal.value = (s.arcanaVal ?? "");
-mSkillAthlVal.value = (s.athleticsVal ?? "");
-mSkillDeceVal.value = (s.deceptionVal ?? "");
-mSkillHistVal.value = (s.historyVal ?? "");
-mSkillInsiVal.value = (s.insightVal ?? "");
-mSkillIntiVal.value = (s.intimidationVal ?? "");
-mSkillInveVal.value = (s.investigationVal ?? "");
-mSkillMediVal.value = (s.medicineVal ?? "");
-mSkillNatuVal.value = (s.natureVal ?? "");
-mSkillPercVal.value = (s.perceptionVal ?? "");
-mSkillPersVal.value = (s.persuasionVal ?? "");
-mSkillReliVal.value = (s.religionVal ?? "");
-mSkillSleiVal.value = (s.sleightOfHandVal ?? "");
-mSkillSteaVal.value = (s.stealthVal ?? "");
-mSkillSurvVal.value = (s.survivalVal ?? "");
-mSkillPerfVal.value = (s.performanceVal ?? "");
+const mSkillAcro = document.getElementById("mSkillAcro");
+const mSkillAnim = document.getElementById("mSkillAnim");
+const mSkillArca = document.getElementById("mSkillArca");
+const mSkillAthl = document.getElementById("mSkillAthl");
+const mSkillDece = document.getElementById("mSkillDece");
+const mSkillHist = document.getElementById("mSkillHist");
+const mSkillInsi = document.getElementById("mSkillInsi");
+const mSkillInti = document.getElementById("mSkillInti");
+const mSkillInve = document.getElementById("mSkillInve");
+const mSkillMedi = document.getElementById("mSkillMedi");
+const mSkillNatu = document.getElementById("mSkillNatu");
+const mSkillPerc = document.getElementById("mSkillPerc");
+const mSkillPers = document.getElementById("mSkillPers");
+const mSkillReli = document.getElementById("mSkillReli");
+const mSkillSlei = document.getElementById("mSkillSlei");
+const mSkillStea = document.getElementById("mSkillStea");
+const mSkillSurv = document.getElementById("mSkillSurv");
+const mSkillPerf = document.getElementById("mSkillPerf");
 
 
   const canEdit = IS_MJ;
