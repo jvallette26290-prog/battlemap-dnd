@@ -338,19 +338,7 @@
 }
 
 /* ===== Barre PV ===== */
-.hpBar{
-  height: 10px;
-  border-radius: 999px;
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.10);
-  overflow: hidden;
-  margin-top: 6px;
-}
-#hpFill{
-  height: 100%;
-  width: 0%;
-  background: rgba(90, 220, 140, 0.65);
-}
+
   </style>
 </head>
 
@@ -399,8 +387,6 @@
   <input id="mHpMax" type="number" min="0" />
 </div>
       
-      <div></div>
-<div class="hpBar"><div id="hpFill"></div></div>
 
       <label>CA</label>
       <input id="mAc" type="number" min="0" />
@@ -574,24 +560,8 @@ function parseStatus(str){
     .filter(Boolean);
 }
 
-function updateHpBar(){
-  const hpFill = document.getElementById("hpFill");
-  if (!hpFill) return;
-
-  const hp = Number(mHp.value);
-  const hpMax = Number(mHpMax.value);
-
-  if (Number.isFinite(hp) && Number.isFinite(hpMax) && hpMax > 0) {
-    const pct = Math.max(0, Math.min(100, Math.round((hp / hpMax) * 100)));
-    hpFill.style.width = pct + "%";
-  } else {
-    hpFill.style.width = "0%";
-  }
-}
 
 // ✅ ICI : on branche les listeners UNE SEULE FOIS (pas dans loadTokenToModal)
-mHp.addEventListener("input", updateHpBar);
-mHpMax.addEventListener("input", updateHpBar);
 
 async function loadTokenToModal(tokenId){
   openedTokenId = tokenId;
@@ -649,8 +619,6 @@ mSkillStea.checked = !!s.stealth;
 mSkillSurv.checked = !!s.survival;
 mSkillPerf.checked = !!s.performance;
 
-  // ✅ on met à jour la barre APRES avoir rempli les champs
-  updateHpBar();
 
   const canEdit = IS_MJ;
   [mName,mHp,mHpMax,mAc,mStatus,mNotes,mSave].forEach(el => el.disabled = !canEdit);
