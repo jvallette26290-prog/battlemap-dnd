@@ -140,6 +140,7 @@
 /* ===== Modal fiche token (Premium Glass) ===== */
 .modalHidden{ display:none !important; }
 
+/* ===== Modal plein écran ===== */
 #tokenModal{
   position: fixed;
   inset: 0;
@@ -147,20 +148,27 @@
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
   display:flex;
-  align-items:center;
-  justify-content:center;
+  align-items: stretch;     /* ✅ prend toute la hauteur */
+  justify-content: center;
   z-index: 9999;
+  padding: 16px;
 }
 
+/* La "carte" prend (presque) tout l'écran */
 .modalCard{
-  width: min(560px, calc(100vw - 28px));
+  width: min(900px, 100%);  /* ✅ largeur confortable, mais responsive */
+  height: 100%;             /* ✅ plein écran */
+  max-height: 100%;
   background: linear-gradient(180deg, rgba(30,30,30,0.92), rgba(16,16,16,0.92));
   border: 1px solid rgba(255,255,255,0.10);
   border-radius: 18px;
   box-shadow:
     0 30px 90px rgba(0,0,0,0.75),
     inset 0 1px 0 rgba(255,255,255,0.06);
-  padding: 14px;
+
+  display: flex;            /* ✅ permet header / body / footer */
+  flex-direction: column;
+  overflow: hidden;         /* ✅ pas de débordement */
 }
 
 .modalHeader{
@@ -168,7 +176,9 @@
   align-items:center;
   justify-content:space-between;
   gap:12px;
-  margin-bottom: 12px;
+
+  padding: 14px 14px 0 14px; /* espace intérieur */
+  margin-bottom: 12px;       /* espace avec le contenu */
 }
 
 #mTitle{
@@ -193,6 +203,13 @@
   grid-template-columns: 84px 1fr;
   gap: 10px 12px;
   align-items:start;
+}
+
+/* ✅ zone centrale scrollable */
+.modalBody{
+  padding: 14px;
+  overflow: auto;       /* ✅ scroll */
+  flex: 1;              /* ✅ prend toute la place entre header et footer */
 }
 
 .modalGrid label{
@@ -227,9 +244,10 @@
   display:flex;
   align-items:center;
   justify-content:space-between;
-  margin-top: 12px;
   gap: 12px;
-  padding-top: 10px;
+
+  padding: 10px 14px 14px 14px; /* espace intérieur */
+  margin-top: 0;
   border-top: 1px solid rgba(255,255,255,0.08);
 }
 
@@ -342,7 +360,7 @@
       <div id="mTitle">Fiche token</div>
       <button id="mClose">✕</button>
     </div>
-
+   <div class="modalBody">
     <div class="modalGrid">
       <label>Nom</label>
       <input id="mName" />
