@@ -338,6 +338,16 @@
   height:16px;
 }
 
+#mAuto{
+  padding: 10px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.18);
+  background: rgba(255,255,255,0.08);
+  color:#fff;
+  cursor:pointer;
+  font-weight: 800;
+}
+#mAuto:hover{ background: rgba(255,255,255,0.12); }    
     
 
 #mInfo{
@@ -411,6 +421,9 @@
 
       <label>CA</label>
       <input id="mAc" type="number" min="0" />
+
+      <label>Maîtrise</label>
+<input id="mProf" type="number" step="1" placeholder="+2" />
 
       <!-- ===== D&D : Caractéristiques ===== -->
 <label>Caracs</label>
@@ -527,6 +540,7 @@
 
     <div class="modalFooter">
       <div id="mInfo"></div>
+      <button id="mAuto">Auto-calc</button>
       <button id="mSave">Enregistrer</button>
     </div>
   </div>
@@ -595,6 +609,8 @@ const mHp     = document.getElementById("mHp");
 const mHpTemp = document.getElementById("mHpTemp");    
 const mHpMax  = document.getElementById("mHpMax");
 const mAc     = document.getElementById("mAc");
+const mProf = document.getElementById("mProf");
+const mAuto = document.getElementById("mAuto");    
 const mStatus = document.getElementById("mStatus");
 const mNotes  = document.getElementById("mNotes");
 
@@ -828,6 +844,8 @@ skills: {
     mInfo.textContent = "❌ Erreur (permissions Firestore ?)";
   }
 });
+
+    
 
 // 🔥 Collection de tokens (un doc = un token)
 const tokensCol = collection(db, "rooms", roomId, "tokens");
