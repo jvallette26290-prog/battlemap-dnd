@@ -839,7 +839,18 @@ mSkillPerfVal.value = (s.performanceVal ?? "");
 
 
   const canEdit = IS_MJ;
-  [mName,mHp,mHpMax,mAc,mStatus,mNotes,mSave].forEach(el => el.disabled = !canEdit);
+[mName, mHp, mHpTemp, mHpMax, mAc, mProf,
+ mStatus, mNotes,
+ mAuto, mSave,
+ // checkboxes skills
+ mSkillAcro, mSkillAnim, mSkillArca, mSkillAthl, mSkillDece, mSkillHist, mSkillInsi, mSkillInti,
+ mSkillInve, mSkillMedi, mSkillNatu, mSkillPerc, mSkillPers, mSkillReli, mSkillSlei, mSkillStea,
+ mSkillSurv, mSkillPerf,
+ // valeurs skills
+ mSkillAcroVal, mSkillAnimVal, mSkillArcaVal, mSkillAthlVal, mSkillDeceVal, mSkillHistVal, mSkillInsiVal, mSkillIntiVal,
+ mSkillInveVal, mSkillMediVal, mSkillNatuVal, mSkillPercVal, mSkillPersVal, mSkillReliVal, mSkillSleiVal, mSkillSteaVal,
+ mSkillSurvVal, mSkillPerfVal
+].forEach(el => el.disabled = !canEdit);
   mInfo.textContent = canEdit ? "Modifiable (MJ)" : "Lecture seule";
 }
 
@@ -863,7 +874,9 @@ mSave.addEventListener("click", async () => {
       status: parseStatus(mStatus.value),
       notes: (mNotes.value || "").trim(),
       updatedAt: serverTimestamp(),
-      profBonus: mProf.value === "" ? null : Number(mProf.value), abilities: {
+      profBonus: mProf.value === "" ? null : Number(mProf.value), 
+      
+      abilities: {
   str: mStr.value === "" ? null : Number(mStr.value),
   dex: mDex.value === "" ? null : Number(mDex.value),
   con: mCon.value === "" ? null : Number(mCon.value),
