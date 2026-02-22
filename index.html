@@ -387,6 +387,34 @@ const mAc     = document.getElementById("mAc");
 const mStatus = document.getElementById("mStatus");
 const mNotes  = document.getElementById("mNotes");
 
+let openedTokenId = null;
+
+function openModal(){
+  modal.classList.remove("modalHidden");
+}
+
+function closeModal(){
+  modal.classList.add("modalHidden");
+  openedTokenId = null;
+  if (mInfo) mInfo.textContent = "";
+}
+
+// bouton X
+mClose.addEventListener("click", closeModal);
+
+// clic en dehors de la carte = fermer
+modal.addEventListener("click", (e) => {
+  if (e.target === modal) closeModal();
+});
+
+// helper statuts
+function parseStatus(str){
+  return (str || "")
+    .split(",")
+    .map(s => s.trim())
+    .filter(Boolean);
+}
+
 function updateHpBar(){
   const hpFill = document.getElementById("hpFill");
   if (!hpFill) return;
