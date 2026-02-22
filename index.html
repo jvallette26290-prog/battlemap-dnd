@@ -305,6 +305,21 @@
     const db = getFirestore(app);
     const board = document.getElementById("board");
 
+    // ===== Gestion touche F =====
+let isFPressed = false;
+
+document.addEventListener("keydown", (e) => {
+  if (e.key.toLowerCase() === "f") {
+    isFPressed = true;
+  }
+});
+
+document.addEventListener("keyup", (e) => {
+  if (e.key.toLowerCase() === "f") {
+    isFPressed = false;
+  }
+});
+
     // ===== FICHE TOKEN (modal) =====
 const modal = document.getElementById("tokenModal");
 const mClose = document.getElementById("mClose");
@@ -440,8 +455,11 @@ function createTokenElement(id, data){
       }
     });
   }
-// 📝 clic = ouvrir la fiche
-el.addEventListener("click", () => {
+// 📝 F + clic = ouvrir la fiche
+el.addEventListener("click", (e) => {
+  if (!isFPressed) return;   // ⛔ sans F, rien ne se passe
+
+  e.stopPropagation();      // évite effets de bord
   loadTokenToModal(id);
 });
   return el;
