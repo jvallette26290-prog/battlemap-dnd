@@ -307,6 +307,25 @@
   border:1px solid rgba(255,255,255,0.10);
   background: rgba(255,255,255,0.04);
 }
+
+.skillRow{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+
+.skillVal{
+  width:72px;
+  min-width:72px;
+  padding:8px 10px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,0.10);
+  background: rgba(255,255,255,0.05);
+  color:#eee;
+  text-align:center;
+}
+ 
 .chk{
   display:flex;
   align-items:center;
@@ -318,6 +337,8 @@
   width:16px;
   height:16px;
 }
+
+    
 
 #mInfo{
   font-size: 12px;
@@ -405,26 +426,98 @@
 <!-- ===== D&D : Compétences ===== -->
 <label>Comp.</label>
 <div class="skillGrid">
-  <label class="chk"><input id="mSkillAcro" type="checkbox"> Acrobaties</label>
-  <label class="chk"><input id="mSkillAnim" type="checkbox"> Dressage</label>
-  <label class="chk"><input id="mSkillArca" type="checkbox"> Arcanes</label>
-  <label class="chk"><input id="mSkillAthl" type="checkbox"> Athlétisme</label>
-  <label class="chk"><input id="mSkillDece" type="checkbox"> Tromperie</label>
-  <label class="chk"><input id="mSkillHist" type="checkbox"> Histoire</label>
-  <label class="chk"><input id="mSkillInsi" type="checkbox"> Intuition</label>
-  <label class="chk"><input id="mSkillInti" type="checkbox"> Intimidation</label>
-  <label class="chk"><input id="mSkillInve" type="checkbox"> Investigation</label>
-  <label class="chk"><input id="mSkillMedi" type="checkbox"> Médecine</label>
-  <label class="chk"><input id="mSkillNatu" type="checkbox"> Nature</label>
-  <label class="chk"><input id="mSkillPerc" type="checkbox"> Perception</label>
-  <label class="chk"><input id="mSkillPers" type="checkbox"> Persuasion</label>
-  <label class="chk"><input id="mSkillReli" type="checkbox"> Religion</label>
-  <label class="chk"><input id="mSkillSlei" type="checkbox"> Escamotage</label>
-  <label class="chk"><input id="mSkillStea" type="checkbox"> Discrétion</label>
-  <label class="chk"><input id="mSkillSurv" type="checkbox"> Survie</label>
-  <label class="chk"><input id="mSkillPerf" type="checkbox"> Représentation</label>
-</div>
 
+  <div class="skillRow">
+    <label class="chk"><input id="mSkillAcro" type="checkbox"> Acrobaties</label>
+    <input id="mSkillAcroVal" class="skillVal" type="number" placeholder="+0">
+  </div>
+
+  <div class="skillRow">
+    <label class="chk"><input id="mSkillAnim" type="checkbox"> Dressage</label>
+    <input id="mSkillAnimVal" class="skillVal" type="number" placeholder="+0">
+  </div>
+
+  <div class="skillRow">
+    <label class="chk"><input id="mSkillArca" type="checkbox"> Arcanes</label>
+    <input id="mSkillArcaVal" class="skillVal" type="number" placeholder="+0">
+  </div>
+
+  <div class="skillRow">
+    <label class="chk"><input id="mSkillAthl" type="checkbox"> Athlétisme</label>
+    <input id="mSkillAthlVal" class="skillVal" type="number" placeholder="+0">
+  </div>
+
+  <div class="skillRow">
+    <label class="chk"><input id="mSkillDece" type="checkbox"> Tromperie</label>
+    <input id="mSkillDeceVal" class="skillVal" type="number" placeholder="+0">
+  </div>
+
+  <div class="skillRow">
+    <label class="chk"><input id="mSkillHist" type="checkbox"> Histoire</label>
+    <input id="mSkillHistVal" class="skillVal" type="number" placeholder="+0">
+  </div>
+
+  <div class="skillRow">
+    <label class="chk"><input id="mSkillInsi" type="checkbox"> Intuition</label>
+    <input id="mSkillInsiVal" class="skillVal" type="number" placeholder="+0">
+  </div>
+
+  <div class="skillRow">
+    <label class="chk"><input id="mSkillInti" type="checkbox"> Intimidation</label>
+    <input id="mSkillIntiVal" class="skillVal" type="number" placeholder="+0">
+  </div>
+
+  <div class="skillRow">
+    <label class="chk"><input id="mSkillInve" type="checkbox"> Investigation</label>
+    <input id="mSkillInveVal" class="skillVal" type="number" placeholder="+0">
+  </div>
+
+  <div class="skillRow">
+    <label class="chk"><input id="mSkillMedi" type="checkbox"> Médecine</label>
+    <input id="mSkillMediVal" class="skillVal" type="number" placeholder="+0">
+  </div>
+
+  <div class="skillRow">
+    <label class="chk"><input id="mSkillNatu" type="checkbox"> Nature</label>
+    <input id="mSkillNatuVal" class="skillVal" type="number" placeholder="+0">
+  </div>
+
+  <div class="skillRow">
+    <label class="chk"><input id="mSkillPerc" type="checkbox"> Perception</label>
+    <input id="mSkillPercVal" class="skillVal" type="number" placeholder="+0">
+  </div>
+
+  <div class="skillRow">
+    <label class="chk"><input id="mSkillPers" type="checkbox"> Persuasion</label>
+    <input id="mSkillPersVal" class="skillVal" type="number" placeholder="+0">
+  </div>
+
+  <div class="skillRow">
+    <label class="chk"><input id="mSkillReli" type="checkbox"> Religion</label>
+    <input id="mSkillReliVal" class="skillVal" type="number" placeholder="+0">
+  </div>
+
+  <div class="skillRow">
+    <label class="chk"><input id="mSkillSlei" type="checkbox"> Escamotage</label>
+    <input id="mSkillSleiVal" class="skillVal" type="number" placeholder="+0">
+  </div>
+
+  <div class="skillRow">
+    <label class="chk"><input id="mSkillStea" type="checkbox"> Discrétion</label>
+    <input id="mSkillSteaVal" class="skillVal" type="number" placeholder="+0">
+  </div>
+
+  <div class="skillRow">
+    <label class="chk"><input id="mSkillSurv" type="checkbox"> Survie</label>
+    <input id="mSkillSurvVal" class="skillVal" type="number" placeholder="+0">
+  </div>
+
+  <div class="skillRow">
+    <label class="chk"><input id="mSkillPerf" type="checkbox"> Représentation</label>
+    <input id="mSkillPerfVal" class="skillVal" type="number" placeholder="+0">
+  </div>
+
+</div>
       <label>Statuts</label>
       <input id="mStatus" placeholder="ex: poison, prone" />
 
@@ -514,24 +607,25 @@ const mWis = document.getElementById("mWis");
 const mCha = document.getElementById("mCha");
 
 // ===== Compétences =====
-const mSkillAcro = document.getElementById("mSkillAcro");
-const mSkillAnim = document.getElementById("mSkillAnim");
-const mSkillArca = document.getElementById("mSkillArca");
-const mSkillAthl = document.getElementById("mSkillAthl");
-const mSkillDece = document.getElementById("mSkillDece");
-const mSkillHist = document.getElementById("mSkillHist");
-const mSkillInsi = document.getElementById("mSkillInsi");
-const mSkillInti = document.getElementById("mSkillInti");
-const mSkillInve = document.getElementById("mSkillInve");
-const mSkillMedi = document.getElementById("mSkillMedi");
-const mSkillNatu = document.getElementById("mSkillNatu");
-const mSkillPerc = document.getElementById("mSkillPerc");
-const mSkillPers = document.getElementById("mSkillPers");
-const mSkillReli = document.getElementById("mSkillReli");
-const mSkillSlei = document.getElementById("mSkillSlei");
-const mSkillStea = document.getElementById("mSkillStea");
-const mSkillSurv = document.getElementById("mSkillSurv");
-const mSkillPerf = document.getElementById("mSkillPerf");    
+// ===== Valeurs numériques des compétences =====
+const mSkillAcroVal = document.getElementById("mSkillAcroVal");
+const mSkillAnimVal = document.getElementById("mSkillAnimVal");
+const mSkillArcaVal = document.getElementById("mSkillArcaVal");
+const mSkillAthlVal = document.getElementById("mSkillAthlVal");
+const mSkillDeceVal = document.getElementById("mSkillDeceVal");
+const mSkillHistVal = document.getElementById("mSkillHistVal");
+const mSkillInsiVal = document.getElementById("mSkillInsiVal");
+const mSkillIntiVal = document.getElementById("mSkillIntiVal");
+const mSkillInveVal = document.getElementById("mSkillInveVal");
+const mSkillMediVal = document.getElementById("mSkillMediVal");
+const mSkillNatuVal = document.getElementById("mSkillNatuVal");
+const mSkillPercVal = document.getElementById("mSkillPercVal");
+const mSkillPersVal = document.getElementById("mSkillPersVal");
+const mSkillReliVal = document.getElementById("mSkillReliVal");
+const mSkillSleiVal = document.getElementById("mSkillSleiVal");
+const mSkillSteaVal = document.getElementById("mSkillSteaVal");
+const mSkillSurvVal = document.getElementById("mSkillSurvVal");
+const mSkillPerfVal = document.getElementById("mSkillPerfVal");   
 let openedTokenId = null;
 
 function openModal(){
@@ -600,24 +694,24 @@ mCha.value = a.cha ?? "";
 
 // Skills (objet de bool)
 const s = t.skills || {};
-mSkillAcro.checked = !!s.acrobatics;
-mSkillAnim.checked = !!s.animalHandling;
-mSkillArca.checked = !!s.arcana;
-mSkillAthl.checked = !!s.athletics;
-mSkillDece.checked = !!s.deception;
-mSkillHist.checked = !!s.history;
-mSkillInsi.checked = !!s.insight;
-mSkillInti.checked = !!s.intimidation;
-mSkillInve.checked = !!s.investigation;
-mSkillMedi.checked = !!s.medicine;
-mSkillNatu.checked = !!s.nature;
-mSkillPerc.checked = !!s.perception;
-mSkillPers.checked = !!s.persuasion;
-mSkillReli.checked = !!s.religion;
-mSkillSlei.checked = !!s.sleightOfHand;
-mSkillStea.checked = !!s.stealth;
-mSkillSurv.checked = !!s.survival;
-mSkillPerf.checked = !!s.performance;
+mSkillAcroVal.value = (s.acrobaticsVal ?? "");
+mSkillAnimVal.value = (s.animalHandlingVal ?? "");
+mSkillArcaVal.value = (s.arcanaVal ?? "");
+mSkillAthlVal.value = (s.athleticsVal ?? "");
+mSkillDeceVal.value = (s.deceptionVal ?? "");
+mSkillHistVal.value = (s.historyVal ?? "");
+mSkillInsiVal.value = (s.insightVal ?? "");
+mSkillIntiVal.value = (s.intimidationVal ?? "");
+mSkillInveVal.value = (s.investigationVal ?? "");
+mSkillMediVal.value = (s.medicineVal ?? "");
+mSkillNatuVal.value = (s.natureVal ?? "");
+mSkillPercVal.value = (s.perceptionVal ?? "");
+mSkillPersVal.value = (s.persuasionVal ?? "");
+mSkillReliVal.value = (s.religionVal ?? "");
+mSkillSleiVal.value = (s.sleightOfHandVal ?? "");
+mSkillSteaVal.value = (s.stealthVal ?? "");
+mSkillSurvVal.value = (s.survivalVal ?? "");
+mSkillPerfVal.value = (s.performanceVal ?? "");
 
 
   const canEdit = IS_MJ;
@@ -655,24 +749,77 @@ mSave.addEventListener("click", async () => {
 },
 
 skills: {
+  // Acrobaties (DEX)
   acrobatics: mSkillAcro.checked,
+  acrobaticsVal: mSkillAcroVal.value === "" ? null : Number(mSkillAcroVal.value),
+
+  // Dressage / Animal Handling (SAG)
   animalHandling: mSkillAnim.checked,
+  animalHandlingVal: mSkillAnimVal.value === "" ? null : Number(mSkillAnimVal.value),
+
+  // Arcanes (INT)
   arcana: mSkillArca.checked,
+  arcanaVal: mSkillArcaVal.value === "" ? null : Number(mSkillArcaVal.value),
+
+  // Athlétisme (FOR)
   athletics: mSkillAthl.checked,
+  athleticsVal: mSkillAthlVal.value === "" ? null : Number(mSkillAthlVal.value),
+
+  // Tromperie (CHA)
   deception: mSkillDece.checked,
+  deceptionVal: mSkillDeceVal.value === "" ? null : Number(mSkillDeceVal.value),
+
+  // Histoire (INT)
   history: mSkillHist.checked,
+  historyVal: mSkillHistVal.value === "" ? null : Number(mSkillHistVal.value),
+
+  // Intuition (SAG)
   insight: mSkillInsi.checked,
+  insightVal: mSkillInsiVal.value === "" ? null : Number(mSkillInsiVal.value),
+
+  // Intimidation (CHA)
   intimidation: mSkillInti.checked,
+  intimidationVal: mSkillIntiVal.value === "" ? null : Number(mSkillIntiVal.value),
+
+  // Investigation (INT)
   investigation: mSkillInve.checked,
+  investigationVal: mSkillInveVal.value === "" ? null : Number(mSkillInveVal.value),
+
+  // Médecine (SAG)
   medicine: mSkillMedi.checked,
+  medicineVal: mSkillMediVal.value === "" ? null : Number(mSkillMediVal.value),
+
+  // Nature (INT)
   nature: mSkillNatu.checked,
+  natureVal: mSkillNatuVal.value === "" ? null : Number(mSkillNatuVal.value),
+
+  // Perception (SAG)
   perception: mSkillPerc.checked,
+  perceptionVal: mSkillPercVal.value === "" ? null : Number(mSkillPercVal.value),
+
+  // Persuasion (CHA)
   persuasion: mSkillPers.checked,
+  persuasionVal: mSkillPersVal.value === "" ? null : Number(mSkillPersVal.value),
+
+  // Religion (INT)
   religion: mSkillReli.checked,
+  religionVal: mSkillReliVal.value === "" ? null : Number(mSkillReliVal.value),
+
+  // Escamotage (DEX)
   sleightOfHand: mSkillSlei.checked,
+  sleightOfHandVal: mSkillSleiVal.value === "" ? null : Number(mSkillSleiVal.value),
+
+  // Discrétion (DEX)
   stealth: mSkillStea.checked,
+  stealthVal: mSkillSteaVal.value === "" ? null : Number(mSkillSteaVal.value),
+
+  // Survie (SAG)
   survival: mSkillSurv.checked,
+  survivalVal: mSkillSurvVal.value === "" ? null : Number(mSkillSurvVal.value),
+
+  // Représentation (CHA)
   performance: mSkillPerf.checked,
+  performanceVal: mSkillPerfVal.value === "" ? null : Number(mSkillPerfVal.value),
 },
     });
     mInfo.textContent = "✅ Enregistré";
