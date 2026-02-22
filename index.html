@@ -132,6 +132,88 @@
     .pj2 { background-color:#2ecc71; }
     .pj3 { background-color:#e67e22; }
     .pnj { background-color:#e74c3c; }
+
+    /* ===== Modal fiche token ===== */
+.modalHidden{ display:none !important; }
+
+#tokenModal{
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index: 9999;
+}
+
+.modalCard{
+  width: 420px;
+  background:#121212;
+  border:1px solid #333;
+  border-radius:14px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+  padding:12px;
+}
+
+.modalHeader{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:10px;
+  font-weight:800;
+}
+
+#mClose{
+  border:1px solid #333;
+  background:#1b1b1b;
+  color:#eee;
+  border-radius:10px;
+  width:34px;
+  height:34px;
+  cursor:pointer;
+}
+
+.modalGrid{
+  display:grid;
+  grid-template-columns: 90px 1fr;
+  gap:8px 10px;
+  align-items:center;
+}
+
+.modalGrid input, .modalGrid textarea{
+  width:100%;
+  padding:8px 10px;
+  border-radius:10px;
+  border:1px solid #333;
+  background:#181818;
+  color:#eee;
+}
+
+.row2{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap:8px;
+}
+
+.modalFooter{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-top:12px;
+  gap:10px;
+}
+
+#mSave{
+  padding:8px 12px;
+  border-radius:10px;
+  border:1px solid #333;
+  background:#222;
+  color:#eee;
+  cursor:pointer;
+}
+
+#mInfo{ font-size:12px; color:#aaa; }
   </style>
 </head>
 
@@ -158,10 +240,44 @@
 
   <!-- Firebase temps réel (TOKENS UNIQUEMENT) -->
   <script type="module">
+    <!-- ===== FICHE TOKEN (modal) ===== -->
+<div id="tokenModal" class="modalHidden">
+  <div class="modalCard">
+    <div class="modalHeader">
+      <div id="mTitle">Fiche token</div>
+      <button id="mClose">✕</button>
+    </div>
+
+    <div class="modalGrid">
+      <label>Nom</label>
+      <input id="mName" />
+
+      <label>PV</label>
+      <div class="row2">
+        <input id="mHp" type="number" min="0" placeholder="actuels" />
+        <input id="mHpMax" type="number" min="0" placeholder="max" />
+      </div>
+
+      <label>CA</label>
+      <input id="mAc" type="number" min="0" />
+
+      <label>Statuts</label>
+      <input id="mStatus" placeholder="ex: poison, prone" />
+
+      <label>Notes</label>
+      <textarea id="mNotes" rows="4"></textarea>
+    </div>
+
+    <div class="modalFooter">
+      <div id="mInfo"></div>
+      <button id="mSave">Enregistrer</button>
+    </div>
+  </div>
+</div>
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
     import {
   getFirestore, doc, setDoc, onSnapshot, serverTimestamp, runTransaction,
-  collection, addDoc, deleteDoc, updateDoc
+  collection, addDoc, deleteDoc, updateDoc, getDoc
 } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
     
     // ===== QUI EST MJ ? (on le garde, même si fog supprimé) =====
@@ -187,6 +303,95 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     const board = document.getElementById("board");
+
+    // ===== FICHE TOKEN (modal) =====
+const modal = document.getElementById("tokenModal");
+const mClose = document.getElementById("mClose");
+const mSave  = document.getElementById("mSave");
+const mTitle = document.getElementById("mTitle");
+const mInfo  = document.getElementById("mInfo");
+
+const mName   = document.getElementById("mName");
+const mHp     = document.getElementById("mHp");
+const mHpMax  = document.getElementById("mHpMax");
+const mAc     = document.getElementById("mAc");
+const mStatus = document.getElementById("mStatus");
+const mNotes  = document.getElementById("mNotes");
+
+let openedTokenId = null;
+
+function openModal(){ modal.classList.remove("modalHidden"); }
+function closeModal(){
+  modal.classList.add("modalHidden");
+  openedTokenId = null;
+  mInfo.textContent = "";
+}
+
+mClose.addEventListener("click", closeModal);
+modal.addEventListener("click", (e) => { if (e.target === modal) closeModal(); });
+
+function parseStatus(str){
+  return (str || "")
+    .split(",")
+    .map(s => s.trim())
+    .filter(Boolean);
+}
+
+async function loadTokenToModal(tokenId){
+  openedTokenId = tokenId;
+  mInfo.textContent = "Chargement…";
+  openModal();
+
+  const ref = doc(db, "rooms", roomId, "tokens", tokenId);
+  const snap = await getDoc(ref);
+
+  if (!snap.exists()){
+    mInfo.textContent = "Token introuvable.";
+    return;
+  }
+
+  const t = snap.data();
+  mTitle.textContent = t.name ? `Fiche : ${t.name}` : `Fiche : ${tokenId}`;
+
+  mName.value   = t.name ?? "";
+  mHp.value     = (t.hp ?? "");
+  mHpMax.value  = (t.hpMax ?? "");
+  mAc.value     = (t.ac ?? "");
+  mStatus.value = Array.isArray(t.status) ? t.status.join(", ") : (t.status ?? "");
+  mNotes.value  = t.notes ?? "";
+
+  // MJ-only : joueurs en lecture seule
+  const canEdit = IS_MJ;
+  [mName,mHp,mHpMax,mAc,mStatus,mNotes,mSave].forEach(el => el.disabled = !canEdit);
+  mInfo.textContent = canEdit ? "Modifiable (MJ)" : "Lecture seule";
+}
+
+mSave.addEventListener("click", async () => {
+  if (!IS_MJ) return;
+  if (!openedTokenId) return;
+
+  const ref = doc(db, "rooms", roomId, "tokens", openedTokenId);
+
+  const hp = mHp.value === "" ? null : Number(mHp.value);
+  const hpMax = mHpMax.value === "" ? null : Number(mHpMax.value);
+  const ac = mAc.value === "" ? null : Number(mAc.value);
+
+  try {
+    await updateDoc(ref, {
+      name: (mName.value || "").trim(),
+      hp: Number.isFinite(hp) ? hp : null,
+      hpMax: Number.isFinite(hpMax) ? hpMax : null,
+      ac: Number.isFinite(ac) ? ac : null,
+      status: parseStatus(mStatus.value),
+      notes: (mNotes.value || "").trim(),
+      updatedAt: serverTimestamp(),
+    });
+    mInfo.textContent = "✅ Enregistré";
+  } catch (err) {
+    console.error(err);
+    mInfo.textContent = "❌ Erreur (permissions Firestore ?)";
+  }
+});
 
 // 🔥 Collection de tokens (un doc = un token)
 const tokensCol = collection(db, "rooms", roomId, "tokens");
@@ -228,13 +433,16 @@ function createTokenElement(id, data){
   // Bouton suppression (MJ seulement si tu veux)
   // (si tu veux que tout le monde puisse supprimer, enlève la condition IS_MJ)
   if (IS_MJ) {
-    el.addEventListener("dblclick", async () => {
+    el.addEventListener("dblclick", async () => {   
       if (confirm("Supprimer ce token ?")) {
         await deleteDoc(doc(db, "rooms", roomId, "tokens", id));
       }
     });
   }
-
+// 📝 clic = ouvrir la fiche
+el.addEventListener("click", () => {
+  loadTokenToModal(id);
+});
   return el;
 }
 
