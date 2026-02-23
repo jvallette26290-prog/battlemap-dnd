@@ -34,6 +34,28 @@
   justify-content: center;
 }
 
+#mapPanel{
+  width: 1000px;
+  margin: 10px auto 10px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+}
+
+#mapPanel .mapBtn{
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid #333;
+  background: #222;
+  color: #eee;
+  cursor: pointer;
+}
+
+#mapPanel .mapBtn:active{
+  transform: scale(0.98);
+}   
+    
 #rollD20{
   padding: 10px 16px;
   font-size: 16px;
@@ -588,6 +610,11 @@
 <body>
 
  <div id="board"></div>
+  <div id="mapPanel">
+  <button class="mapBtn" data-map="taverne">🍻 Taverne</button>
+  <button class="mapBtn" data-map="donjon">🧱 Donjon</button>
+  <button class="mapBtn" data-map="foret">🌲 Forêt</button>
+</div>
 
 <div id="dicePanel">
   <button id="rollD20" title="Lancer un D20">🎲 D20</button>
@@ -916,6 +943,7 @@
 
     if (!IS_MJ) {
   document.getElementById("tokenPanel").style.display = "none";
+  document.getElementById("mapPanel").style.display = "none";
 }
 
     // ✅ Salle unique : tout le monde synchronisé ici
@@ -934,6 +962,52 @@
     const db = getFirestore(app);
     const board = document.getElementById("board");
 
+    // ===== MAP SYNC (MJ -> tout le monde) =====
+const mapRef = doc(db, "rooms", roomId, "sync", "map");
+
+// Associe un nom de bouton à un fichier image
+const MAPS = {
+  taverne: "taverne.png",
+  donjon:  "donjon.png",
+  foret:   "foret.png",
+};
+
+// Le panneau de boutons
+const mapPanel = document.getElementById("mapPanel");
+const mapBtns = document.querySelectorAll(".mapBtn");
+
+// ✅ SEUL le MJ peut changer la map (écrit dans Firestore)
+if (IS_MJ && mapPanel) {
+  mapBtns.forEach(btn => {
+    btn.addEventListener("click", async () => {
+      const key = btn.dataset.map;
+      const url = MAPS[key];
+      if (!url) return;
+
+      try {
+        await setDoc(mapRef, {
+          key,
+          url,
+          at: serverTimestamp(),
+        }, { merge: true });
+      } catch (err) {
+        console.error(err);
+        alert("Impossible de changer la map (permissions Firestore ?)");
+      }
+    });
+  });
+}
+
+// ✅ TOUT LE MONDE (MJ + PJ) écoute et applique la map
+onSnapshot(mapRef, (snap) => {
+  const data = snap.data();
+  if (!data || !data.url) return;
+
+  board.style.backgroundImage = `url("${data.url}")`;
+  board.style.backgroundPosition = "center";
+  board.style.backgroundSize = "cover";
+  board.style.backgroundRepeat = "no-repeat";
+});
 
     // ===== Gestion touche F =====
 let isFPressed = false;
