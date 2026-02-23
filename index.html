@@ -421,10 +421,11 @@
    <div class="modalBody">
     <div class="modalGrid">
 
-     <label>Identité</label>
+ <label>Identité</label>
 <div class="row2">
   <input id="mName" placeholder="Nom" />
   <input id="mClass" placeholder="Classe" />
+  <input id="mSubClass" placeholder="Sous-classe" />
   <input id="mRace" placeholder="Race" />
 </div>
 
@@ -627,6 +628,7 @@ const mInfo  = document.getElementById("mInfo");
 
 const mName   = document.getElementById("mName");
 const mClass  = document.getElementById("mClass");
+const mSubClass = document.getElementById("mSubClass");
 const mRace   = document.getElementById("mRace");
 const mHp     = document.getElementById("mHp");
 const mHpTemp = document.getElementById("mHpTemp");    
@@ -793,6 +795,7 @@ async function loadTokenToModal(tokenId){
 
 mName.value  = t.name ?? "";
 mClass.value = t.class ?? "";
+mSubClass.value = t.subClass ?? "";
 mRace.value  = t.race ?? "";  
 mHp.value    = (t.hp ?? "");
 mHpTemp.value= (t.hpTemp ?? "");
@@ -858,7 +861,7 @@ mSkillPerfVal.value = (s.performanceVal ?? "");
 
 
   const canEdit = IS_MJ;
-[mName, mClass, mRace, mHp, mHpTemp, mHpMax, mAc, mProf,
+[mName, mClass, mSubClass, mRace, mHp, mHpTemp, mHpMax, mAc, mProf,
  mStatus, mNotes,
  mAuto, mSave,
  // checkboxes skills
@@ -887,6 +890,7 @@ mSave.addEventListener("click", async () => {
     await updateDoc(ref, {
       name: (mName.value || "").trim(),
       class: (mClass.value || "").trim(),
+      subClass: (mSubClass.value || "").trim(),
       race: (mRace.value || "").trim(),
       hp: Number.isFinite(hp) ? hp : null,
       hpTemp: mHpTemp.value === "" ? null : Number(mHpTemp.value),
@@ -1016,14 +1020,18 @@ function createTokenElement(id, data){
   if (data.img) el.style.backgroundImage = `url('${data.img}')`;
   const name = data.name || id;
 const cls  = (data.class || "").trim();
+const sub  = (data.subClass || "").trim();
 const race = (data.race || "").trim();
+
+const classLine = cls ? (sub ? `${cls} (${sub})` : cls) : "";
+const line2 = [classLine, race].filter(Boolean).join(" · ");
 
 if (cls || race) {
   // 2 lignes : Nom puis "Classe · Race"
   el.innerHTML = `
     <div style="line-height:1.05; text-align:center;">
       <div>${escapeHtml(name)}</div>
-      <div style="font-size:9px; opacity:.9;">${escapeHtml([cls, race].filter(Boolean).join(" · "))}</div>
+      <div style="font-size:9px; opacity:.9;">${escapeHtml(line2)}</div>
     </div>
   `;
 } else {
