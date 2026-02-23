@@ -13,7 +13,7 @@
 }
    
 
-/* La map (se déplace/zoome à l’intérieur du cadre) */
+
 #board{
   width: 800px;
   height: 600px;
@@ -928,13 +928,6 @@
     const db = getFirestore(app);
     const board = document.getElementById("board");
 
-}, { passive: false });
-
-document.addEventListener("mouseup", () => {
-  if (!isPanning) return;
-  isPanning = false;
-  board.classList.remove("panning");
-});
 
     // ===== Gestion touche F =====
 let isFPressed = false;
