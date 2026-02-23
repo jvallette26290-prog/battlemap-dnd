@@ -1175,7 +1175,6 @@ function autoCalcSkills(){
 
 // bouton Auto-calc
 mAuto.addEventListener("click", () => {
-  if (!IS_MJ) return;
   calcAbilitiesAndSaves();
   autoCalcSkills();
 });
@@ -1293,7 +1292,7 @@ mSkillPerfVal.value = (s.performanceVal ?? "");
 
 
 
-  const canEdit = IS_MJ;
+  const canEdit = true;
 [mName, mClass, mSubClass, mRace, mHp, mHpTemp, mHpMax, mAc, mProf, mSpeed, mInsp, mLevel, mXp, mHitDice, mDsS1, mDsS2, mDsS3, mDsF1, mDsF2, mDsF3,
  mStatus, mNotes,
  mAuto, mSave,
@@ -1306,11 +1305,10 @@ mSkillPerfVal.value = (s.performanceVal ?? "");
  mSkillInveVal, mSkillMediVal, mSkillNatuVal, mSkillPercVal, mSkillPersVal, mSkillReliVal, mSkillSleiVal, mSkillSteaVal,
  mSkillSurvVal, mSkillPerfVal
 ].forEach(el => el.disabled = !canEdit);
-  mInfo.textContent = canEdit ? "Modifiable (MJ)" : "Lecture seule";
+  mInfo.textContent = "Modifiable (Tous)";
 }
 
 mSave.addEventListener("click", async () => {
-  if (!IS_MJ) return;
   if (!openedTokenId) return;
 
   const ref = doc(db, "rooms", roomId, "tokens", openedTokenId);
