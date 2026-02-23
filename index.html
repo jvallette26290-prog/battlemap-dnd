@@ -1773,7 +1773,16 @@ document.addEventListener("mouseup", async () => {
   const x = parseInt(el.style.left || "0", 10);
   const y = parseInt(el.style.top  || "0", 10);
 
-  await updateDoc(doc(db, "rooms", roomId, "tokens", id), { x, y });
+  // === conversion en coordonnées relatives ===
+  const rx = board.clientWidth  ? x / board.clientWidth  : 0;
+  const ry = board.clientHeight ? y / board.clientHeight : 0;
+
+  await updateDoc(doc(db, "rooms", roomId, "tokens", id), {
+    rx,
+    ry,
+    x,   // conservé temporairement
+    y
+  });
 });
 
 // Déplacement tactile
@@ -1799,7 +1808,16 @@ document.addEventListener("touchend", async () => {
   const x = parseInt(el.style.left || "0", 10);
   const y = parseInt(el.style.top  || "0", 10);
 
-  await updateDoc(doc(db, "rooms", roomId, "tokens", id), { x, y });
+  // === conversion en coordonnées relatives ===
+  const rx = board.clientWidth  ? x / board.clientWidth  : 0;
+  const ry = board.clientHeight ? y / board.clientHeight : 0;
+
+  await updateDoc(doc(db, "rooms", roomId, "tokens", id), {
+    rx,
+    ry,
+    x,   // conservé temporairement
+    y
+  });
 }, { passive: true });
     
 // ===== DÉS synchronisés (D4/D6/D8/D10/D12/D20/D100) + cooldown partagé =====
