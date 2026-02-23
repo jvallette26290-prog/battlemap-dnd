@@ -1606,9 +1606,23 @@ if (typeof data.rx === "number" && typeof data.ry === "number") {
   px = data.rx * board.clientWidth;
   py = data.ry * board.clientHeight;
 } else {
+ 
+  
+  // ✅ Calcul position token (relatif si possible)
+const bw = board.clientWidth;
+const bh = board.clientHeight;
+
+let px = 0;
+let py = 0;
+
+if (typeof data.rx === "number" && typeof data.ry === "number") {
+  px = Math.round(data.rx * bw);
+  py = Math.round(data.ry * bh);
+} else {
   // fallback anciens tokens
-  px = data.x ?? 0;
-  py = data.y ?? 0;
+  px = Number.isFinite(data.x) ? data.x : 0;
+  py = Number.isFinite(data.y) ? data.y : 0;
+}
 }
 
 el.style.left = px + "px";
