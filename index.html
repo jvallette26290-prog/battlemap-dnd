@@ -637,6 +637,17 @@ body.is-mj #board{
   opacity: 0.6;
   cursor: not-allowed;
 }
+/* ===== Grille hexagonale (overlay) ===== */
+#board{ position: relative; }  /* important : pour que l'overlay se place dedans */
+
+#gridOverlay{
+  position: absolute;
+  inset: 0;                 /* prend toute la surface du board */
+  pointer-events: none;     /* ✅ n'empêche pas de cliquer/drag les tokens */
+  opacity: 0.35;            /* transparence de la grille (ajuste si besoin) */
+  background-repeat: repeat;
+  z-index: 5;               /* au-dessus de la map, en-dessous des tokens (tokens z-index:10) */
+}
     
 /* ===== Barre PV ===== */
 
@@ -645,7 +656,9 @@ body.is-mj #board{
 
 <body>
 
- <div id="board"></div>
+ <div id="board">
+  <div id="gridOverlay"></div>
+</div>
   <div id="mapPanel">
   <button class="mapBtn" data-map="taverne">🍻 Taverne</button>
   <button class="mapBtn" data-map="donjon">🧱 Donjon</button>
@@ -1006,7 +1019,47 @@ body.is-mj #board{
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     const board = document.getElementById("board");
+const gridOverlay = document.getElementById("gridOverlay");
 
+/* Génère une grille hexagonale "flat-top" (hexagones à plat) */
+function setHexGrid(hexSizePx = 35, stroke = "rgba(255,255,255,0.35)", strokeWidth = 1){
+  const a = hexSizePx;               // côté de l'hexagone
+  const h = Math.sqrt(3) * a;        // hauteur d'un hex flat-top
+  const tileW = 3 * a;               // largeur de tuile pour répétition
+  const tileH = 2 * h;               // hauteur de tuile pour répétition
+
+  // points d'un hexagone flat-top centré en (cx,cy)
+  const hexPath = (cx, cy) => {
+    const p = [
+      [cx + a,     cy],
+      [cx + a/2,   cy + h/2],
+      [cx - a/2,   cy + h/2],
+      [cx - a,     cy],
+      [cx - a/2,   cy - h/2],
+      [cx + a/2,   cy - h/2],
+    ];
+    return "M " + p.map(pt => pt[0].toFixed(2)+","+pt[1].toFixed(2)).join(" L ") + " Z";
+  };
+
+  // On dessine plusieurs hex dans la tuile pour que la répétition soit parfaite
+  const paths = [
+    hexPath(a,     h/2),
+    hexPath(2.5*a, h),
+    hexPath(2.5*a, 0),
+    hexPath(a,     1.5*h),
+  ].map(d => `<path d="${d}" fill="none" stroke="${stroke}" stroke-width="${strokeWidth}"/>`).join("");
+
+  const svg = `
+    <svg xmlns="http://www.w3.org/2000/svg" width="${tileW}" height="${tileH}" viewBox="0 0 ${tileW} ${tileH}">
+      ${paths}
+    </svg>
+  `.trim();
+
+  const uri = `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
+  gridOverlay.style.backgroundImage = `url("${uri}")`;
+  gridOverlay.style.backgroundSize = `${tileW}px ${tileH}px`;
+}
+setHexGrid(35);
     // ===== MAP SYNC (MJ -> tout le monde) =====
 const mapRef = doc(db, "rooms", roomId, "sync", "map");
 
