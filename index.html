@@ -598,6 +598,7 @@
   <div id="tokenPanel">
   <input id="tName" placeholder="Nom (ex: GOBELIN)" />
   <input id="tImg" placeholder="Image (ex: gob.png ou URL)" />
+  <input id="tOwner" placeholder="Propriétaire PJ (ex: ALICE) - vide pour PNJ" />
   <select id="tType">
     <option value="pj">PJ</option>
     <option value="pnj">PNJ</option>
@@ -907,6 +908,11 @@
     // ===== QUI EST MJ ? (on le garde, même si fog supprimé) =====
     const params = new URLSearchParams(window.location.search);
     const IS_MJ = params.get("dm") === "1";
+    const PLAYER_ID = (params.get("p") || "").trim(); // ex: ALICE
+
+    if (!IS_MJ && !PLAYER_ID) {
+  alert("Lien PJ invalide : ajoute ?p=TON_NOM dans l'URL (ex: ?p=ALICE)");
+}
 
     if (!IS_MJ) {
   document.getElementById("tokenPanel").style.display = "none";
@@ -1292,7 +1298,8 @@ mSkillPerfVal.value = (s.performanceVal ?? "");
 
 
 
-  const canEdit = true;
+const owner = (t.owner || "").trim();
+const canEdit = IS_MJ || (owner && owner === PLAYER_ID);
 [mName, mClass, mSubClass, mRace, mHp, mHpTemp, mHpMax, mAc, mProf, mSpeed, mInsp, mLevel, mXp, mHitDice, mDsS1, mDsS2, mDsS3, mDsF1, mDsF2, mDsF3,
  mStatus, mNotes,
  mAuto, mSave,
@@ -1305,7 +1312,9 @@ mSkillPerfVal.value = (s.performanceVal ?? "");
  mSkillInveVal, mSkillMediVal, mSkillNatuVal, mSkillPercVal, mSkillPersVal, mSkillReliVal, mSkillSleiVal, mSkillSteaVal,
  mSkillSurvVal, mSkillPerfVal
 ].forEach(el => el.disabled = !canEdit);
-  mInfo.textContent = "Modifiable (Tous)";
+  mInfo.textContent = canEdit
+  ? (IS_MJ ? "Modifiable (MJ)" : "Modifiable (Ton personnage)")
+  : "Lecture seule";
 }
 
 mSave.addEventListener("click", async () => {
@@ -1469,6 +1478,7 @@ function createTokenElement(id, data){
   const el = document.createElement("div");
   el.className = "token " + (data.type === "pnj" ? "pnj" : "pj1"); // couleur fallback
   el.dataset.id = id;
+  el.dataset.owner = (data.owner || "").trim();
   el.style.left = (data.x ?? 0) + "px";
   el.style.top  = (data.y ?? 0) + "px";
 
@@ -1494,22 +1504,30 @@ if (cls || race) {
 }
 
   // 🧲 Drag souris
-  el.addEventListener("mousedown", (e) => {
-    activeEl = el;
-    activeId = id;
-    dx = e.offsetX;
-    dy = e.offsetY;
-  });
+el.addEventListener("mousedown", (e) => {
+  const owner = (el.dataset.owner || "").trim();
+  const canMove = IS_MJ || (owner && owner === PLAYER_ID);
+  if (!canMove) return;
+
+  activeEl = el;
+  activeId = id;
+  dx = e.offsetX;
+  dy = e.offsetY;
+});
 
   // 🧲 Drag tactile
   el.addEventListener("touchstart", (e) => {
-    const touch = e.touches[0];
-    const rect = el.getBoundingClientRect();
-    activeEl = el;
-    activeId = id;
-    dx = touch.clientX - rect.left;
-    dy = touch.clientY - rect.top;
-  }, { passive: true });
+  const owner = (el.dataset.owner || "").trim();
+  const canMove = IS_MJ || (owner && owner === PLAYER_ID);
+  if (!canMove) return;
+
+  const touch = e.touches[0];
+  const rect = el.getBoundingClientRect();
+  activeEl = el;
+  activeId = id;
+  dx = touch.clientX - rect.left;
+  dy = touch.clientY - rect.top;
+}, { passive: true });
 
   // Bouton suppression (MJ seulement si tu veux)
   // (si tu veux que tout le monde puisse supprimer, enlève la condition IS_MJ)
@@ -1522,9 +1540,13 @@ if (cls || race) {
   }
 // 📝 F + clic = ouvrir la fiche
 el.addEventListener("click", (e) => {
-  if (!isFPressed) return;   // ⛔ sans F, rien ne se passe
+  if (!isFPressed) return;
 
-  e.stopPropagation();      // évite effets de bord
+  const owner = (el.dataset.owner || "").trim();
+  const canOpen = IS_MJ || (owner && owner === PLAYER_ID);
+  if (!canOpen) return;
+
+  e.stopPropagation();
   loadTokenToModal(id);
 });
   return el;
@@ -1561,6 +1583,7 @@ onSnapshot(tokensCol, (snap) => {
 // ===== Étape 5 : Ajout de token via le panneau (MJ ONLY) =====
 const tName = document.getElementById("tName");
 const tImg  = document.getElementById("tImg");
+const tOwner = document.getElementById("tOwner");
 const tType = document.getElementById("tType");
 const addBtn = document.getElementById("addToken");
 
@@ -1570,6 +1593,7 @@ addBtn.addEventListener("click", async () => {
   const name = (tName.value || "").trim() || "TOKEN";
   const img  = (tImg.value  || "").trim();
   const type = tType.value;
+  const owner = (tOwner.value || "").trim(); // ex: ALICE (vide = PNJ ou token libre)
 
   const x = Math.floor(board.clientWidth / 2) - 25;
   const y = Math.floor(board.clientHeight / 2) - 25;
@@ -1579,6 +1603,7 @@ addBtn.addEventListener("click", async () => {
       name,
       img,
       type,
+      owner,
       x,
       y,
       createdAt: serverTimestamp(),
@@ -1586,6 +1611,7 @@ addBtn.addEventListener("click", async () => {
 
     tName.value = "";
     tImg.value = "";
+    tOwner.value = "";
     tName.focus();
   } catch (err) {
     console.error("Erreur addDoc token:", err);
