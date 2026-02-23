@@ -1712,14 +1712,21 @@ addBtn.addEventListener("click", async () => {
 
   try {
     await addDoc(tokensCol, {
-      name,
-      img,
-      type,
-      owner,
-      x,
-      y,
-      createdAt: serverTimestamp(),
-    });
+  name,
+  img,
+  type,
+  owner,
+
+  // positions RELATIVES (0 → 1)
+  rx: 0.5,
+  ry: 0.5,
+
+  // positions pixels (temporaire, compatibilité)
+  x,
+  y,
+
+  createdAt: serverTimestamp(),
+});
 
     tName.value = "";
     tImg.value = "";
