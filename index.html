@@ -1327,14 +1327,6 @@ mSave.addEventListener("click", async () => {
   f3: mDsF3.checked,
 },
       abilities: {
-        saveProfs: {
-  str: mStrSaveProf.checked,
-  dex: mDexSaveProf.checked,
-  con: mConSaveProf.checked,
-  int: mIntSaveProf.checked,
-  wis: mWisSaveProf.checked,
-  cha: mChaSaveProf.checked,
-},
   str: mStr.value === "" ? null : Number(mStr.value),
   dex: mDex.value === "" ? null : Number(mDex.value),
   con: mCon.value === "" ? null : Number(mCon.value),
@@ -1342,6 +1334,14 @@ mSave.addEventListener("click", async () => {
   wis: mWis.value === "" ? null : Number(mWis.value),
   cha: mCha.value === "" ? null : Number(mCha.value),
 },
+   saveProfs: {
+    str: mStrSaveProf.checked,
+    dex: mDexSaveProf.checked,
+    con: mConSaveProf.checked,
+    int: mIntSaveProf.checked,
+    wis: mWisSaveProf.checked,
+    cha: mChaSaveProf.checked,
+  },   
 const sp = t.saveProfs || {};
 mStrSaveProf.checked = !!sp.str;
 mDexSaveProf.checked = !!sp.dex;
