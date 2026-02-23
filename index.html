@@ -404,8 +404,12 @@
    <div class="modalBody">
     <div class="modalGrid">
 
-      <label>Nom</label>
-      <input id="mName" />
+     <label>Identité</label>
+<div class="row2">
+  <input id="mName" placeholder="Nom" />
+  <input id="mClass" placeholder="Classe" />
+  <input id="mRace" placeholder="Race" />
+</div>
 
       <label>PV</label>
 <div class="hpRow">
@@ -605,6 +609,8 @@ const mTitle = document.getElementById("mTitle");
 const mInfo  = document.getElementById("mInfo");
 
 const mName   = document.getElementById("mName");
+const mClass  = document.getElementById("mClass");
+const mRace   = document.getElementById("mRace");
 const mHp     = document.getElementById("mHp");
 const mHpTemp = document.getElementById("mHpTemp");    
 const mHpMax  = document.getElementById("mHpMax");
@@ -769,6 +775,8 @@ async function loadTokenToModal(tokenId){
   mTitle.textContent = t.name ? `Fiche : ${t.name}` : `Fiche : ${tokenId}`;
 
 mName.value  = t.name ?? "";
+mClass.value = t.class ?? "";
+mRace.value  = t.race ?? "";  
 mHp.value    = (t.hp ?? "");
 mHpTemp.value= (t.hpTemp ?? "");
 mHpMax.value = (t.hpMax ?? "");
@@ -833,7 +841,7 @@ mSkillPerfVal.value = (s.performanceVal ?? "");
 
 
   const canEdit = IS_MJ;
-[mName, mHp, mHpTemp, mHpMax, mAc, mProf,
+[mName, mClass, mRace, mHp, mHpTemp, mHpMax, mAc, mProf,
  mStatus, mNotes,
  mAuto, mSave,
  // checkboxes skills
@@ -861,6 +869,8 @@ mSave.addEventListener("click", async () => {
   try {
     await updateDoc(ref, {
       name: (mName.value || "").trim(),
+      class: (mClass.value || "").trim(),
+      race: (mRace.value || "").trim(),
       hp: Number.isFinite(hp) ? hp : null,
       hpTemp: mHpTemp.value === "" ? null : Number(mHpTemp.value),
       hpMax: Number.isFinite(hpMax) ? hpMax : null,
@@ -971,6 +981,14 @@ let activeId = null;
 let dx = 0, dy = 0;
 
 // Crée un élément token HTML
+function escapeHtml(str){
+  return String(str)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
 function createTokenElement(id, data){
   const el = document.createElement("div");
   el.className = "token " + (data.type === "pnj" ? "pnj" : "pj1"); // couleur fallback
@@ -979,7 +997,21 @@ function createTokenElement(id, data){
   el.style.top  = (data.y ?? 0) + "px";
 
   if (data.img) el.style.backgroundImage = `url('${data.img}')`;
-  el.textContent = data.name || id;
+  const name = data.name || id;
+const cls  = (data.class || "").trim();
+const race = (data.race || "").trim();
+
+if (cls || race) {
+  // 2 lignes : Nom puis "Classe · Race"
+  el.innerHTML = `
+    <div style="line-height:1.05; text-align:center;">
+      <div>${escapeHtml(name)}</div>
+      <div style="font-size:9px; opacity:.9;">${escapeHtml([cls, race].filter(Boolean).join(" · "))}</div>
+    </div>
+  `;
+} else {
+  el.textContent = name;
+}
 
   // 🧲 Drag souris
   el.addEventListener("mousedown", (e) => {
