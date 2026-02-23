@@ -389,6 +389,47 @@
   gap: 10px;
   align-items: center;
 }
+
+/* ===== Modal : layout 2 colonnes ===== */
+.modalBody{
+  padding: 14px;
+  overflow: hidden;   /* on évite le scroll global */
+  flex: 1;
+}
+
+/* conteneur 2 colonnes */
+.modalSplit{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  height: 100%;
+  min-height: 0;
+}
+
+/* chaque colonne scroll indépendamment */
+.col{
+  overflow: auto;
+  min-height: 0;
+  padding-right: 6px; /* petit confort scrollbar */
+}
+
+/* dans les colonnes : la grille label/champ reste comme avant */
+.col .modalGrid{
+  display: grid;
+  grid-template-columns: 84px 1fr;
+  gap: 10px 12px;
+  align-items: start;
+}
+
+/* bloc compétences (pour qu'il prenne toute la largeur de sa colonne) */
+.colRight .skillGrid{
+  grid-column: 1 / -1;
+}
+
+/* optionnel : rendre les labels un poil plus serrés */
+.col .modalGrid label{
+  padding-top: 8px;
+}    
     
 #mAuto{
   padding: 10px 14px;
@@ -453,9 +494,78 @@
       <div id="mTitle">Fiche token</div>
       <button id="mClose">✕</button>
     </div>
-   <div class="modalBody">
-    <div class="modalGrid">
+  <div class="modalBody">
+  <div class="modalSplit">
 
+    <div class="col colLeft">
+      <div class="modalGrid" id="leftGrid">
+        <!-- on mettra ici Identité -> Caracs -->
+      </div>
+    </div>
+
+    <div class="col colRight">
+      <div class="modalGrid" id="rightGrid">
+        <!-- on mettra ici Compétences -->
+      </div>
+    </div>
+ <div class="modalGrid">
+   <div class="modalGrid" id="leftGrid">
+  <!-- Identité -->
+  <label>Identité</label>
+  <div class="row2">
+    <input id="mName" placeholder="Nom" />
+    <input id="mClass" placeholder="Classe" />
+    <input id="mSubClass" placeholder="Sous-classe" />
+    <input id="mRace" placeholder="Race" />
+  </div>
+
+  <!-- Progression -->
+  <label>Progression</label>
+  <div class="tripleLineWide">
+    <span class="tlLbl">Niveau</span>
+    <input id="mLevel" class="tlVal" type="number" min="1" max="20" />
+    <span class="tlLbl">XP</span>
+    <input id="mXp" class="tlVal" type="number" min="0" />
+    <span class="tlLbl">Dés de vie</span>
+    <input id="mHitDice" class="tlVal" type="text" placeholder="ex: 5d8" />
+  </div>
+
+  <!-- PV -->
+  <label>PV</label>
+  <div class="hpRow">
+    <span>Actuels</span><input id="mHp" type="number" min="0" />
+    <span>Temp.</span><input id="mHpTemp" type="number" min="0" />
+    <span>Max</span><input id="mHpMax" type="number" min="0" />
+  </div>
+
+  <!-- CA -->
+  <label>CA</label>
+  <input id="mAc" type="number" min="0" />
+
+  <!-- Maîtrise/Vitesse/Inspiration -->
+  <label>Maîtrise</label>
+  <div class="tripleLine">
+    <span class="tlLbl">Maîtrise</span>
+    <input id="mProf" class="tlVal" type="text" inputmode="numeric" placeholder="+2" />
+    <span class="tlLbl">Vitesse</span>
+    <input id="mSpeed" class="tlVal" type="number" min="0" placeholder="9" />
+    <span class="tlLbl">Inspiration</span>
+    <input id="mInsp" class="tlVal" type="number" min="0" value="0" />
+  </div>
+
+  <!-- Caracs -->
+  <label>Caracs</label>
+  <div class="statGrid">
+    <div class="statItem"><span>FOR</span><input id="mStr" type="number" min="1" max="30"></div>
+    <div class="statItem"><span>DEX</span><input id="mDex" type="number" min="1" max="30"></div>
+    <div class="statItem"><span>CON</span><input id="mCon" type="number" min="1" max="30"></div>
+    <div class="statItem"><span>INT</span><input id="mInt" type="number" min="1" max="30"></div>
+    <div class="statItem"><span>SAG</span><input id="mWis" type="number" min="1" max="30"></div>
+    <div class="statItem"><span>CHA</span><input id="mCha" type="number" min="1" max="30"></div>
+  </div>
+</div>
+  </div>
+</div>
  <label>Identité</label>
 <div class="row2">
   <input id="mName" placeholder="Nom" />
