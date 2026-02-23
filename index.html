@@ -453,6 +453,19 @@
   <input id="mRace" placeholder="Race" />
 </div>
 
+      <label>Progression</label>
+<div class="tripleLine">
+  <span class="tlLbl">Niveau</span>
+  <input id="mLevel" class="tlVal" type="number" min="1" max="20" />
+
+  <span class="tlLbl">XP</span>
+  <input id="mXp" class="tlVal" type="number" min="0" />
+
+  <span class="tlLbl">Dés de vie</span>
+  <input id="mHitDice" class="tlVal" type="text" placeholder="ex: 5d8" />
+</div>
+
+      
       <label>PV</label>
 <div class="hpRow">
   <span>Actuels</span>
@@ -674,6 +687,10 @@ const mAuto = document.getElementById("mAuto");
 const mStatus = document.getElementById("mStatus");
 const mNotes  = document.getElementById("mNotes");
 
+const mLevel   = document.getElementById("mLevel");
+const mXp      = document.getElementById("mXp");
+const mHitDice = document.getElementById("mHitDice");    
+
 // ===== Caractéristiques =====
 const mStr = document.getElementById("mStr");
 const mDex = document.getElementById("mDex");
@@ -843,6 +860,10 @@ mInspChk.checked  = !!t.inspirationChecked;
 mStatus.value = Array.isArray(t.status) ? t.status.join(", ") : (t.status ?? "");
 mNotes.value  = t.notes ?? "";
 
+mLevel.value   = (t.level ?? "");
+mXp.value      = (t.xp ?? "");
+mHitDice.value = (t.hitDice ?? "");  
+
 // Caracs
 const a = t.abilities || {};
 mStr.value = a.str ?? "";
@@ -898,7 +919,7 @@ mSkillPerfVal.value = (s.performanceVal ?? "");
 
 
   const canEdit = IS_MJ;
-[mName, mClass, mSubClass, mRace, mHp, mHpTemp, mHpMax, mAc, mProf, mProfChk, mSpeed, mSpeedChk, mInsp, mInspChk,
+[mName, mClass, mSubClass, mRace, mHp, mHpTemp, mHpMax, mAc, mProf, mProfChk, mSpeed, mSpeedChk, mInsp, mInspChk, mLevel, mXp, mHitDice,
  mStatus, mNotes,
  mAuto, mSave,
  // checkboxes skills
@@ -939,6 +960,10 @@ mSave.addEventListener("click", async () => {
       profBonus: mProf.value === "" ? null : Number(mProf.value), 
       speed: mSpeed.value === "" ? null : Number(mSpeed.value),
       inspiration: mInsp.value === "" ? 0 : Number(mInsp.value),
+
+      level: mLevel.value === "" ? null : Number(mLevel.value),
+      xp: mXp.value === "" ? null : Number(mXp.value),
+      hitDice: (mHitDice.value || "").trim(),
 
       
       abilities: {
