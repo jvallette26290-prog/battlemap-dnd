@@ -378,6 +378,17 @@
   width: 16px;
   height: 16px;
 }
+
+/* Ligne Progression : XP et Dés de vie plus larges */
+.tripleLineWide{
+  display: grid;
+  grid-template-columns:
+    auto 70px      /* Niveau */
+    auto 110px     /* XP (plus large) */
+    auto 110px;    /* Dés de vie (plus large) */
+  gap: 10px;
+  align-items: center;
+}
     
 #mAuto{
   padding: 10px 14px;
@@ -454,7 +465,7 @@
 </div>
 
       <label>Progression</label>
-<div class="tripleLine">
+<div class="tripleLineWide">
   <span class="tlLbl">Niveau</span>
   <input id="mLevel" class="tlVal" type="number" min="1" max="20" />
 
