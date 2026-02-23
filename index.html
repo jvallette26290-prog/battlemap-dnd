@@ -404,11 +404,6 @@
    <div class="modalBody">
     <div class="modalGrid">
 
-      <div class="modalFooter">
-  <div id="mInfo"></div>
-  <button id="mAuto">Auto-calc</button>
-  <button id="mSave">Enregistrer</button>
-</div>
       <label>Nom</label>
       <input id="mName" />
 
@@ -424,7 +419,6 @@
   <input id="mHpMax" type="number" min="0" />
 </div>
       
-
       <label>CA</label>
       <input id="mAc" type="number" min="0" />
 
@@ -1035,15 +1029,19 @@ function clampPosition(el, x, y){
 
 // Écoute temps réel : on “redessine” la liste
 onSnapshot(tokensCol, (snap) => {
-  board.querySelectorAll(".token").forEach(t => t.remove());
+  // On supprime tous les tokens SAUF celui en cours de déplacement
+  board.querySelectorAll(".token").forEach(t => {
+    if (t.dataset.id !== activeId) t.remove();
+  });
 
   snap.forEach((docSnap) => {
     const id = docSnap.id;
     const data = docSnap.data();
 
-    const el = createTokenElement(id, data);
-    if (activeId === id) return;
+    // Si c'est le token qu'on est en train de déplacer, on le laisse tranquille
+    if (id === activeId) return;
 
+    const el = createTokenElement(id, data);
     board.appendChild(el);
   });
 });
