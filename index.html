@@ -473,7 +473,80 @@
 .col .modalGrid label{
   padding-top: 8px;
 }    
-    
+
+/* ===== Caracs améliorées : Score / Mod / JS ===== */
+.abilityBlock{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.abilityRow{
+  display:grid;
+  grid-template-columns: 54px 1fr;
+  gap:10px;
+  align-items:center;
+  padding:10px 10px;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,0.10);
+  background: rgba(255,255,255,0.04);
+}
+
+.abilityName{
+  font-weight:900;
+  text-align:center;
+  opacity:.9;
+}
+
+.abilityFields{
+  display:grid;
+  grid-template-columns: repeat(3, 1fr) auto;
+  gap:10px;
+  align-items:end;
+  min-width:0;
+}
+
+.af{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  min-width:0;
+}
+
+.afLbl{
+  font-size:11px;
+  color: rgba(255,255,255,0.70);
+}
+
+.abilityFields input[type="number"],
+.abilityFields input[type="text"]{
+  width:100%;
+  padding:10px 12px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,0.10);
+  background: rgba(255,255,255,0.05);
+  color:#eee;
+}
+
+.abilityFields input[readonly]{
+  opacity: .92;
+}
+
+.afChk{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-size:13px;
+  color: rgba(255,255,255,0.85);
+  white-space: nowrap;
+  user-select:none;
+  padding-bottom: 8px;
+}
+
+.afChk input{
+  width:16px;
+  height:16px;
+}    
 #mAuto{
   padding: 10px 14px;
   border-radius: 14px;
@@ -611,17 +684,92 @@
 </div>
             
             <label>Caracs</label>
-            <div class="statGrid">
-              <div class="statItem"><span>FOR</span><input id="mStr" type="number" min="1" max="30"></div>
-              <div class="statItem"><span>DEX</span><input id="mDex" type="number" min="1" max="30"></div>
-              <div class="statItem"><span>CON</span><input id="mCon" type="number" min="1" max="30"></div>
-              <div class="statItem"><span>INT</span><input id="mInt" type="number" min="1" max="30"></div>
-              <div class="statItem"><span>SAG</span><input id="mWis" type="number" min="1" max="30"></div>
-              <div class="statItem"><span>CHA</span><input id="mCha" type="number" min="1" max="30"></div>
-            </div>
 
-          </div>
-        </div>
+<div class="abilityBlock">
+
+  <!-- FOR -->
+  <div class="abilityRow">
+    <div class="abilityName">FOR</div>
+
+    <div class="abilityFields">
+      <div class="af">
+        <div class="afLbl">Score</div>
+        <input id="mStr" type="number" min="1" max="30">
+      </div>
+
+      <div class="af">
+        <div class="afLbl">Mod</div>
+        <input id="mStrMod" type="text" readonly>
+      </div>
+
+      <div class="af">
+        <div class="afLbl">JS</div>
+        <input id="mStrSave" type="text" readonly>
+      </div>
+
+      <label class="afChk">
+        <input id="mStrSaveProf" type="checkbox">
+        Maîtrise
+      </label>
+    </div>
+  </div>
+
+  <!-- DEX -->
+  <div class="abilityRow">
+    <div class="abilityName">DEX</div>
+    <div class="abilityFields">
+      <div class="af"><div class="afLbl">Score</div><input id="mDex" type="number" min="1" max="30"></div>
+      <div class="af"><div class="afLbl">Mod</div><input id="mDexMod" type="text" readonly></div>
+      <div class="af"><div class="afLbl">JS</div><input id="mDexSave" type="text" readonly></div>
+      <label class="afChk"><input id="mDexSaveProf" type="checkbox"> Maîtrise</label>
+    </div>
+  </div>
+
+  <!-- CON -->
+  <div class="abilityRow">
+    <div class="abilityName">CON</div>
+    <div class="abilityFields">
+      <div class="af"><div class="afLbl">Score</div><input id="mCon" type="number" min="1" max="30"></div>
+      <div class="af"><div class="afLbl">Mod</div><input id="mConMod" type="text" readonly></div>
+      <div class="af"><div class="afLbl">JS</div><input id="mConSave" type="text" readonly></div>
+      <label class="afChk"><input id="mConSaveProf" type="checkbox"> Maîtrise</label>
+    </div>
+  </div>
+
+  <!-- INT -->
+  <div class="abilityRow">
+    <div class="abilityName">INT</div>
+    <div class="abilityFields">
+      <div class="af"><div class="afLbl">Score</div><input id="mInt" type="number" min="1" max="30"></div>
+      <div class="af"><div class="afLbl">Mod</div><input id="mIntMod" type="text" readonly></div>
+      <div class="af"><div class="afLbl">JS</div><input id="mIntSave" type="text" readonly></div>
+      <label class="afChk"><input id="mIntSaveProf" type="checkbox"> Maîtrise</label>
+    </div>
+  </div>
+
+  <!-- SAG -->
+  <div class="abilityRow">
+    <div class="abilityName">SAG</div>
+    <div class="abilityFields">
+      <div class="af"><div class="afLbl">Score</div><input id="mWis" type="number" min="1" max="30"></div>
+      <div class="af"><div class="afLbl">Mod</div><input id="mWisMod" type="text" readonly></div>
+      <div class="af"><div class="afLbl">JS</div><input id="mWisSave" type="text" readonly></div>
+      <label class="afChk"><input id="mWisSaveProf" type="checkbox"> Maîtrise</label>
+    </div>
+  </div>
+
+  <!-- CHA -->
+  <div class="abilityRow">
+    <div class="abilityName">CHA</div>
+    <div class="abilityFields">
+      <div class="af"><div class="afLbl">Score</div><input id="mCha" type="number" min="1" max="30"></div>
+      <div class="af"><div class="afLbl">Mod</div><input id="mChaMod" type="text" readonly></div>
+      <div class="af"><div class="afLbl">JS</div><input id="mChaSave" type="text" readonly></div>
+      <label class="afChk"><input id="mChaSaveProf" type="checkbox"> Maîtrise</label>
+    </div>
+  </div>
+
+</div>
 
         <div class="col colRight">
           <div class="modalGrid" id="rightGrid">
@@ -836,6 +984,28 @@ const mInt = document.getElementById("mInt");
 const mWis = document.getElementById("mWis");
 const mCha = document.getElementById("mCha");
 
+// ===== Mod + Jets de sauvegarde (affichage) =====
+const mStrMod = document.getElementById("mStrMod");
+const mDexMod = document.getElementById("mDexMod");
+const mConMod = document.getElementById("mConMod");
+const mIntMod = document.getElementById("mIntMod");
+const mWisMod = document.getElementById("mWisMod");
+const mChaMod = document.getElementById("mChaMod");
+
+const mStrSave = document.getElementById("mStrSave");
+const mDexSave = document.getElementById("mDexSave");
+const mConSave = document.getElementById("mConSave");
+const mIntSave = document.getElementById("mIntSave");
+const mWisSave = document.getElementById("mWisSave");
+const mChaSave = document.getElementById("mChaSave");
+
+const mStrSaveProf = document.getElementById("mStrSaveProf");
+const mDexSaveProf = document.getElementById("mDexSaveProf");
+const mConSaveProf = document.getElementById("mConSaveProf");
+const mIntSaveProf = document.getElementById("mIntSaveProf");
+const mWisSaveProf = document.getElementById("mWisSaveProf");
+const mChaSaveProf = document.getElementById("mChaSaveProf");    
+
 // ===== Compétences =====
 // ===== Checkboxes maîtrise des compétences =====
 const mSkillAcro = document.getElementById("mSkillAcro");
@@ -914,6 +1084,42 @@ function signed(n){
 }
 
 function autoCalcSkills(){
+function calcAbilitiesAndSaves(){
+  const prof = Number(mProf.value);
+  const profBonus = Number.isFinite(prof) ? prof : 0;
+
+  const strMod = abilityMod(mStr.value);
+  const dexMod = abilityMod(mDex.value);
+  const conMod = abilityMod(mCon.value);
+  const intMod = abilityMod(mInt.value);
+  const wisMod = abilityMod(mWis.value);
+  const chaMod = abilityMod(mCha.value);
+
+  mStrMod.value = signed(strMod);
+  mDexMod.value = signed(dexMod);
+  mConMod.value = signed(conMod);
+  mIntMod.value = signed(intMod);
+  mWisMod.value = signed(wisMod);
+  mChaMod.value = signed(chaMod);
+
+  mStrSave.value = signed(strMod + (mStrSaveProf.checked ? profBonus : 0));
+  mDexSave.value = signed(dexMod + (mDexSaveProf.checked ? profBonus : 0));
+  mConSave.value = signed(conMod + (mConSaveProf.checked ? profBonus : 0));
+  mIntSave.value = signed(intMod + (mIntSaveProf.checked ? profBonus : 0));
+  mWisSave.value = signed(wisMod + (mWisSaveProf.checked ? profBonus : 0));
+  mChaSave.value = signed(chaMod + (mChaSaveProf.checked ? profBonus : 0));
+}
+// 🔁 Recalcul automatique quand on modifie une carac ou une maîtrise
+[
+  mStr, mDex, mCon, mInt, mWis, mCha,     // scores
+  mProf,                                 // bonus de maîtrise
+  mStrSaveProf, mDexSaveProf, mConSaveProf,
+  mIntSaveProf, mWisSaveProf, mChaSaveProf
+].forEach(el => {
+  el.addEventListener("input", calcAbilitiesAndSaves);
+  el.addEventListener("change", calcAbilitiesAndSaves);
+});
+  
   // bonus de maîtrise
   const prof = Number(mProf.value);
   const profBonus = Number.isFinite(prof) ? prof : 0;
@@ -962,6 +1168,7 @@ function autoCalcSkills(){
     mAuto.addEventListener("click", () => {
   if (!IS_MJ) return; // optionnel
   autoCalcSkills();
+  calcAbilitiesAndSaves();    
 });
 
 // ✅ ICI : on branche les listeners UNE SEULE FOIS (pas dans loadTokenToModal)
@@ -1092,6 +1299,14 @@ mSave.addEventListener("click", async () => {
 
   try {
     await updateDoc(ref, {
+      saveProfs: {
+  str: mStrSaveProf.checked,
+  dex: mDexSaveProf.checked,
+  con: mConSaveProf.checked,
+  int: mIntSaveProf.checked,
+  wis: mWisSaveProf.checked,
+  cha: mChaSaveProf.checked,
+},
       name: (mName.value || "").trim(),
       class: (mClass.value || "").trim(),
       subClass: (mSubClass.value || "").trim(),
@@ -1127,7 +1342,16 @@ mSave.addEventListener("click", async () => {
   wis: mWis.value === "" ? null : Number(mWis.value),
   cha: mCha.value === "" ? null : Number(mCha.value),
 },
+const sp = t.saveProfs || {};
+mStrSaveProf.checked = !!sp.str;
+mDexSaveProf.checked = !!sp.dex;
+mConSaveProf.checked = !!sp.con;
+mIntSaveProf.checked = !!sp.int;
+mWisSaveProf.checked = !!sp.wis;
+mChaSaveProf.checked = !!sp.cha;
 
+// Met à jour l'affichage mod & JS
+calcAbilitiesAndSaves();
 skills: {
   // Acrobaties (DEX)
   acrobatics: mSkillAcro.checked,
