@@ -1299,14 +1299,6 @@ mSave.addEventListener("click", async () => {
 
   try {
     await updateDoc(ref, {
-      saveProfs: {
-  str: mStrSaveProf.checked,
-  dex: mDexSaveProf.checked,
-  con: mConSaveProf.checked,
-  int: mIntSaveProf.checked,
-  wis: mWisSaveProf.checked,
-  cha: mChaSaveProf.checked,
-},
       name: (mName.value || "").trim(),
       class: (mClass.value || "").trim(),
       subClass: (mSubClass.value || "").trim(),
@@ -1335,6 +1327,14 @@ mSave.addEventListener("click", async () => {
   f3: mDsF3.checked,
 },
       abilities: {
+        saveProfs: {
+  str: mStrSaveProf.checked,
+  dex: mDexSaveProf.checked,
+  con: mConSaveProf.checked,
+  int: mIntSaveProf.checked,
+  wis: mWisSaveProf.checked,
+  cha: mChaSaveProf.checked,
+},
   str: mStr.value === "" ? null : Number(mStr.value),
   dex: mDex.value === "" ? null : Number(mDex.value),
   con: mCon.value === "" ? null : Number(mCon.value),
