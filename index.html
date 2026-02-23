@@ -994,11 +994,11 @@ body.is-mj #board{
     const IS_MJ = params.get("dm") === "1";
     if (IS_MJ) document.body.classList.add("is-mj");
     const PLAYER_ID = (params.get("p") || "").trim(); // ex: ALICE
-
+    const board = document.getElementById("board");
+    
     if (!IS_MJ && !PLAYER_ID) {
   alert("Lien PJ invalide : ajoute ?p=TON_NOM dans l'URL (ex: ?p=ALICE)");
 }
-
     if (!IS_MJ) {
   document.getElementById("tokenPanel").style.display = "none";
   document.getElementById("mapPanel").style.display = "none";
@@ -1023,7 +1023,6 @@ body.is-mj #board{
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
-    const board = document.getElementById("board");
     const HEX_REL = 35 / 800; // ✅ hex ≈ 35px quand board ≈ 800px de large
 const gridOverlay = document.getElementById("gridOverlay");
 
