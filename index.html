@@ -1019,6 +1019,7 @@ body.is-mj #board{
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     const board = document.getElementById("board");
+    const HEX_REL = 35 / 800; // ✅ hex ≈ 35px quand board ≈ 800px de large
 const gridOverlay = document.getElementById("gridOverlay");
 
 /* Génère une grille hexagonale "flat-top" (hexagones à plat) */
@@ -1059,7 +1060,13 @@ function setHexGrid(hexSizePx = 35, stroke = "rgba(255,255,255,0.35)", strokeWid
   gridOverlay.style.backgroundImage = `url("${uri}")`;
   gridOverlay.style.backgroundSize = `${tileW}px ${tileH}px`;
 }
-setHexGrid(35);
+function updateHexGrid(){
+  const hexPx = Math.max(10, Math.round(board.clientWidth * HEX_REL));
+  setHexGrid(hexPx);
+}
+
+updateHexGrid();
+window.addEventListener("resize", updateHexGrid);
     // ===== MAP SYNC (MJ -> tout le monde) =====
 const mapRef = doc(db, "rooms", roomId, "sync", "map");
 
