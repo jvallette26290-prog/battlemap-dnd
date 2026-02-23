@@ -11,8 +11,6 @@
 *, *::before, *::after{
   box-sizing: border-box;
 }
-   
-
 
 #board{
   width: 800px;
@@ -56,39 +54,7 @@
   transform: scale(0.98);
 }   
     
-#rollD20{
-  width: 56px;
-  height: 56px;
-  padding: 0;
-  border-radius: 14px;
-  border: 1px solid #333;
-  background: #1b1b1b;
-  cursor: pointer;
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-#rollD20 img{
-  width: 150px;
-  height: 150px;
-  object-fit: contain;
-  user-select: none;
-  -webkit-user-drag: none;
-}
-
-#rollD20:hover{
-  background: #222;
-}
-
-#rollD20:active{
-  transform: scale(0.96);
-}
-
-#rollD20:active{
-  transform: scale(0.98);
-}
 
 #diceResult{
   width: 80px;
@@ -591,7 +557,49 @@
 .afChk input{
   width:16px;
   height:16px;
-}    
+} 
+
+/* Boutons dés (icônes) */
+.diceBtn{
+  width: 80px;
+  height: 80px;
+  padding: 0;
+  border-radius: 14px;
+  border: 1px solid #333;
+  background: #1b1b1b;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.diceBtn img{
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.diceBtn:hover{
+  background: #222;
+}
+
+.diceBtn:active{
+  transform: scale(0.96);
+}
+
+.diceBtn:disabled{
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Animation : on fait tourner l’image du dé */
+.diceBtn.rolling img{
+  animation: spin 0.6s linear infinite;
+}
+    
 #mAuto{
   padding: 10px 14px;
   border-radius: 14px;
@@ -642,9 +650,15 @@
 </div>
 
 <div id="dicePanel">
-  <button id="rollD20" class="diceBtn" title="Lancer un D20">
-  <img src="d20.png" alt="D20" />
-</button>
+
+  <button id="rollD4" class="diceBtn" title="Lancer un D4"><img src="d4.png" alt="D4"></button>
+  <button id="rollD6" class="diceBtn" title="Lancer un D6"><img src="d6.png" alt="D6"></button>
+  <button id="rollD8" class="diceBtn" title="Lancer un D8"><img src="d8.png" alt="D8"></button>
+  <button id="rollD10" class="diceBtn" title="Lancer un D10"><img src="d10.png" alt="D10"></button>
+  <button id="rollD12" class="diceBtn" title="Lancer un D12"><img src="d12.png" alt="D12"></button>
+  <button id="rollD20" class="diceBtn" title="Lancer un D20"><img src="d20.png" alt="D20"></button>
+  <button id="rollD100" class="diceBtn" title="Lancer un D100"><img src="d100.png" alt="D100"></button>
+
   <div id="diceResult">—</div>
   <div id="diceMsg"></div>
 </div>
@@ -1773,11 +1787,21 @@ document.addEventListener("touchend", async () => {
     
     const diceRef = doc(db, "rooms", roomId, "sync", "dice");
     
+// ===== DÉS synchronisés (D4/D6/D8/D10/D12/D20/D100) + cooldown partagé =====
+const diceRef = doc(db, "rooms", roomId, "sync", "dice");
 
-// ===== D20 synchronisé + cooldown partagé =====
-const rollBtn = document.getElementById("rollD20");
 const diceRes = document.getElementById("diceResult");
 const diceMsg = document.getElementById("diceMsg");
+
+const DICE = [
+  { id: "rollD4", sides: 4, label: "D4" },
+  { id: "rollD6", sides: 6, label: "D6" },
+  { id: "rollD8", sides: 8, label: "D8" },
+  { id: "rollD10", sides: 10, label: "D10" },
+  { id: "rollD12", sides: 12, label: "D12" },
+  { id: "rollD20", sides: 20, label: "D20" },
+  { id: "rollD100", sides: 100, label: "D100" },
+];
 
 const COOLDOWN_MS = 5000;
 let lastRollId = null;
@@ -1799,38 +1823,112 @@ function randIntCrypto(min, max) {
   return min + (arr[0] % range);
 }
 
-function playRollAnimation(finalValue) {
-  rollBtn.disabled = true;
-  rollBtn.classList.add("rolling");
-  diceRes.textContent = "…";
+function setAllDiceDisabled(disabled){
+  DICE.forEach(d => {
+    const btn = document.getElementById(d.id);
+    if (btn) btn.disabled = disabled;
+  });
+}
+
+function setRolling(isRolling){
+  DICE.forEach(d => {
+    const btn = document.getElementById(d.id);
+    if (!btn) return;
+    if (isRolling) btn.classList.add("rolling");
+    else btn.classList.remove("rolling");
+  });
+}
+
+function playRollAnimation(label, sides, finalValue) {
+  setAllDiceDisabled(true);
+  setRolling(true);
 
   const start = Date.now();
   const duration = 900;
+
+  diceRes.textContent = "…";
+  showMsg(`${label} en cours...`);
+
   const ticker = setInterval(() => {
-    diceRes.textContent = randIntCrypto(1, 20);
+    diceRes.textContent = `${label} : ${randIntCrypto(1, sides)}`;
     if (Date.now() - start > duration) {
       clearInterval(ticker);
-      rollBtn.classList.remove("rolling");
-      diceRes.textContent = String(finalValue);
-      rollBtn.disabled = false;
+      setRolling(false);
+      diceRes.textContent = `${label} : ${finalValue}`;
+      showMsg("");
+      setAllDiceDisabled(false);
     }
   }, 60);
 }
 
-// écoute Firestore : tout le monde voit le même résultat
+// Tout le monde écoute Firestore : affiche le même résultat
 onSnapshot(diceRef, (snap) => {
   const data = snap.data();
-  if (!data || data.type !== "d20") return;
+  if (!data || data.kind !== "dice") return;
   if (!data.rollId || data.rollId === lastRollId) return;
 
   lastRollId = data.rollId;
 
-  const v = Number(data.value);
-  if (!Number.isFinite(v) || v < 1 || v > 20) return;
+  const sides = Number(data.sides);
+  const value = Number(data.value);
+  const label = String(data.label || `D${sides}`);
 
-  showMsg("");
-  playRollAnimation(v);
+  if (!Number.isFinite(sides) || sides < 2) return;
+  if (!Number.isFinite(value) || value < 1 || value > sides) return;
+
+  playRollAnimation(label, sides, value);
 });
+
+// Clic sur n’importe quel dé => tente un nouveau jet (cooldown partagé)
+DICE.forEach(d => {
+  const btn = document.getElementById(d.id);
+  if (!btn) return;
+
+  btn.addEventListener("click", async () => {
+    if (btn.disabled) return;
+    showMsg("");
+
+    const value = randIntCrypto(1, d.sides);
+    const rollId = (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random());
+
+    try {
+      await runTransaction(db, async (tx) => {
+        const snap = await tx.get(diceRef);
+        const old = snap.exists() ? snap.data() : null;
+
+        const now = Date.now();
+        const lastRollMs = old && Number.isFinite(Number(old.lastRollMs)) ? Number(old.lastRollMs) : 0;
+
+        if (now - lastRollMs < COOLDOWN_MS) {
+          const remain = Math.ceil((COOLDOWN_MS - (now - lastRollMs)) / 1000);
+          throw new Error("COOLDOWN_" + remain);
+        }
+
+        tx.set(diceRef, {
+          kind: "dice",
+          sides: d.sides,
+          label: d.label,
+          value,
+          rollId,
+          by: clientId,
+          lastRollMs: now,
+          at: serverTimestamp(),
+        }, { merge: true });
+      });
+    } catch (err) {
+      const msg = String(err?.message || err);
+
+      if (msg.startsWith("COOLDOWN_")) {
+        const remain = msg.split("_")[1] || "5";
+        showMsg(`⏳ Cooldown : attends encore ${remain}s`);
+      } else {
+        showMsg("❌ Erreur de lancer (permissions / réseau ?)");
+        console.error(err);
+      }
+    }
+  });
+});
+
 
 // clic = tente un nouveau jet (verrou 5s partagé)
 rollBtn.addEventListener("click", async () => {
