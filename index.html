@@ -103,9 +103,6 @@
 }    
     
 /* Animation “ça tourne” */
-#rollD20.rolling img{
-  animation: spin 0.6s linear infinite;
-}
 
 @keyframes spin{
   from{ transform: rotate(0deg); }
@@ -1785,8 +1782,6 @@ document.addEventListener("touchend", async () => {
   await updateDoc(doc(db, "rooms", roomId, "tokens", id), { x, y });
 }, { passive: true });
     
-    const diceRef = doc(db, "rooms", roomId, "sync", "dice");
-    
 // ===== DÉS synchronisés (D4/D6/D8/D10/D12/D20/D100) + cooldown partagé =====
 const diceRef = doc(db, "rooms", roomId, "sync", "dice");
 
@@ -1927,51 +1922,6 @@ DICE.forEach(d => {
       }
     }
   });
-});
-
-
-// clic = tente un nouveau jet (verrou 5s partagé)
-rollBtn.addEventListener("click", async () => {
-  if (rollBtn.disabled) return;
-
-  showMsg("");
-
-  const value = randIntCrypto(1, 20);
-  const rollId = (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random());
-
-  try {
-    await runTransaction(db, async (tx) => {
-      const snap = await tx.get(diceRef);
-      const data = snap.exists() ? snap.data() : null;
-
-      const now = Date.now();
-      const lastRollMs = data && Number.isFinite(Number(data.lastRollMs)) ? Number(data.lastRollMs) : 0;
-
-      if (now - lastRollMs < COOLDOWN_MS) {
-        const remain = Math.ceil((COOLDOWN_MS - (now - lastRollMs)) / 1000);
-        throw new Error("COOLDOWN_" + remain);
-      }
-
-      tx.set(diceRef, {
-        type: "d20",
-        value,
-        rollId,
-        by: clientId,
-        lastRollMs: now,
-        at: serverTimestamp(),
-      }, { merge: true });
-    });
-  } catch (err) {
-    const msg = String(err?.message || err);
-
-    if (msg.startsWith("COOLDOWN_")) {
-      const remain = msg.split("_")[1] || "5";
-      showMsg(`⏳ Cooldown : attends encore ${remain}s`);
-    } else {
-      showMsg("❌ Erreur de lancer (permissions / réseau ?)");
-      console.error(err);
-    }
-  }
 });
   </script>
 </body>
