@@ -1591,8 +1591,21 @@ function createTokenElement(id, data){
   el.className = "token " + (data.type === "pnj" ? "pnj" : "pj1"); // couleur fallback
   el.dataset.id = id;
   el.dataset.owner = (data.owner || "").trim();
-  el.style.left = (data.x ?? 0) + "px";
-  el.style.top  = (data.y ?? 0) + "px";
+  // === Position du token (relatif prioritaire) ===
+let px = 0;
+let py = 0;
+
+if (typeof data.rx === "number" && typeof data.ry === "number") {
+  px = data.rx * board.clientWidth;
+  py = data.ry * board.clientHeight;
+} else {
+  // fallback anciens tokens
+  px = data.x ?? 0;
+  py = data.y ?? 0;
+}
+
+el.style.left = px + "px";
+el.style.top  = py + "px";
 
   if (data.img) el.style.backgroundImage = `url('${data.img}')`;
   const name = data.name || id;
