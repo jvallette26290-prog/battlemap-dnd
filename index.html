@@ -12,15 +12,31 @@
   box-sizing: border-box;
 }
     /* Zone map */
-    #board{
-      width: 800px;
-      height: 600px;
-      background: url("map2.png") center/cover no-repeat;
-      position: relative;
-      margin: 20px auto;
-      border: 2px solid #333;
-      overflow: hidden; /* évite de “perdre” les tokens hors cadre */
-    }
+    /* Cadre (fenêtre de caméra) */
+#boardWrap{
+  width: 800px;
+  height: 600px;
+  margin: 20px auto;
+  border: 2px solid #333;
+  overflow: hidden;
+  position: relative;
+  background: #000;
+}
+
+/* La map (se déplace/zoome à l’intérieur du cadre) */
+#board{
+  width: 800px;
+  height: 600px;
+  background: url("map2.png") center/cover no-repeat;
+  position: absolute;
+  inset: 0;
+  transform-origin: 0 0;
+  will-change: transform;
+  cursor: default;
+}
+
+#board.panning{ cursor: grab; }
+#board.panning:active{ cursor: grabbing; }
 
 #dicePanel{
   width: 1000px;
@@ -584,8 +600,9 @@
 
 <body>
 
-  <div id="board"> 
-  </div>
+  <div id="boardWrap">
+  <div id="board"></div>
+</div>
 
 <div id="dicePanel">
   <button id="rollD20" title="Lancer un D20">🎲 D20</button>
@@ -925,7 +942,88 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     const board = document.getElementById("board");
+const boardWrap = document.getElementById("boardWrap");
 
+// ===== Zoom / Pan =====
+let view = { scale: 1, x: 0, y: 0 };
+let isPanning = false;
+let panStart = { x: 0, y: 0 };
+let viewStart = { x: 0, y: 0 };
+
+function applyView(){
+  board.style.transform = `translate(${view.x}px, ${view.y}px) scale(${view.scale})`;
+}
+
+function clampView(){
+  // marge légère pour ne pas bloquer trop fort
+  const margin = 80;
+
+  const maxX = margin;
+  const maxY = margin;
+
+  const minX = boardWrap.clientWidth - (board.clientWidth * view.scale) - margin;
+  const minY = boardWrap.clientHeight - (board.clientHeight * view.scale) - margin;
+
+  view.x = Math.min(maxX, Math.max(minX, view.x));
+  view.y = Math.min(maxY, Math.max(minY, view.y));
+}
+
+// Zoom à la molette (vers la souris)
+boardWrap.addEventListener("wheel", (e) => {
+  e.preventDefault();
+
+  const rect = boardWrap.getBoundingClientRect();
+  const mx = e.clientX - rect.left;
+  const my = e.clientY - rect.top;
+
+  const prevScale = view.scale;
+  const delta = -Math.sign(e.deltaY) * 0.1;
+  view.scale = Math.min(2.5, Math.max(0.5, view.scale + delta));
+
+  const ratio = view.scale / prevScale;
+  view.x = mx - (mx - view.x) * ratio;
+  view.y = my - (my - view.y) * ratio;
+
+  clampView();
+  applyView();
+}, { passive: false });
+
+// Pan : Espace + drag OU clic milieu
+let isSpace = false;
+document.addEventListener("keydown", (e) => { if (e.code === "Space") isSpace = true; });
+document.addEventListener("keyup",   (e) => { if (e.code === "Space") isSpace = false; });
+
+boardWrap.addEventListener("mousedown", (e) => {
+  const middle = (e.button === 1);
+  if (!(middle || isSpace)) return;
+
+  isPanning = true;
+  board.classList.add("panning");
+  panStart = { x: e.clientX, y: e.clientY };
+  viewStart = { x: view.x, y: view.y };
+});
+
+document.addEventListener("mousemove", (e) => {
+  if (!isPanning) return;
+
+  const dx = e.clientX - panStart.x;
+  const dy = e.clientY - panStart.y;
+
+  view.x = viewStart.x + dx;
+  view.y = viewStart.y + dy;
+
+  clampView();
+  applyView();
+});
+
+document.addEventListener("mouseup", () => {
+  if (!isPanning) return;
+  isPanning = false;
+  board.classList.remove("panning");
+});
+
+// initial
+applyView();
     // ===== Gestion touche F =====
 let isFPressed = false;
 
