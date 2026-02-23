@@ -358,10 +358,9 @@
 /* Ligne Maîtrise / Vitesse / Inspiration (sur une seule ligne) */
 .tripleLine{
   display: grid;
-  grid-template-columns: auto 70px 18px auto 70px 18px auto 90px 18px;
-  gap: 8px;
+  grid-template-columns: auto 70px auto 70px auto 70px;
+  gap: 10px;
   align-items: center;
-  min-width: 0;
 }
 
 .tlLbl{
@@ -473,15 +472,12 @@
 <div class="tripleLine">
   <span class="tlLbl">Maîtrise</span>
   <input id="mProf" class="tlVal" type="text" inputmode="numeric" placeholder="+2" />
-  <input id="mProfChk" class="tlChk" type="checkbox" />
 
   <span class="tlLbl">Vitesse</span>
   <input id="mSpeed" class="tlVal" type="number" min="0" placeholder="9" />
-  <input id="mSpeedChk" class="tlChk" type="checkbox" />
 
   <span class="tlLbl">Inspiration</span>
-  <input id="mInsp" class="tlVal" type="text" placeholder="Oui/Non" />
-  <input id="mInspChk" class="tlChk" type="checkbox" />
+  <input id="mInsp" class="tlVal" type="number" min="0" value="0" />
 </div>
 
       <!-- ===== D&D : Caractéristiques ===== -->
@@ -672,11 +668,8 @@ const mHpTemp = document.getElementById("mHpTemp");
 const mHpMax  = document.getElementById("mHpMax");
 const mAc     = document.getElementById("mAc");
 const mProf = document.getElementById("mProf");
-const mProfChk  = document.getElementById("mProfChk");
 const mSpeed    = document.getElementById("mSpeed");
-const mSpeedChk = document.getElementById("mSpeedChk");
-const mInsp     = document.getElementById("mInsp");
-const mInspChk  = document.getElementById("mInspChk");    
+const mInsp     = document.getElementById("mInsp");    
 const mAuto = document.getElementById("mAuto");    
 const mStatus = document.getElementById("mStatus");
 const mNotes  = document.getElementById("mNotes");
@@ -844,12 +837,8 @@ mHpTemp.value= (t.hpTemp ?? "");
 mHpMax.value = (t.hpMax ?? "");
 mAc.value    = (t.ac ?? "");
 mProf.value  = (t.profBonus ?? ""); // bonus maîtrise
-mProfChk.checked  = !!t.profChecked;
-
-mSpeed.value      = t.speed ?? "";
-mSpeedChk.checked = !!t.speedChecked;
-
-mInsp.value       = t.inspiration ?? "";
+mSpeed.value = t.speed ?? "";
+mInsp.value  = (t.inspiration ?? 0);
 mInspChk.checked  = !!t.inspirationChecked;
 mStatus.value = Array.isArray(t.status) ? t.status.join(", ") : (t.status ?? "");
 mNotes.value  = t.notes ?? "";
@@ -948,13 +937,9 @@ mSave.addEventListener("click", async () => {
       notes: (mNotes.value || "").trim(),
       updatedAt: serverTimestamp(),
       profBonus: mProf.value === "" ? null : Number(mProf.value), 
-      profChecked: mProfChk.checked,
+      speed: mSpeed.value === "" ? null : Number(mSpeed.value),
+      inspiration: mInsp.value === "" ? 0 : Number(mInsp.value),
 
-speed: mSpeed.value === "" ? null : Number(mSpeed.value),
-speedChecked: mSpeedChk.checked,
-
-inspiration: (mInsp.value || "").trim(),
-inspirationChecked: mInspChk.checked,
       
       abilities: {
   str: mStr.value === "" ? null : Number(mStr.value),
