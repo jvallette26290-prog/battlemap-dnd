@@ -487,193 +487,199 @@
   <button id="addToken">+ Ajouter token</button>
 </div>
   
-
-  <div id="tokenModal" class="modalHidden">
+<div id="tokenModal" class="modalHidden">
   <div class="modalCard">
+
     <div class="modalHeader">
       <div id="mTitle">Fiche token</div>
       <button id="mClose">✕</button>
     </div>
-  <div class="modalBody">
-  <div class="modalSplit">
 
-    <div class="col colLeft">
-      <div class="modalGrid" id="leftGrid">
-         <label>Identité</label>
-<div class="row2">
-  <input id="mName" placeholder="Nom" />
-  <input id="mClass" placeholder="Classe" />
-  <input id="mSubClass" placeholder="Sous-classe" />
-  <input id="mRace" placeholder="Race" />
-</div>
+    <div class="modalBody">
+      <div class="modalSplit">
 
-      <label>Progression</label>
-<div class="tripleLineWide">
-  <span class="tlLbl">Niveau</span>
-  <input id="mLevel" class="tlVal" type="number" min="1" max="20" />
+        <div class="col colLeft">
+          <div class="modalGrid" id="leftGrid">
 
-  <span class="tlLbl">XP</span>
-  <input id="mXp" class="tlVal" type="number" min="0" />
+            <label>Identité</label>
+            <div class="row2">
+              <input id="mName" placeholder="Nom" />
+              <input id="mClass" placeholder="Classe" />
+              <input id="mSubClass" placeholder="Sous-classe" />
+              <input id="mRace" placeholder="Race" />
+            </div>
 
-  <span class="tlLbl">Dés de vie</span>
-  <input id="mHitDice" class="tlVal" type="text" placeholder="ex: 5d8" />
-</div>
+            <label>Progression</label>
+            <div class="tripleLineWide">
+              <span class="tlLbl">Niveau</span>
+              <input id="mLevel" class="tlVal" type="number" min="1" max="20" />
 
-      
-      <label>PV</label>
-<div class="hpRow">
-  <span>Actuels</span>
-  <input id="mHp" type="number" min="0" />
+              <span class="tlLbl">XP</span>
+              <input id="mXp" class="tlVal" type="number" min="0" />
 
-  <span>Temp.</span>
-  <input id="mHpTemp" type="number" min="0" />
+              <span class="tlLbl">Dés de vie</span>
+              <input id="mHitDice" class="tlVal" type="text" placeholder="ex: 5d8" />
+            </div>
 
-  <span>Max</span>
-  <input id="mHpMax" type="number" min="0" />
-</div>
-      
-      <label>CA</label>
-      <input id="mAc" type="number" min="0" />
+            <label>PV</label>
+            <div class="hpRow">
+              <span>Actuels</span>
+              <input id="mHp" type="number" min="0" />
 
-     <label>Maîtrise</label>
-<div class="tripleLine">
-  <span class="tlLbl">Maîtrise</span>
-  <input id="mProf" class="tlVal" type="text" inputmode="numeric" placeholder="+2" />
+              <span>Temp.</span>
+              <input id="mHpTemp" type="number" min="0" />
 
-  <span class="tlLbl">Vitesse</span>
-  <input id="mSpeed" class="tlVal" type="number" min="0" placeholder="9" />
+              <span>Max</span>
+              <input id="mHpMax" type="number" min="0" />
+            </div>
 
-  <span class="tlLbl">Inspiration</span>
-  <input id="mInsp" class="tlVal" type="number" min="0" value="0" />
-</div>
+            <label>CA</label>
+            <input id="mAc" type="number" min="0" />
 
-      <!-- ===== D&D : Caractéristiques ===== -->
-<label>Caracs</label>
-<div class="statGrid">
-  <div class="statItem"><span>FOR</span><input id="mStr" type="number" min="1" max="30"></div>
-  <div class="statItem"><span>DEX</span><input id="mDex" type="number" min="1" max="30"></div>
-  <div class="statItem"><span>CON</span><input id="mCon" type="number" min="1" max="30"></div>
-  <div class="statItem"><span>INT</span><input id="mInt" type="number" min="1" max="30"></div>
-  <div class="statItem"><span>SAG</span><input id="mWis" type="number" min="1" max="30"></div>
-  <div class="statItem"><span>CHA</span><input id="mCha" type="number" min="1" max="30"></div>
-</div>
+            <label>Maîtrise</label>
+            <div class="tripleLine">
+              <span class="tlLbl">Maîtrise</span>
+              <input id="mProf" class="tlVal" type="text" inputmode="numeric" placeholder="2" />
+
+              <span class="tlLbl">Vitesse</span>
+              <input id="mSpeed" class="tlVal" type="number" min="0" placeholder="9" />
+
+              <span class="tlLbl">Inspiration</span>
+              <input id="mInsp" class="tlVal" type="number" min="0" value="0" />
+            </div>
+
+            <label>Caracs</label>
+            <div class="statGrid">
+              <div class="statItem"><span>FOR</span><input id="mStr" type="number" min="1" max="30"></div>
+              <div class="statItem"><span>DEX</span><input id="mDex" type="number" min="1" max="30"></div>
+              <div class="statItem"><span>CON</span><input id="mCon" type="number" min="1" max="30"></div>
+              <div class="statItem"><span>INT</span><input id="mInt" type="number" min="1" max="30"></div>
+              <div class="statItem"><span>SAG</span><input id="mWis" type="number" min="1" max="30"></div>
+              <div class="statItem"><span>CHA</span><input id="mCha" type="number" min="1" max="30"></div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="col colRight">
+          <div class="modalGrid" id="rightGrid">
+
+            <label>Comp.</label>
+            <div class="skillGrid">
+
+              <div class="skillRow">
+                <label class="chk"><input id="mSkillAcro" type="checkbox"> Acrobaties</label>
+                <input id="mSkillAcroVal" class="skillVal" type="text" inputmode="numeric" placeholder="+0">
+              </div>
+
+              <div class="skillRow">
+                <label class="chk"><input id="mSkillAnim" type="checkbox"> Dressage</label>
+                <input id="mSkillAnimVal" class="skillVal" type="text" inputmode="numeric" placeholder="+0">
+              </div>
+
+              <div class="skillRow">
+                <label class="chk"><input id="mSkillArca" type="checkbox"> Arcanes</label>
+                <input id="mSkillArcaVal" class="skillVal" type="text" inputmode="numeric" placeholder="+0">
+              </div>
+
+              <div class="skillRow">
+                <label class="chk"><input id="mSkillAthl" type="checkbox"> Athlétisme</label>
+                <input id="mSkillAthlVal" class="skillVal" type="text" inputmode="numeric" placeholder="+0">
+              </div>
+
+              <div class="skillRow">
+                <label class="chk"><input id="mSkillDece" type="checkbox"> Tromperie</label>
+                <input id="mSkillDeceVal" class="skillVal" type="text" inputmode="numeric" placeholder="+0">
+              </div>
+
+              <div class="skillRow">
+                <label class="chk"><input id="mSkillHist" type="checkbox"> Histoire</label>
+                <input id="mSkillHistVal" class="skillVal" type="text" inputmode="numeric" placeholder="+0">
+              </div>
+
+              <div class="skillRow">
+                <label class="chk"><input id="mSkillInsi" type="checkbox"> Intuition</label>
+                <input id="mSkillInsiVal" class="skillVal" type="text" inputmode="numeric" placeholder="+0">
+              </div>
+
+              <div class="skillRow">
+                <label class="chk"><input id="mSkillInti" type="checkbox"> Intimidation</label>
+                <input id="mSkillIntiVal" class="skillVal" type="text" inputmode="numeric" placeholder="+0">
+              </div>
+
+              <div class="skillRow">
+                <label class="chk"><input id="mSkillInve" type="checkbox"> Investigation</label>
+                <input id="mSkillInveVal" class="skillVal" type="text" inputmode="numeric" placeholder="+0">
+              </div>
+
+              <div class="skillRow">
+                <label class="chk"><input id="mSkillMedi" type="checkbox"> Médecine</label>
+                <input id="mSkillMediVal" class="skillVal" type="text" inputmode="numeric" placeholder="+0">
+              </div>
+
+              <div class="skillRow">
+                <label class="chk"><input id="mSkillNatu" type="checkbox"> Nature</label>
+                <input id="mSkillNatuVal" class="skillVal" type="text" inputmode="numeric" placeholder="+0">
+              </div>
+
+              <div class="skillRow">
+                <label class="chk"><input id="mSkillPerc" type="checkbox"> Perception</label>
+                <input id="mSkillPercVal" class="skillVal" type="text" inputmode="numeric" placeholder="+0">
+              </div>
+
+              <div class="skillRow">
+                <label class="chk"><input id="mSkillPers" type="checkbox"> Persuasion</label>
+                <input id="mSkillPersVal" class="skillVal" type="text" inputmode="numeric" placeholder="+0">
+              </div>
+
+              <div class="skillRow">
+                <label class="chk"><input id="mSkillReli" type="checkbox"> Religion</label>
+                <input id="mSkillReliVal" class="skillVal" type="text" inputmode="numeric" placeholder="+0">
+              </div>
+
+              <div class="skillRow">
+                <label class="chk"><input id="mSkillSlei" type="checkbox"> Escamotage</label>
+                <input id="mSkillSleiVal" class="skillVal" type="text" inputmode="numeric" placeholder="+0">
+              </div>
+
+              <div class="skillRow">
+                <label class="chk"><input id="mSkillStea" type="checkbox"> Discrétion</label>
+                <input id="mSkillSteaVal" class="skillVal" type="text" inputmode="numeric" placeholder="+0">
+              </div>
+
+              <div class="skillRow">
+                <label class="chk"><input id="mSkillSurv" type="checkbox"> Survie</label>
+                <input id="mSkillSurvVal" class="skillVal" type="text" inputmode="numeric" placeholder="+0">
+              </div>
+
+              <div class="skillRow">
+                <label class="chk"><input id="mSkillPerf" type="checkbox"> Représentation</label>
+                <input id="mSkillPerfVal" class="skillVal" type="text" inputmode="numeric" placeholder="+0">
+              </div>
+
+            </div>
+
+            <label>Statuts</label>
+            <input id="mStatus" placeholder="ex: poison, prone" />
+
+            <label>Notes</label>
+            <textarea id="mNotes" rows="4"></textarea>
+
+          </div>
+        </div>
+
       </div>
     </div>
 
-    <div class="col colRight">
-      <div class="modalGrid" id="rightGrid">
-       <!-- ===== D&D : Compétences ===== -->
-<label>Comp.</label>
-<div class="skillGrid">
-
-  <div class="skillRow">
-    <label class="chk"><input id="mSkillAcro" type="checkbox"> Acrobaties</label>
-   <input id="mSkillAcroVal" class="skillVal" type="text" inputmode="numeric" placeholder="+0">
-  </div>
-
-  <div class="skillRow">
-    <label class="chk"><input id="mSkillAnim" type="checkbox"> Dressage</label>
-    <input id="mSkillAnimVal" class="skillVal" type="text" inputmode="numeric" placeholder="+0">
-  </div>
-
-  <div class="skillRow">
-    <label class="chk"><input id="mSkillArca" type="checkbox"> Arcanes</label>
-    <input id="mSkillArcaVal" class="skillVal" type="text" inputmode="numeric" placeholder="+0">
-  </div>
-
-  <div class="skillRow">
-    <label class="chk"><input id="mSkillAthl" type="checkbox"> Athlétisme</label>
-    <input id="mSkillAthlVal" class="skillVal" type="text" inputmode="numeric" placeholder="+0">
-  </div>
-
-  <div class="skillRow">
-    <label class="chk"><input id="mSkillDece" type="checkbox"> Tromperie</label>
-    <input id="mSkillDeceVal" class="skillVal" type="text" inputmode="numeric" placeholder="+0">
-  </div>
-
-  <div class="skillRow">
-    <label class="chk"><input id="mSkillHist" type="checkbox"> Histoire</label>
-    <input id="mSkillHistVal" class="skillVal" type="text" inputmode="numeric" placeholder="+0">
-  </div>
-
-  <div class="skillRow">
-    <label class="chk"><input id="mSkillInsi" type="checkbox"> Intuition</label>
-    <input id="mSkillInsiVal" class="skillVal" type="text" inputmode="numeric" placeholder="+0">
-  </div>
-
-  <div class="skillRow">
-    <label class="chk"><input id="mSkillInti" type="checkbox"> Intimidation</label>
-    <input id="mSkillIntiVal" class="skillVal" type="text" inputmode="numeric" placeholder="+0">
-  </div>
-
-  <div class="skillRow">
-    <label class="chk"><input id="mSkillInve" type="checkbox"> Investigation</label>
-    <input id="mSkillInveVal" class="skillVal" type="text" inputmode="numeric" placeholder="+0">
-  </div>
-
-  <div class="skillRow">
-    <label class="chk"><input id="mSkillMedi" type="checkbox"> Médecine</label>
-    <input id="mSkillMediVal" class="skillVal" type="text" inputmode="numeric" placeholder="+0">
-  </div>
-
-  <div class="skillRow">
-    <label class="chk"><input id="mSkillNatu" type="checkbox"> Nature</label>
-    <input id="mSkillNatuVal" class="skillVal" type="text" inputmode="numeric" placeholder="+0">
-  </div>
-
-  <div class="skillRow">
-    <label class="chk"><input id="mSkillPerc" type="checkbox"> Perception</label>
-    <input id="mSkillPercVal" class="skillVal" type="text" inputmode="numeric" placeholder="+0">
-  </div>
-
-  <div class="skillRow">
-    <label class="chk"><input id="mSkillPers" type="checkbox"> Persuasion</label>
-    <input id="mSkillPersVal" class="skillVal" type="text" inputmode="numeric" placeholder="+0">
-  </div>
-
-  <div class="skillRow">
-    <label class="chk"><input id="mSkillReli" type="checkbox"> Religion</label>
-    <input id="mSkillReliVal" class="skillVal" type="text" inputmode="numeric" placeholder="+0">
-  </div>
-
-  <div class="skillRow">
-    <label class="chk"><input id="mSkillSlei" type="checkbox"> Escamotage</label>
-    <input id="mSkillSleiVal" class="skillVal" type="text" inputmode="numeric" placeholder="+0">
-  </div>
-
-  <div class="skillRow">
-    <label class="chk"><input id="mSkillStea" type="checkbox"> Discrétion</label>
-    <input id="mSkillSteaVal" class="skillVal" type="text" inputmode="numeric" placeholder="+0">
-  </div>
-
-  <div class="skillRow">
-    <label class="chk"><input id="mSkillSurv" type="checkbox"> Survie</label>
-    <input id="mSkillSurvVal" class="skillVal" type="text" inputmode="numeric" placeholder="+0">
-  </div>
-
-  <div class="skillRow">
-    <label class="chk"><input id="mSkillPerf" type="checkbox"> Représentation</label>
-    <input id="mSkillPerfVal" class="skillVal" type="text" inputmode="numeric" placeholder="+0">
-  </div>
-
-</div>
-      <label>Statuts</label>
-      <input id="mStatus" placeholder="ex: poison, prone" />
-
-      <label>Notes</label>
-      <textarea id="mNotes" rows="4"></textarea>
-    </div>
-  </div>
-</div>
-      </div>
-    </div>
-</div>
-<div class="modalFooter">
+    <div class="modalFooter">
       <div id="mInfo"></div>
       <button id="mAuto">Auto-calc</button>
       <button id="mSave">Enregistrer</button>
     </div>
-</div>  
+
+  </div>
+</div>
+   
   
   <!-- Firebase temps réel (TOKENS UNIQUEMENT) -->
   <script type="module">
