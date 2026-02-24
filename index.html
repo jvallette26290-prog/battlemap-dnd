@@ -225,6 +225,48 @@ body.is-mj #board{
   margin-bottom: 12px;       /* espace avec le contenu */
 }
 
+/* ===== Lisibilité MODAL SORTS ===== */
+
+/* 1) Les conteneurs de boutons doivent être dans la colonne 2 (à droite) */
+#spellModal .modalGrid > div[id$="Btns"]{
+  grid-column: 2;
+}
+
+/* 2) Et on affiche les boutons proprement */
+#spellModal .modalGrid > div[id$="Btns"]{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 8px 0 14px;
+}
+
+/* 3) Labels plus lisibles */
+#spellModal .modalGrid label{
+  font-size: 13px;
+  font-weight: 800;
+  opacity: 0.85;
+  padding-top: 12px;
+}
+
+/* 4) Textareas plus confort */
+#spellModal textarea{
+  font-size: 14px;
+  line-height: 1.35;
+  padding: 12px 14px;
+  border-radius: 14px;
+}
+
+/* 5) Boutons plus lisibles (si tu veux uniformiser sans JS) */
+#spellModal .modalGrid button{
+  font-size: 13px;
+  padding: 8px 10px;
+  border-radius: 12px;
+}
+
+#spellModal .modalGrid{
+  grid-template-columns: 110px 1fr;
+}   
+    
 #mTitle{
   font-weight: 900;
   font-size: 16px;
