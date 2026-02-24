@@ -628,23 +628,6 @@ body.is-mj #board{
 } 
 
 /* Boutons dés (icônes) */
-/* 🎲 Bouton invisible sous le dé */
-.diceBtn{
-  width: 25px;
-  height: 25px;
-  padding: 0;
-
-  background: transparent;
-  border: none;
-  box-shadow: none;
-
-  cursor: pointer;
-  overflow: visible;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
 
 .diceBtn img{
   width: 110px;
@@ -997,8 +980,32 @@ body:not(.is-mj) .slotRow{
 body:not(.is-mj) #diceMsg{
   display: none;
 }
-    
+ /* 🎲 Bouton totalement invisible (MJ + PJ) */
+.diceBtn{
+  all: unset;              /* 🔥 supprime TOUS les styles natifs */
+  position: relative;
 
+  width: 25px;
+  height: 25px;
+
+  cursor: pointer;
+  overflow: visible;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}   
+.diceBtn:focus{
+  outline: none;
+}
+/* 🔒 Historique MJ uniquement (sécurité visuelle) */
+body:not(.is-mj) #diceMsg{
+  display: none !important;
+}
+
+
+
+    
 
 
 
@@ -2952,6 +2959,7 @@ const clientId = localStorage.getItem("battlemap_clientId") || (() => {
 })();
 
 function showMsg(txt){
+  if (!IS_MJ) return;   // 🔒 PJ ne voient JAMAIS l’historique
   if (diceMsg) diceMsg.textContent = txt || "";
 }
 
