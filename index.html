@@ -1441,22 +1441,7 @@ function renderSpellButtons(textarea, container){
   });
 }
 
-// ===== Mise à jour en live =====
-[
-  [sCantrips, sCantripsBtns],
-  [sL1, sL1Btns],
-  [sL2, sL2Btns],
-  [sL3, sL3Btns],
-  [sL4, sL4Btns],
-  [sL5, sL5Btns],
-  [sL6, sL6Btns],
-  [sL7, sL7Btns],
-  [sL8, sL8Btns],
-  [sL9, sL9Btns],
-].forEach(([ta, box]) => {
-  if (!ta || !box) return;
-  ta.addEventListener("input", () => renderSpellButtons(ta, box));
-});
+
     
 const mSave  = document.getElementById("mSave");
 const mTitle = document.getElementById("mTitle");
@@ -1578,6 +1563,23 @@ const sL7 = document.getElementById("sL7");
 const sL8 = document.getElementById("sL8");
 const sL9 = document.getElementById("sL9");
 
+// ===== Mise à jour en live =====
+[
+  [sCantrips, sCantripsBtns],
+  [sL1, sL1Btns],
+  [sL2, sL2Btns],
+  [sL3, sL3Btns],
+  [sL4, sL4Btns],
+  [sL5, sL5Btns],
+  [sL6, sL6Btns],
+  [sL7, sL7Btns],
+  [sL8, sL8Btns],
+  [sL9, sL9Btns],
+].forEach(([ta, box]) => {
+  if (!ta || !box) return;
+  ta.addEventListener("input", () => renderSpellButtons(ta, box));
+});
+    
 let openedSpellTokenId = null;
 let openedSpellOwners = [];
 let spellCanEdit = false;
@@ -1941,13 +1943,6 @@ mSkillSleiVal.value = (s.sleightOfHandVal ?? "");
 mSkillSteaVal.value = (s.stealthVal ?? "");
 mSkillSurvVal.value = (s.survivalVal ?? "");
 mSkillPerfVal.value = (s.performanceVal ?? "");
-
-
-
-const owners = (tOwner.value || "")
-  .split(",")
-  .map(s => s.trim())
-  .filter(Boolean);
 
   
   // ===== ACTIVE / DÉSACTIVE LA FICHE =====
