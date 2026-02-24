@@ -117,31 +117,42 @@ body.is-mj #board{
     
     /* Tokens */
     .token{
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      position: absolute;
-      z-index: 10;
-      cursor: grab;
+  /* on enlève le rond */
+  border-radius: 0;
 
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
+  /* HEXAGONE "flat-top" (haut plat) */
+  clip-path: polygon(
+    25% 6.7%,
+    75% 6.7%,
+    100% 50%,
+    75% 93.3%,
+    25% 93.3%,
+    0% 50%
+  );
 
-      border: 2px solid white;
-      box-shadow: 0 0 6px rgba(0,0,0,0.6);
+  /* garde tes styles */
+  position: absolute;
+  z-index: 10;
+  cursor: grab;
 
-      display: flex;
-      align-items: flex-end;
-      justify-content: center;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 
-      color: white;
-      font-size: 11px;
-      font-weight: bold;
-      text-shadow: 0 0 4px black;
-      padding-bottom: 2px;
-      user-select: none;
-    }
+  border: 2px solid white;
+  box-shadow: 0 0 6px rgba(0,0,0,0.6);
+
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+
+  color: white;
+  font-size: 11px;
+  font-weight: bold;
+  text-shadow: 0 0 4px black;
+  padding-bottom: 2px;
+  user-select: none;
+}
      .token > div{
   width: 100%;
   padding: 0 2px;
@@ -995,7 +1006,7 @@ body.is-mj #board{
     if (IS_MJ) document.body.classList.add("is-mj");
     const PLAYER_ID = (params.get("p") || "").trim(); // ex: ALICE
     const board = document.getElementById("board");
-    
+    let CURRENT_HEX_PX = 35; // valeur par défaut
     if (!IS_MJ && !PLAYER_ID) {
   alert("Lien PJ invalide : ajoute ?p=TON_NOM dans l'URL (ex: ?p=ALICE)");
 }
@@ -1066,7 +1077,16 @@ function setHexGrid(hexSizePx = 35, stroke = "rgba(255,255,255,0.35)", strokeWid
 }
 function updateHexGrid(){
   const hexPx = Math.max(10, Math.round(board.clientWidth * HEX_REL));
+  CURRENT_HEX_PX = hexPx;
+
   setHexGrid(hexPx);
+
+  // ✅ met à jour la taille de TOUS les tokens déjà affichés
+  const tokenSize = Math.round(CURRENT_HEX_PX * 1.05); // 1.0 = même taille que hex, 1.05 un poil plus grand
+  board.querySelectorAll(".token").forEach(t => {
+    t.style.width  = tokenSize + "px";
+    t.style.height = tokenSize + "px";
+  });
 }
 
 updateHexGrid();
@@ -1659,6 +1679,9 @@ function escapeHtml(str){
 }
 function createTokenElement(id, data){
   const el = document.createElement("div");
+  const tokenSize = Math.round(CURRENT_HEX_PX * 0.95);
+el.style.width  = tokenSize + "px";
+el.style.height = tokenSize + "px";
   el.className = "token " + (data.type === "pnj" ? "pnj" : "pj1"); // couleur fallback
   el.dataset.id = id;
   el.dataset.owner = (data.owner || "").trim();
