@@ -181,6 +181,8 @@ body.is-mj #board{
     /* ===== Modal fiche token ===== */
 /* ===== Modal fiche token (Premium Glass) ===== */
 .modalHidden{ display:none !important; }
+ #spellImgModal{ z-index: 10000; } /* au-dessus de la fiche F et S */
+#spellImgModal img{ max-width: 100%; height: auto; }   
 
 /* ===== Modal plein écran ===== */
 #tokenModal, #spellModal{
@@ -1060,7 +1062,21 @@ body.grid-off #gridOverlay{
 
   </div>
 </div>  
-  
+<!-- ===== Modal Image Sort ===== -->
+<div id="spellImgModal" class="modalHidden">
+  <div class="modalCard" style="max-width: 1100px; height: auto;">
+
+    <div class="modalHeader">
+      <div id="siTitle">Sort</div>
+      <button id="siClose">✕</button>
+    </div>
+
+    <div class="modalBody" style="padding:14px; overflow:auto;">
+      <img id="siImg" alt="Sort" style="width:100%; height:auto; display:block; border-radius:14px;">
+    </div>
+
+  </div>
+</div>  
   <!-- Firebase temps réel (TOKENS UNIQUEMENT) -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
@@ -1335,6 +1351,113 @@ window.addEventListener("blur", () => {
     // ===== FICHE TOKEN (modal) =====
 const modal = document.getElementById("tokenModal");
 const mClose = document.getElementById("mClose");
+    // ===== MODAL IMAGE SORT =====
+const spellImgModal = document.getElementById("spellImgModal");
+const siClose = document.getElementById("siClose");
+const siTitle = document.getElementById("siTitle");
+const siImg   = document.getElementById("siImg");
+
+function openSpellImg(title, url){
+  siTitle.textContent = title || "Sort";
+  siImg.src = url || "";
+  spellImgModal.classList.remove("modalHidden");
+}
+
+function closeSpellImg(){
+  spellImgModal.classList.add("modalHidden");
+  siImg.src = "";
+}
+
+siClose.addEventListener("click", closeSpellImg);
+spellImgModal.addEventListener("click", (e) => {
+  if (e.target === spellImgModal) closeSpellImg();
+});
+
+// ===== TEXTAREAS SORTS =====
+const sCantrips = document.getElementById("sCantrips");
+const sL1 = document.getElementById("sL1");
+const sL2 = document.getElementById("sL2");
+const sL3 = document.getElementById("sL3");
+const sL4 = document.getElementById("sL4");
+const sL5 = document.getElementById("sL5");
+const sL6 = document.getElementById("sL6");
+const sL7 = document.getElementById("sL7");
+const sL8 = document.getElementById("sL8");
+const sL9 = document.getElementById("sL9");
+
+// ===== CONTENEURS DES BOUTONS =====
+const sCantripsBtns = document.getElementById("sCantripsBtns");
+const sL1Btns = document.getElementById("sL1Btns");
+const sL2Btns = document.getElementById("sL2Btns");
+const sL3Btns = document.getElementById("sL3Btns");
+const sL4Btns = document.getElementById("sL4Btns");
+const sL5Btns = document.getElementById("sL5Btns");
+const sL6Btns = document.getElementById("sL6Btns");
+const sL7Btns = document.getElementById("sL7Btns");
+const sL8Btns = document.getElementById("sL8Btns");
+const sL9Btns = document.getElementById("sL9Btns");
+
+// ===== Génération des boutons de sorts =====
+function parseSpellLine(line){
+  const parts = String(line || "").split("|");
+  const name = (parts[0] || "").trim();
+  const url  = (parts[1] || "").trim();
+  if (!name || !url) return null;
+  return { name, url };
+}
+
+function renderSpellButtons(textarea, container){
+  if (!textarea || !container) return;
+
+  container.innerHTML = "";
+
+  const lines = textarea.value
+    .split("\n")
+    .map(l => l.trim())
+    .filter(Boolean);
+
+  lines.forEach(line => {
+    const spell = parseSpellLine(line);
+    if (!spell) return;
+
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.textContent = "📜 " + spell.name;
+
+    btn.style.padding = "8px 10px";
+    btn.style.borderRadius = "12px";
+    btn.style.border = "1px solid rgba(255,255,255,0.15)";
+    btn.style.background = "rgba(255,255,255,0.06)";
+    btn.style.color = "#eee";
+    btn.style.cursor = "pointer";
+    btn.style.margin = "6px 6px 0 0";
+
+    // ⚠️ le clic sera branché à l’étape suivante
+    btn.addEventListener("click", () => {
+      console.log("Sort cliqué :", spell.name);
+    });
+
+    container.appendChild(btn);
+  });
+}
+
+// ===== Mise à jour en live =====
+[
+  [sCantrips, sCantripsBtns],
+  [sL1, sL1Btns],
+  [sL2, sL2Btns],
+  [sL3, sL3Btns],
+  [sL4, sL4Btns],
+  [sL5, sL5Btns],
+  [sL6, sL6Btns],
+  [sL7, sL7Btns],
+  [sL8, sL8Btns],
+  [sL9, sL9Btns],
+].forEach(([ta, box]) => {
+  if (!ta || !box) return;
+  ta.addEventListener("input", () => renderSpellButtons(ta, box));
+});
+    
 const mSave  = document.getElementById("mSave");
 const mTitle = document.getElementById("mTitle");
 const mInfo  = document.getElementById("mInfo");
