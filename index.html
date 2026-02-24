@@ -1067,7 +1067,120 @@ body.is-mj #dicePanel{
   width: var(--boardW);
   margin: 0;
 }
+/* =========================
+   VTT PRO — MJ RIGHT (final)
+   ========================= */
 
+body.is-mj{
+  background: radial-gradient(1200px 700px at 15% 10%, rgba(120,180,255,0.10), transparent 60%),
+              radial-gradient(900px 600px at 80% 40%, rgba(255,160,60,0.08), transparent 55%),
+              #0f0f12;
+}
+
+/* Colonne droite : map + dés (propre, sans chevauchement) */
+body.is-mj #mjRight{
+  width: var(--boardW, 800px);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: stretch;
+}
+
+/* Battlemap : cadre premium */
+body.is-mj #board{
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,0.12) !important;
+  box-shadow:
+    0 30px 90px rgba(0,0,0,0.70),
+    0 0 0 1px rgba(255,255,255,0.06) inset;
+  overflow: hidden;
+}
+
+/* Grille overlay mieux intégrée */
+body.is-mj #gridOverlay{
+  opacity: 0.28;
+}
+
+/* Dés : vraie barre HUD sous la map */
+body.is-mj #dicePanel{
+  width: 100% !important;
+  margin: 0 !important;
+
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+
+  padding: 12px 14px;
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: linear-gradient(180deg, rgba(22,22,26,0.85), rgba(12,12,14,0.75));
+  box-shadow: 0 18px 60px rgba(0,0,0,0.55);
+}
+
+/* Ligne des boutons de dés (bien alignés) */
+body.is-mj #dicePanel .diceBtn{
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(255,255,255,0.06);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform .08s ease, background .15s ease, border-color .15s ease;
+}
+
+body.is-mj #dicePanel .diceBtn:hover{
+  background: rgba(255,255,255,0.10);
+  border-color: rgba(255,255,255,0.22);
+  transform: translateY(-1px);
+}
+
+body.is-mj #dicePanel .diceBtn:active{
+  transform: translateY(0px) scale(0.98);
+}
+
+/* Images des dés : taille propre */
+body.is-mj #dicePanel .diceBtn img{
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Résultat + msg : une vraie ligne HUD */
+body.is-mj #diceResult{
+  width: 100% !important;
+  height: 54px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(255,255,255,0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-weight: 900;
+  font-size: 18px;
+  letter-spacing: 0.3px;
+}
+
+body.is-mj #diceMsg{
+  width: 100%;
+  min-width: 0 !important;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(255,255,255,0.04);
+  padding: 10px 12px;
+
+  font-size: 13px;
+  color: rgba(255,255,255,0.78);
+}
+
+/* Si diceMsg vide -> pas de bloc moche */
+body.is-mj #diceMsg:empty{
+  display: none !important;
+}
 
 
     
@@ -1075,9 +1188,15 @@ body.is-mj #dicePanel{
 
 
     
-/* ===== Barre PV ===== */
+
 
   </style>
+
+
+  
+  / * Fin CSS * /
+
+
 </head>
 
 <body>
