@@ -1094,6 +1094,57 @@ window.addEventListener("resize", updateHexGrid);
     // ===== MAP SYNC (MJ -> tout le monde) =====
 const mapRef = doc(db, "rooms", roomId, "sync", "map");
 
+// ===== SNAP HEX (flat-top) =====
+function axialRound(q, r){
+  // axial -> cube
+  let x = q;
+  let z = r;
+  let y = -x - z;
+
+  // round cube
+  let rx = Math.round(x);
+  let ry = Math.round(y);
+  let rz = Math.round(z);
+
+  const dx = Math.abs(rx - x);
+  const dy = Math.abs(ry - y);
+  const dz = Math.abs(rz - z);
+
+  if (dx > dy && dx > dz) rx = -ry - rz;
+  else if (dy > dz)        ry = -rx - rz;
+  else                     rz = -rx - ry;
+
+  // cube -> axial
+  return { q: rx, r: rz };
+}
+
+// Convertit un point (px,py) -> centre du HEX le plus proche
+function snapPointToHexCenter(px, py){
+  const a = CURRENT_HEX_PX;            // taille "côté" hex
+  const h = Math.sqrt(3) * a;          // hauteur d'un hex
+
+  // ✅ IMPORTANT : ton overlay commence un hex centré en (a, h/2)
+  const originX = a;
+  const originY = h / 2;
+
+  // translate vers origine
+  const x = px - originX;
+  const y = py - originY;
+
+  // pixel -> axial (flat-top)
+  const q = (2/3) * (x / a);
+  const r = (-1/3) * (x / a) + (1/Math.sqrt(3)) * (y / a);
+
+  // arrondi vers l'hex le plus proche
+  const ar = axialRound(q, r);
+
+  // axial -> pixel (centre)
+  const cx = originX + (3/2) * a * ar.q;
+  const cy = originY + h * (ar.r + ar.q/2);
+
+  return { cx, cy };
+}
+    
 // Associe un nom de bouton à un fichier image
 const MAPS = {
   taverne: "taverne.png",
@@ -1872,25 +1923,38 @@ document.addEventListener("mousemove", (e) => {
 
 document.addEventListener("mouseup", async () => {
   if (!activeEl) return;
+
   const id = activeId;
   const el = activeEl;
 
   activeEl = null;
   activeId = null;
 
-  const x = parseInt(el.style.left || "0", 10);
-  const y = parseInt(el.style.top  || "0", 10);
+  // position actuelle top-left
+  let left = parseInt(el.style.left || "0", 10);
+  let top  = parseInt(el.style.top  || "0", 10);
+
+  // ✅ on snap le CENTRE du token sur le CENTRE d'un hex
+  const size = el.offsetWidth || 50;
+  const tokenCenterX = left + size/2;
+  const tokenCenterY = top  + size/2;
+
+  const { cx, cy } = snapPointToHexCenter(tokenCenterX, tokenCenterY);
+
+  // nouveau top-left
+  left = Math.round(cx - size/2);
+  top  = Math.round(cy - size/2);
+
+  // re-clamp dans le board (évite de sortir)
+  const p = clampPosition(el, left, top);
+  el.style.left = p.x + "px";
+  el.style.top  = p.y + "px";
 
   // === conversion en coordonnées relatives ===
-  const rx = board.clientWidth  ? x / board.clientWidth  : 0;
-  const ry = board.clientHeight ? y / board.clientHeight : 0;
+  const rx = board.clientWidth  ? p.x / board.clientWidth  : 0;
+  const ry = board.clientHeight ? p.y / board.clientHeight : 0;
 
-  await updateDoc(doc(db, "rooms", roomId, "tokens", id), {
-    rx,
-    ry,
-    x,   // conservé temporairement
-    y
-  });
+  await updateDoc(doc(db, "rooms", roomId, "tokens", id), { rx, ry, x: p.x, y: p.y });
 });
 
 // Déplacement tactile
@@ -1907,25 +1971,33 @@ document.addEventListener("touchmove", (e) => {
 
 document.addEventListener("touchend", async () => {
   if (!activeEl) return;
+
   const id = activeId;
   const el = activeEl;
 
   activeEl = null;
   activeId = null;
 
-  const x = parseInt(el.style.left || "0", 10);
-  const y = parseInt(el.style.top  || "0", 10);
+  let left = parseInt(el.style.left || "0", 10);
+  let top  = parseInt(el.style.top  || "0", 10);
 
-  // === conversion en coordonnées relatives ===
-  const rx = board.clientWidth  ? x / board.clientWidth  : 0;
-  const ry = board.clientHeight ? y / board.clientHeight : 0;
+  const size = el.offsetWidth || 50;
+  const tokenCenterX = left + size/2;
+  const tokenCenterY = top  + size/2;
 
-  await updateDoc(doc(db, "rooms", roomId, "tokens", id), {
-    rx,
-    ry,
-    x,   // conservé temporairement
-    y
-  });
+  const { cx, cy } = snapPointToHexCenter(tokenCenterX, tokenCenterY);
+
+  left = Math.round(cx - size/2);
+  top  = Math.round(cy - size/2);
+
+  const p = clampPosition(el, left, top);
+  el.style.left = p.x + "px";
+  el.style.top  = p.y + "px";
+
+  const rx = board.clientWidth  ? p.x / board.clientWidth  : 0;
+  const ry = board.clientHeight ? p.y / board.clientHeight : 0;
+
+  await updateDoc(doc(db, "rooms", roomId, "tokens", id), { rx, ry, x: p.x, y: p.y });
 }, { passive: true });
     
 // ===== DÉS synchronisés (D4/D6/D8/D10/D12/D20/D100) + cooldown partagé =====
