@@ -1875,6 +1875,7 @@ function renderSlotRow(levelKey, slotData, canEditMax, canToggleUsed){
 
     chk.addEventListener("change", async () => {
       if (!openedSpellTokenId) return;
+
       if (!canToggleUsed) {
         chk.checked = !chk.checked;
         return;
@@ -1919,56 +1920,6 @@ function renderSlotRow(levelKey, slotData, canEditMax, canToggleUsed){
     }catch(err){
       console.error(err);
       if (sInfo) sInfo.textContent = "❌ Erreur emplacements";
-    }
-  };
-}
-
-  // MJ : modification du nombre max
-  inputMax.onchange = async () => {
-    if (!openedSpellTokenId) return;
-    if (!canEditMax) return;
-
-    let newMax = Number(inputMax.value);
-    if (!Number.isFinite(newMax)) newMax = 0;
-    newMax = Math.max(0, Math.min(10, Math.round(newMax)));
-
-    const newUsed = Math.min(used, newMax);
-
-    try{
-      const ref = doc(db, "rooms", roomId, "tokens", openedSpellTokenId);
-      await updateDoc(ref, {
-        [`spellSlots.${levelKey}.max`]: newMax,
-        [`spellSlots.${levelKey}.used`]: newUsed,
-        updatedAt: serverTimestamp(),
-      });
-    }catch(err){
-      console.error(err);
-      if (sInfo) sInfo.textContent = "❌ Erreur emplacements";
-    }
-  };
-
-  // changement max (MJ)
-  inputMax.onchange = async () => {
-    if (!openedSpellTokenId) return;
-    if (!canEditMax) return;
-
-    let newMax = Number(inputMax.value);
-    if (!Number.isFinite(newMax)) newMax = 0;
-    newMax = Math.max(0, Math.min(10, Math.round(newMax)));
-
-    // on clamp used
-    const newUsed = Math.min(used, newMax);
-
-    try{
-      const ref = doc(db, "rooms", roomId, "tokens", openedSpellTokenId);
-      await updateDoc(ref, {
-        [`spellSlots.${levelKey}.max`]: newMax,
-        [`spellSlots.${levelKey}.used`]: newUsed,
-        updatedAt: serverTimestamp(),
-      });
-    }catch(err){
-      console.error(err);
-      if (sInfo) sInfo.textContent = "❌ Erreur slots (permissions ?)";
     }
   };
 }
