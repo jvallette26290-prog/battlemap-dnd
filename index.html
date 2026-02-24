@@ -1396,7 +1396,202 @@ body.is-mj .diceBtn{
 body.is-mj{
   padding-right: calc(var(--mjBoardW) + (var(--mjGap) * 2));
 }
+/* =========================
+   MJ LAYOUT PRO (FINAL CLEAN)
+   ========================= */
 
+/* PJ : on ne touche à rien */
+body:not(.is-mj) #mjLayout,
+body:not(.is-mj) #mjLeft,
+body:not(.is-mj) #mjRight{
+  all: unset;
+}
+
+/* MJ : grille 2 colonnes */
+body.is-mj{
+  --gap: 16px;
+  --leftW: 520px;
+  --boardW: 800px;
+  --boardH: 550px;
+
+  margin: 0;
+  padding: var(--gap);
+}
+
+/* Conteneur global */
+body.is-mj #mjLayout{
+  display: grid;
+  grid-template-columns: var(--leftW) var(--boardW);
+  gap: var(--gap);
+  align-items: start;
+}
+
+/* Colonne gauche */
+body.is-mj #mjLeft{
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+}
+
+/* Colonne droite */
+body.is-mj #mjRight{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* ✅ Battlemap fixe haut-droite (dans sa colonne) */
+body.is-mj #board{
+  width: var(--boardW);
+  height: var(--boardH);
+  margin: 0 !important;
+  border-radius: 18px;
+  overflow: hidden;
+  position: sticky;      /* reste visible en haut si scroll */
+  top: var(--gap);
+  z-index: 10;
+}
+
+/* ✅ Cartes UI */
+body.is-mj #mapPanel,
+body.is-mj #tokenPanel{
+  width: 100%;
+  margin: 0;
+  padding: 14px;
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(10,10,10,0.55);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.55);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+/* Map panel : boutons alignés */
+body.is-mj #mapPanel{
+  justify-content: flex-start;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* Token panel : compact */
+body.is-mj #tokenPanel{
+  justify-content: flex-start;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* =========================
+   DICE BAR (sous la map)
+   ========================= */
+body.is-mj #dicePanel{
+  width: var(--boardW);
+  margin: 0;
+  padding: 12px 14px;
+
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(10,10,10,0.55);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.55);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+
+  display: grid;
+  grid-template-columns: 1fr 220px;  /* dés | résultat */
+  align-items: center;
+  gap: 14px;
+}
+
+/* Ligne des dés : une rangée propre, scroll horizontal si besoin */
+body.is-mj #dicePanel .diceBtn{
+  margin: 0 !important;
+}
+body.is-mj #dicePanel{
+  overflow: hidden;
+}
+body.is-mj #dicePanel{
+  /* on met les dés dans la 1ère colonne via flex */
+}
+body.is-mj #dicePanel > .diceBtn{
+  grid-column: 1;
+}
+
+/* ⚠️ Comme tes dés sont des éléments directs du panel,
+   on force une "ligne" en wrap via un conteneur virtuel :
+   on transforme #dicePanel en flex pour les dés et on garde le HUD via position.
+   => plus simple : on crée une zone “dés” via :has() n’existe pas partout.
+   Donc on va utiliser une astuce CSS : on remet les dés en inline-flex
+   et on laisse le résultat en fin.
+*/
+body.is-mj #dicePanel{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+body.is-mj #dicePanel{
+  flex-wrap: nowrap;
+}
+
+/* Dés : alignés + espace régulier */
+body.is-mj .diceBtn{
+  display: inline-flex;
+}
+body.is-mj .diceBtn + .diceBtn{
+  margin-left: 18px !important;
+}
+
+/* Résultat : HUD à droite */
+body.is-mj #diceResult{
+  flex: 0 0 auto;
+  width: 220px;
+  height: 58px;
+  border-radius: 18px;
+  font-size: 22px;
+  font-weight: 900;
+
+  background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.05));
+  border: 1px solid rgba(255,255,255,0.14);
+}
+
+/* MJ Historique : on le met dans la colonne gauche (si tu veux l’afficher) */
+body.is-mj #diceMsg{
+  width: 100%;
+  margin: 0;
+  padding: 12px 14px;
+
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(10,10,10,0.55);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.55);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+
+  font-size: 13px;
+  color: rgba(255,255,255,0.75);
+  line-height: 1.35;
+}
+
+/* PJ : historique jamais visible */
+body:not(.is-mj) #diceMsg{
+  display: none !important;
+}
+
+/* Responsive : si écran trop petit */
+@media (max-width: 1250px){
+  body.is-mj #mjLayout{
+    grid-template-columns: 1fr;
+  }
+  body.is-mj #mjRight{
+    order: 1;
+  }
+  body.is-mj #mjLeft{
+    order: 2;
+  }
+  body.is-mj #board,
+  body.is-mj #dicePanel{
+    width: min(96vw, var(--boardW));
+  }
+}
 
 
 
