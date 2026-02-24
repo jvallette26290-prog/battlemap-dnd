@@ -1605,6 +1605,15 @@ function animateFireball(fromId, toId, durationMs = 520){
 
   requestAnimationFrame(tick);
 }
+
+    
+window.animateFireball = animateFireball;
+window.testFireball = () => animateFireball("Odran", "Fanatics");
+
+
+
+
+    
     // ===== DROITS : qui peut contrôler un token =====
 function canPlayerControlToken(data){
   if (IS_MJ) return true;
