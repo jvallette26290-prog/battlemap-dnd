@@ -1181,7 +1181,70 @@ body.is-mj #diceMsg{
 body.is-mj #diceMsg:empty{
   display: none !important;
 }
+/* =========================
+   VTT PRO — MJ SIDEBAR
+   ========================= */
 
+/* Colonne gauche = sidebar */
+body.is-mj #mjLeft{
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  align-items: stretch;
+}
+
+/* Carte générique (token / map / historique) */
+body.is-mj #mjLeft > div{
+  padding: 12px 14px;
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: linear-gradient(180deg, rgba(18,18,22,0.88), rgba(10,10,12,0.82));
+  box-shadow: 0 18px 60px rgba(0,0,0,0.55);
+}
+
+/* Titres visuels (quand présents) */
+body.is-mj #mjLeft h3,
+body.is-mj #mjLeft h4{
+  margin: 0 0 8px 0;
+  font-weight: 900;
+  font-size: 14px;
+  letter-spacing: .3px;
+  opacity: .9;
+}
+
+/* Historique des jets */
+body.is-mj #diceLog{
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+body.is-mj .diceLogItem{
+  padding: 6px 0;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+
+body.is-mj .diceLogItem:first-child{
+  border-top: none;
+}
+
+/* Token panel compact */
+body.is-mj #tokenPanel{
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* Map panel boutons */
+body.is-mj #mapPanel{
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+body.is-mj .mapBtn{
+  border-radius: 14px;
+  padding: 8px 12px;
+  font-weight: 700;
+}
 
     
     
