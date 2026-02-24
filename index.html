@@ -1434,8 +1434,8 @@ function renderSpellButtons(textarea, container){
 
     // ⚠️ le clic sera branché à l’étape suivante
     btn.addEventListener("click", () => {
-      console.log("Sort cliqué :", spell.name);
-    });
+      openSpellImg(spell.name, spell.url);
+});
 
     container.appendChild(btn);
   });
