@@ -1818,35 +1818,23 @@ el.style.height = tokenSize + "px";
   el.className = "token " + (data.type === "pnj" ? "pnj" : "pj1"); // couleur fallback
   el.dataset.id = id;
   el.dataset.owners = Array.isArray(data.owners) ? data.owners.join(",") : ((data.owner || "").trim());
-  // === Position du token (relatif prioritaire) ===
-let px = 0;
-let py = 0;
+  // === Position du token ===
+  const bw = board.clientWidth;
+  const bh = board.clientHeight;
 
-if (typeof data.rx === "number" && typeof data.ry === "number") {
-  px = data.rx * board.clientWidth;
-  py = data.ry * board.clientHeight;
-} else {
- 
-  
-  // ✅ Calcul position token (relatif si possible)
-const bw = board.clientWidth;
-const bh = board.clientHeight;
+  let px = 0;
+  let py = 0;
 
-let px = 0;
-let py = 0;
+  if (typeof data.rx === "number" && typeof data.ry === "number") {
+    px = Math.round(data.rx * bw);
+    py = Math.round(data.ry * bh);
+  } else {
+    px = Number.isFinite(data.x) ? data.x : 0;
+    py = Number.isFinite(data.y) ? data.y : 0;
+  }
 
-if (typeof data.rx === "number" && typeof data.ry === "number") {
-  px = Math.round(data.rx * bw);
-  py = Math.round(data.ry * bh);
-} else {
-  // fallback anciens tokens
-  px = Number.isFinite(data.x) ? data.x : 0;
-  py = Number.isFinite(data.y) ? data.y : 0;
-}
-}
-
-el.style.left = px + "px";
-el.style.top  = py + "px";
+  el.style.left = px + "px";
+  el.style.top  = py + "px";
 
   if (data.img) el.style.backgroundImage = `url('${data.img}')`;
   const name = data.name || id;
