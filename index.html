@@ -838,10 +838,30 @@ body:not(.is-mj) #spellModal textarea{
   cursor: pointer;
   accent-color: rgba(120,180,255,0.9); /* couleur moderne */
 }
+/* PJ : on cache le champ "max" (nombre d'emplacements) */
+body:not(.is-mj) .slotMax{
+  display: none !important;
+}
+/* Alignement horizontal des emplacements */
+.slotBoxes{
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  flex-wrap: nowrap;        /* ✅ une seule ligne */
+  align-items: center;
+}
 
+/* Si l’écran est trop petit, optionnel : autoriser le retour à la ligne */
+@media (max-width: 900px){
+  .slotBoxes{
+    flex-wrap: wrap;        /* ✅ évite de sortir de l’écran */
+  }
+}
 
-
-
+/* PJ : quand max est caché, on colle les checkboxes à gauche */
+body:not(.is-mj) .slotRow{
+  gap: 10px;
+}
 
 
     
