@@ -774,7 +774,64 @@ body:not(.is-mj) #spellModal textarea{
   background: rgba(255,255,255,0.14);
 }
 
+/* ===== Slots de sorts ===== */
+.slotRow{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin: 6px 0 12px;
+  flex-wrap: wrap;
+}
 
+.slotLabel{
+  font-size:12px;
+  color: rgba(255,255,255,0.75);
+  min-width: 70px;
+}
+
+.slotBoxes{
+  display:flex;
+  gap:6px;
+  flex-wrap: wrap;
+}
+
+.slotBox{
+  width: 22px;
+  height: 22px;
+  border-radius: 7px;
+  border: 1px solid rgba(255,255,255,0.22);
+  background: rgba(255,255,255,0.05);
+  cursor: pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  user-select:none;
+  transition: transform .05s ease;
+}
+
+.slotBox:active{ transform: scale(0.96); }
+
+.slotBox.used{
+  background: rgba(120,180,255,0.22);
+  border-color: rgba(120,180,255,0.60);
+}
+
+.slotMax{
+  width: 64px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.05);
+  color:#eee;
+}
+
+
+
+
+
+
+
+    
 
 
     
@@ -1119,44 +1176,90 @@ body:not(.is-mj) #spellModal textarea{
 
     <div class="modalBody" style="overflow:auto;">
       <div class="modalGrid">
+        
         <label>Sorts Mineurs</label>
         <textarea id="sCantrips" rows="4" placeholder="Un par ligne..."></textarea>
         <div id="sCantripsBtns"></div>
         
         <label>Niv. 1</label>
         <textarea id="sL1" rows="4"></textarea>
+        <div class="slotRow" data-level="l1">
+  <span class="slotLabel">Slots</span>
+  <input class="slotMax" type="number" min="0" max="10" value="0" title="Slots max (MJ)">
+  <div class="slotBoxes"></div>
+</div>
         <div id="sL1Btns"></div>
         
         <label>Niv. 2</label>
         <textarea id="sL2" rows="4"></textarea>
+        <div class="slotRow" data-level="l2">
+  <span class="slotLabel">Slots</span>
+  <input class="slotMax" type="number" min="0" max="10" value="0" title="Slots max (MJ)">
+  <div class="slotBoxes"></div>
+</div>
         <div id="sL2Btns"></div>
 
         <label>Niv. 3</label>
         <textarea id="sL3" rows="4"></textarea>
+        <div class="slotRow" data-level="l3">
+  <span class="slotLabel">Slots</span>
+  <input class="slotMax" type="number" min="0" max="10" value="0" title="Slots max (MJ)">
+  <div class="slotBoxes"></div>
+</div>
         <div id="sL3Btns"></div>
 
         <label>Niv. 4</label>
         <textarea id="sL4" rows="4"></textarea>
+        <div class="slotRow" data-level="l4">
+  <span class="slotLabel">Slots</span>
+  <input class="slotMax" type="number" min="0" max="10" value="0" title="Slots max (MJ)">
+  <div class="slotBoxes"></div>
+</div>
         <div id="sL4Btns"></div>
 
         <label>Niv. 5</label>
         <textarea id="sL5" rows="4"></textarea>
+        <div class="slotRow" data-level="l5">
+  <span class="slotLabel">Slots</span>
+  <input class="slotMax" type="number" min="0" max="10" value="0" title="Slots max (MJ)">
+  <div class="slotBoxes"></div>
+</div>
         <div id="sL5Btns"></div>
 
         <label>Niv. 6</label>
         <textarea id="sL6" rows="4"></textarea>
+        <div class="slotRow" data-level="l6">
+  <span class="slotLabel">Slots</span>
+  <input class="slotMax" type="number" min="0" max="10" value="0" title="Slots max (MJ)">
+  <div class="slotBoxes"></div>
+</div>
         <div id="sL6Btns"></div>
 
         <label>Niv. 7</label>
         <textarea id="sL7" rows="4"></textarea>
+        <div class="slotRow" data-level="l7">
+  <span class="slotLabel">Slots</span>
+  <input class="slotMax" type="number" min="0" max="10" value="0" title="Slots max (MJ)">
+  <div class="slotBoxes"></div>
+</div>
         <div id="sL7Btns"></div>
 
         <label>Niv. 8</label>
         <textarea id="sL8" rows="4"></textarea>
+        <div class="slotRow" data-level="l8">
+  <span class="slotLabel">Slots</span>
+  <input class="slotMax" type="number" min="0" max="10" value="0" title="Slots max (MJ)">
+  <div class="slotBoxes"></div>
+</div>
         <div id="sL8Btns"></div>
 
         <label>Niv. 9</label>
         <textarea id="sL9" rows="4"></textarea>
+        <div class="slotRow" data-level="l9">
+  <span class="slotLabel">Slots</span>
+  <input class="slotMax" type="number" min="0" max="10" value="0" title="Slots max (MJ)">
+  <div class="slotBoxes"></div>
+</div>
         <div id="sL9Btns"></div>
       </div>
     </div>
@@ -1183,6 +1286,14 @@ body:not(.is-mj) #spellModal textarea{
 
   </div>
 </div>  
+
+
+
+
+
+
+
+  
   <!-- Firebase temps réel (TOKENS UNIQUEMENT) -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
@@ -1708,6 +1819,89 @@ function arrToTxt(arr){
   return Array.isArray(arr) ? arr.join("\n") : "";
 }
 
+
+// ===== Slots (cases) =====
+const SLOT_LEVELS = ["l1","l2","l3","l4","l5","l6","l7","l8","l9"];
+
+function getSlotRow(levelKey){
+  return spellModal.querySelector(`.slotRow[data-level="${levelKey}"]`);
+}
+
+function renderSlotRow(levelKey, slotData, canEditMax, canToggleUsed){
+  const row = getSlotRow(levelKey);
+  if (!row) return;
+
+  const inputMax = row.querySelector(".slotMax");
+  const boxes = row.querySelector(".slotBoxes");
+
+  const max = Math.max(0, Number(slotData?.max ?? 0));
+  const used = Math.max(0, Math.min(max, Number(slotData?.used ?? 0)));
+
+  inputMax.value = String(max);
+  inputMax.disabled = !canEditMax;
+
+  // rebuild boxes
+  boxes.innerHTML = "";
+  for (let i = 1; i <= max; i++){
+    const b = document.createElement("div");
+    b.className = "slotBox" + (i <= used ? " used" : "");
+    b.title = `Slot ${i}/${max}`;
+    b.textContent = ""; // tu peux mettre "•" si tu veux
+    b.addEventListener("click", async () => {
+      if (!openedSpellTokenId) return;
+      if (!canToggleUsed) return;
+
+      // toggle logique : clique sur une case = set used = i (ou i-1 si déjà used)
+      const newUsed = (i === used) ? (i - 1) : i;
+
+      try{
+        const ref = doc(db, "rooms", roomId, "tokens", openedSpellTokenId);
+        await updateDoc(ref, {
+          [`spellSlots.${levelKey}.max`]: max,
+          [`spellSlots.${levelKey}.used`]: newUsed,
+          updatedAt: serverTimestamp(),
+        });
+      }catch(err){
+        console.error(err);
+        if (sInfo) sInfo.textContent = "❌ Erreur slots (permissions ?)";
+      }
+    });
+
+    boxes.appendChild(b);
+  }
+
+  // changement max (MJ)
+  inputMax.onchange = async () => {
+    if (!openedSpellTokenId) return;
+    if (!canEditMax) return;
+
+    let newMax = Number(inputMax.value);
+    if (!Number.isFinite(newMax)) newMax = 0;
+    newMax = Math.max(0, Math.min(10, Math.round(newMax)));
+
+    // on clamp used
+    const newUsed = Math.min(used, newMax);
+
+    try{
+      const ref = doc(db, "rooms", roomId, "tokens", openedSpellTokenId);
+      await updateDoc(ref, {
+        [`spellSlots.${levelKey}.max`]: newMax,
+        [`spellSlots.${levelKey}.used`]: newUsed,
+        updatedAt: serverTimestamp(),
+      });
+    }catch(err){
+      console.error(err);
+      if (sInfo) sInfo.textContent = "❌ Erreur slots (permissions ?)";
+    }
+  };
+}
+
+
+
+
+
+    
+
 async function loadSpellsToModal(tokenId){
   openedSpellTokenId = tokenId;
   sInfo.textContent = "Chargement…";
@@ -1731,7 +1925,21 @@ async function loadSpellsToModal(tokenId){
   sTitle.textContent = t.name ? `Sorts : ${t.name}` : `Sorts : ${tokenId}`;
 
   const sp = t.spells || {};
+  
+// ===== Slots depuis Firestore =====
+const slotRoot = t.spellSlots || {};
 
+// Règles:
+// - MJ peut définir max
+// - Propriétaire (ou MJ) peut cocher/décocher used
+const canEditMax = IS_MJ;
+const canToggleUsed = canPlayerControlToken(t);
+
+// Render slots par niveau
+SLOT_LEVELS.forEach(levelKey => {
+  const slotData = slotRoot[levelKey] || { max: 0, used: 0 };
+  renderSlotRow(levelKey, slotData, canEditMax, canToggleUsed);
+});
   sCantrips.value = arrToTxt(sp.cantrips);
   sL1.value = arrToTxt(sp.l1);
   sL2.value = arrToTxt(sp.l2);
