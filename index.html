@@ -1153,10 +1153,85 @@ body.is-mj{
     margin: 10px auto !important;
   }
 }
+/* =========================
+   DICE PANEL PRO (MJ)
+   ========================= */
+
+/* Le panel devient une "carte" bien structurée */
+body.is-mj #dicePanel{
+  display: grid;
+  grid-template-columns: 1fr;     /* une colonne, 2 lignes via rows auto */
+  gap: 12px;
+  align-items: start;
+}
+
+/* 🧱 Ligne des dés */
+body.is-mj #dicePanel{
+  /* on laisse les boutons au début du flux */
+}
+
+/* Les dés : alignés et espacés proprement */
+body.is-mj .diceBtn{
+  margin: 0 14px 0 0;  /* espace à droite */
+}
+
+/* Si tu veux un espacement parfaitement uniforme sans margin: */
+body.is-mj #dicePanel{
+  /* rien ici */
+}
+
+/* ✅ Un conteneur visuel "barre HUD" pour résultat + historique */
+body.is-mj #diceResult{
+  justify-self: start;
+  width: 210px;
+  height: 58px;
+  border-radius: 18px;
+  font-size: 22px;
+  font-weight: 900;
+
+  background: linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.04));
+  border: 1px solid rgba(255,255,255,0.14);
+  box-shadow: 0 18px 50px rgba(0,0,0,0.55);
+}
+
+/* ✅ Historique MJ : plus compact + pas de "barre vide" */
+body.is-mj #diceMsg{
+  min-width: 0;
+  width: 100%;
+  margin: 0;
+  padding: 10px 12px;
+
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(255,255,255,0.04);
+
+  font-size: 13px;
+  color: rgba(255,255,255,0.75);
+  line-height: 1.35;
+}
+
+/* ✅ Quand l'historique est vide : on masque totalement la zone */
+body.is-mj #diceMsg:empty{
+  display: none;
+}
+    
+body.is-mj .diceBtn:hover img{
+  transform: scale(1.07);
+  filter:
+    drop-shadow(0 0 26px rgba(255,160,60,0.55))
+    drop-shadow(0 10px 18px rgba(0,0,0,0.8));
+}
+body.is-mj .diceBtn:active img{
+  transform: scale(0.94);
+}    
+
+
+
+
+
 
 
     
-
     
 
 
