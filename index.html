@@ -1386,7 +1386,8 @@ const mSkillSteaVal = document.getElementById("mSkillSteaVal");
 const mSkillSurvVal = document.getElementById("mSkillSurvVal");
 const mSkillPerfVal = document.getElementById("mSkillPerfVal");   
 let openedTokenId = null;
-
+let openedTokenId = null;
+let openedTokenOwners = []; // ✅ owners du token actuellement ouvert
 function openModal(){
   modal.classList.remove("modalHidden");
 }
@@ -1528,6 +1529,13 @@ async function loadTokenToModal(tokenId){
   }
 
   const t = snap.data();
+    // ===== DROITS D'ÉDITION =====
+  const canEdit = canPlayerControlToken(t);
+
+  // mémorise les owners pour le save
+  openedTokenOwners = Array.isArray(t.owners)
+    ? t.owners
+    : (t.owner ? [String(t.owner).trim()].filter(Boolean) : []);
   mTitle.textContent = t.name ? `Fiche : ${t.name}` : `Fiche : ${tokenId}`;
 
 mName.value  = t.name ?? "";
@@ -1646,7 +1654,19 @@ const owner = owners[0] || "";
 ].forEach(el => el.disabled = !canEdit);
   mInfo.textContent = canEdit
   ? (IS_MJ ? "Modifiable (MJ)" : "Modifiable (Ton personnage)")
-  : "Lecture seule";
+    : "Lecture seule";
+  
+  // ===== ACTIVE / DÉSACTIVE LA FICHE =====
+  const fields = modal.querySelectorAll("input, textarea, button");
+
+  fields.forEach(el => {
+    if (el === mClose) return; // on laisse le bouton fermer actif
+    el.disabled = !canEdit;
+  });
+
+  mInfo.textContent = canEdit
+    ? (IS_MJ ? "Modifiable (MJ)" : "Modifiable (propriétaire)")
+    : "Lecture seule";
 }
 
 mSave.addEventListener("click", async () => {
@@ -1676,7 +1696,8 @@ mSave.addEventListener("click", async () => {
       profBonus: mProf.value === "" ? null : Number(mProf.value), 
       speed: mSpeed.value === "" ? null : Number(mSpeed.value),
       inspiration: mInsp.value === "" ? 0 : Number(mInsp.value),
-      owners: Array.isArray(t.owners) ? t.owners : (t.owner ? [t.owner] : []),
+      owners: openedTokenOwners,
+      owner: (openedTokenOwners[0] || ""),
 
       level: mLevel.value === "" ? null : Number(mLevel.value),
       xp: mXp.value === "" ? null : Number(mXp.value),
@@ -1953,30 +1974,33 @@ addBtn.addEventListener("click", async () => {
   const name = (tName.value || "").trim() || "TOKEN";
   const img  = (tImg.value  || "").trim();
   const type = tType.value;
-  const owners = (tOwner.value || "")
-  .split(",")
-  .map(s => s.trim())
-  .filter(Boolean);
 
-  const x = Math.floor(board.clientWidth / 2) - 25;
-  const y = Math.floor(board.clientHeight / 2) - 25;
+  const owners = (tOwner.value || "")
+    .split(",")
+    .map(s => s.trim())
+    .filter(Boolean);
+
+  const owner = owners[0] || "";
 
   try {
-    const owners = owner
-  ? owner.split(",").map(s => s.trim()).filter(Boolean)
-  : [];
+    await addDoc(tokensCol, {
+      name,
+      img,
+      type,
+      owner,
+      owners,
+      rx: 0.5,
+      ry: 0.5,
+      createdAt: serverTimestamp(),
+    });
 
-await addDoc(tokensCol, {
-  name,
-  img,
-  type,
-  owner,        // ✅ tableau de propriétaires
-  owners,
-  rx: 0.5,
-  ry: 0.5,
-  x,
-  y,
-  createdAt: serverTimestamp(),
+    tName.value = "";
+    tImg.value = "";
+    tOwner.value = "";
+  } catch (err) {
+    console.error(err);
+    alert("Erreur ajout token");
+  }
 });
     tName.value = "";
     tImg.value = "";
