@@ -1290,7 +1290,112 @@ body.is-mj #dicePanel{
 body.is-mj #dicePanel{
   flex-direction: row !important; /* au cas où */
 }
+/* =========================
+   MJ : Dés sous la battlemap
+   ========================= */
 
+body.is-mj{
+  --mjGap: 16px;
+  --mjBoardW: 800px;
+  --mjBoardH: 550px;
+  --mjHudW: 800px;      /* même largeur que la map */
+}
+
+/* Map fixe haut-droite (au cas où) */
+body.is-mj #board{
+  position: fixed;
+  top: var(--mjGap);
+  right: var(--mjGap);
+  width: var(--mjBoardW);
+  height: var(--mjBoardH);
+  margin: 0 !important;
+  z-index: 20;
+}
+
+/* ✅ Ligne des dés : sous la map */
+body.is-mj #dicePanel{
+  position: fixed;
+  top: calc(var(--mjGap) + var(--mjBoardH) + 10px);
+  right: var(--mjGap);
+  width: var(--mjHudW);
+  margin: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 18px;
+  flex-wrap: nowrap;
+
+  padding: 10px 12px;
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(10,10,10,0.55);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.55);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+
+  z-index: 30;
+}
+
+/* ✅ Résultat + historique : juste sous la ligne des dés */
+body.is-mj #diceResult{
+  position: fixed;
+  top: calc(var(--mjGap) + var(--mjBoardH) + 10px + 84px);
+  right: calc(var(--mjGap) + (var(--mjHudW) - 240px));
+  width: 240px;
+  height: 56px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 18px;
+  font-size: 22px;
+  font-weight: 900;
+
+  background: linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.04));
+  border: 1px solid rgba(255,255,255,0.14);
+  box-shadow: 0 18px 50px rgba(0,0,0,0.55);
+
+  z-index: 30;
+}
+
+/* Historique MJ à côté du résultat */
+body.is-mj #diceMsg{
+  position: fixed;
+  top: calc(var(--mjGap) + var(--mjBoardH) + 10px + 84px);
+  right: var(--mjGap);
+  width: calc(var(--mjHudW) - 260px);
+  min-height: 56px;
+
+  margin: 0 !important;
+  padding: 12px 14px;
+
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(255,255,255,0.04);
+
+  font-size: 13px;
+  color: rgba(255,255,255,0.75);
+  line-height: 1.35;
+
+  z-index: 30;
+}
+
+/* si vide, on masque */
+body.is-mj #diceMsg:empty{
+  display: none !important;
+}
+
+/* ✅ Les dés ne se collent pas : pas de margin individuelle */
+body.is-mj .diceBtn{
+  margin: 0 !important;
+}
+
+/* ✅ Place libre : on évite que tes panels à gauche se superposent à la map */
+body.is-mj{
+  padding-right: calc(var(--mjBoardW) + (var(--mjGap) * 2));
+}
 
 
 
