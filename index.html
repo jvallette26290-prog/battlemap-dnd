@@ -182,7 +182,17 @@ body.is-mj #board{
 /* ===== Modal fiche token (Premium Glass) ===== */
 .modalHidden{ display:none !important; }
  #spellImgModal{ z-index: 10000; } /* au-dessus de la fiche F et S */
-#spellImgModal img{ max-width: 100%; height: auto; }   
+#spellImgModal img{
+  max-width: 720px;     /* ← taille idéale type fiche D&D */
+  width: 100%;
+  height: auto;
+
+  margin: 0 auto;       /* centre l’image */
+  display: block;
+
+  border-radius: 14px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+}   
 
 /* ===== Modal plein écran ===== */
 #tokenModal, #spellModal, #spellImgModal{
