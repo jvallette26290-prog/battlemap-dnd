@@ -1016,7 +1016,27 @@ body:not(.is-mj) .diceHistory{
   visibility: hidden !important;
   opacity: 0 !important;
 }
+/* ✅ MJ : battlemap en haut à droite, taille inchangée */
+body.is-mj #board{
+  position: fixed;     /* sort du flux normal */
+  top: 16px;           /* marge haut */
+  right: 16px;         /* marge droite */
+  margin: 0 !important;
 
+  width: 800px;        /* on garde ta taille MJ */
+  height: 550px;
+
+  z-index: 20;         /* au-dessus de l'UI, sous les modales (9999) */
+}
+
+/* ✅ MJ : les panneaux restent à gauche (optionnel mais conseillé) */
+body.is-mj #dicePanel,
+body.is-mj #mapPanel,
+body.is-mj #tokenPanel{
+  margin-left: 16px;
+  margin-right: 16px;
+  justify-content: flex-start;
+}
     
 
 
