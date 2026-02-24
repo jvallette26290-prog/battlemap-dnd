@@ -1025,33 +1025,43 @@ body.grid-off #gridOverlay{
       <div class="modalGrid">
         <label>Cantrips</label>
         <textarea id="sCantrips" rows="4" placeholder="Un par ligne..."></textarea>
-
+        <div id="sCantripsBtns"></div>
+        
         <label>Niv. 1</label>
         <textarea id="sL1" rows="4"></textarea>
-
+        <div id="sL1Btns"></div>
+        
         <label>Niv. 2</label>
         <textarea id="sL2" rows="4"></textarea>
+        <div id="sL2Btns"></div>
 
         <label>Niv. 3</label>
         <textarea id="sL3" rows="4"></textarea>
+        <div id="sL3Btns"></div>
 
         <label>Niv. 4</label>
         <textarea id="sL4" rows="4"></textarea>
+        <div id="sL4Btns"></div>
 
         <label>Niv. 5</label>
         <textarea id="sL5" rows="4"></textarea>
+        <div id="sL5Btns"></div>
 
         <label>Niv. 6</label>
         <textarea id="sL6" rows="4"></textarea>
+        <div id="sL6Btns"></div>
 
         <label>Niv. 7</label>
         <textarea id="sL7" rows="4"></textarea>
+        <div id="sL7Btns"></div>
 
         <label>Niv. 8</label>
         <textarea id="sL8" rows="4"></textarea>
+        <div id="sL8Btns"></div>
 
         <label>Niv. 9</label>
         <textarea id="sL9" rows="4"></textarea>
+        <div id="sL9Btns"></div>
       </div>
     </div>
 
@@ -1373,17 +1383,7 @@ spellImgModal.addEventListener("click", (e) => {
   if (e.target === spellImgModal) closeSpellImg();
 });
 
-// ===== TEXTAREAS SORTS =====
-const sCantrips = document.getElementById("sCantrips");
-const sL1 = document.getElementById("sL1");
-const sL2 = document.getElementById("sL2");
-const sL3 = document.getElementById("sL3");
-const sL4 = document.getElementById("sL4");
-const sL5 = document.getElementById("sL5");
-const sL6 = document.getElementById("sL6");
-const sL7 = document.getElementById("sL7");
-const sL8 = document.getElementById("sL8");
-const sL9 = document.getElementById("sL9");
+
 
 // ===== CONTENEURS DES BOUTONS =====
 const sCantripsBtns = document.getElementById("sCantripsBtns");
@@ -1644,6 +1644,17 @@ async function loadSpellsToModal(tokenId){
   sL7.value = arrToTxt(sp.l7);
   sL8.value = arrToTxt(sp.l8);
   sL9.value = arrToTxt(sp.l9);
+
+  renderSpellButtons(sCantrips, sCantripsBtns);
+renderSpellButtons(sL1, sL1Btns);
+renderSpellButtons(sL2, sL2Btns);
+renderSpellButtons(sL3, sL3Btns);
+renderSpellButtons(sL4, sL4Btns);
+renderSpellButtons(sL5, sL5Btns);
+renderSpellButtons(sL6, sL6Btns);
+renderSpellButtons(sL7, sL7Btns);
+renderSpellButtons(sL8, sL8Btns);
+renderSpellButtons(sL9, sL9Btns);
 
   // active/désactive champs
   [sCantrips, sL1, sL2, sL3, sL4, sL5, sL6, sL7, sL8, sL9, sSave].forEach(el => {
