@@ -745,7 +745,24 @@ body:not(.is-mj) #spellModal textarea{
   grid-template-columns: 110px 1fr;
 }
 
+/* ===== Boutons de sorts plus parlants ===== */
+#spellModal .modalGrid button{
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 
+  font-size: 14px;
+  font-weight: 700;
+
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 14px;
+  padding: 8px 12px;
+}
+
+#spellModal .modalGrid button:hover{
+  background: rgba(255,255,255,0.14);
+}
 
 
 
@@ -1491,7 +1508,7 @@ function renderSpellButtons(textarea, container){
 
     const btn = document.createElement("button");
     btn.type = "button";
-    btn.textContent = "📜 " + spell.name;
+    btn.textContent = spell.name;
 
     btn.style.padding = "8px 10px";
     btn.style.borderRadius = "12px";
