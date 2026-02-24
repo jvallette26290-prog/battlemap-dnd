@@ -980,50 +980,7 @@ body:not(.is-mj) .slotRow{
 body:not(.is-mj) #diceMsg{
   display: none;
 }
- /* 🎲 Bouton totalement invisible (MJ + PJ) */
-.diceBtn{
-  all: unset;              /* 🔥 supprime TOUS les styles natifs */
-  position: relative;
 
-  width: 25px;
-  height: 25px;
-
-  cursor: pointer;
-  overflow: visible;
-
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}   
-.diceBtn:focus{
-  outline: none;
-}
-/* 🔒 Historique MJ uniquement (sécurité visuelle) */
-body:not(.is-mj) #diceMsg{
-  display: none !important;
-}
-/* 🎲 Espacement entre les dés */
-.diceBtn{
-  margin: 0 18px;
-}
-/* 🔒 Historique MJ uniquement : cache tout ce qui ressemble à un log */
-body:not(.is-mj) #diceMsg,
-body:not(.is-mj) #diceLog,
-body:not(.is-mj) #diceHistory,
-body:not(.is-mj) .diceLog,
-body:not(.is-mj) .diceHistory{
-  display: none !important;
-  visibility: hidden !important;
-  opacity: 0 !important;
-}
-/* ✅ MJ : les panneaux restent à gauche (optionnel mais conseillé) */
-body.is-mj #dicePanel,
-body.is-mj #mapPanel,
-body.is-mj #tokenPanel{
-  margin-left: 16px;
-  margin-right: 16px;
-  justify-content: flex-start;
-}
 
 /* ===== MJ Layout propre (avec #mjLayout) ===== */
 body.is-mj{
