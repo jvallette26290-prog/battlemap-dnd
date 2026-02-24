@@ -1037,8 +1037,133 @@ body.is-mj #tokenPanel{
   margin-right: 16px;
   justify-content: flex-start;
 }
-    
+/* =========================
+   LAYOUT MJ "VTT PRO"
+   Map fixe haut-droite + colonne gauche
+   ========================= */
 
+body.is-mj{
+  /* laisse de la place à droite pour la map */
+  --mjBoardW: 800px;
+  --mjBoardH: 550px;
+  --mjGap: 16px;
+  --mjLeftW: 520px; /* largeur colonne outils */
+}
+
+/* ✅ Map fixe haut-droite */
+body.is-mj #board{
+  position: fixed;
+  top: var(--mjGap);
+  right: var(--mjGap);
+  width: var(--mjBoardW);
+  height: var(--mjBoardH);
+  margin: 0 !important;
+  z-index: 20;
+}
+
+/* ✅ Colonne outils à gauche (on ne touche pas au HTML) */
+body.is-mj #mapPanel,
+body.is-mj #dicePanel,
+body.is-mj #tokenPanel{
+  width: var(--mjLeftW);
+  max-width: calc(100vw - var(--mjBoardW) - (var(--mjGap) * 3));
+  margin: 0;
+}
+
+/* Positionne les panneaux dans une "colonne" fixe */
+body.is-mj #mapPanel{
+  position: fixed;
+  top: var(--mjGap);
+  left: var(--mjGap);
+  z-index: 30;
+  justify-content: flex-start;
+  gap: 10px;
+}
+
+body.is-mj #dicePanel{
+  position: fixed;
+  top: calc(var(--mjGap) + 64px);
+  left: var(--mjGap);
+  z-index: 30;
+  justify-content: flex-start;
+  gap: 14px;
+}
+
+body.is-mj #tokenPanel{
+  position: fixed;
+  top: calc(var(--mjGap) + 64px + 150px);
+  left: var(--mjGap);
+  z-index: 30;
+  justify-content: flex-start;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* ✅ "cartes" visuelles (effet pro) */
+body.is-mj #mapPanel,
+body.is-mj #dicePanel,
+body.is-mj #tokenPanel{
+  padding: 12px 14px;
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(10,10,10,0.55);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.55);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+/* ✅ Dice panel: meilleure structure */
+body.is-mj #dicePanel{
+  align-items: center;
+}
+
+/* Résultat du jet : plus "HUD" */
+body.is-mj #diceResult{
+  width: 160px;
+  height: 54px;
+  font-size: 20px;
+  border-radius: 16px;
+  margin-left: 10px;
+}
+
+/* Historique : bien séparé sous le HUD (si #diceMsg est visible MJ) */
+body.is-mj #diceMsg{
+  margin-left: 14px;
+  padding-left: 14px;
+  border-left: 1px solid rgba(255,255,255,0.10);
+  max-width: 260px;
+}
+
+/* ✅ Token panel: inputs plus compacts */
+body.is-mj #tokenPanel input,
+body.is-mj #tokenPanel select{
+  height: 38px;
+}
+
+/* ✅ Place libre : évite que le contenu “passe sous” la map */
+body.is-mj{
+  padding-right: calc(var(--mjBoardW) + (var(--mjGap) * 2));
+}
+
+/* ✅ Mobile: si écran trop petit, on repasse en flux normal */
+@media (max-width: 1200px){
+  body.is-mj{
+    padding-right: 0;
+  }
+  body.is-mj #board,
+  body.is-mj #mapPanel,
+  body.is-mj #dicePanel,
+  body.is-mj #tokenPanel{
+    position: static;
+    width: auto;
+    max-width: none;
+    margin: 10px auto;
+  }
+}    
+body.is-mj #dicePanel{
+  flex-wrap: wrap;
+  row-gap: 10px;
+}
 
 
 
