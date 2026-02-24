@@ -1010,7 +1010,56 @@ body.grid-off #gridOverlay{
 
   </div>
 </div>
-   
+ <!-- ===== Modal Sorts ===== -->
+<div id="spellModal" class="modalHidden">
+  <div class="modalCard">
+
+    <div class="modalHeader">
+      <div id="sTitle">Sorts</div>
+      <button id="sClose">✕</button>
+    </div>
+
+    <div class="modalBody" style="overflow:auto;">
+      <div class="modalGrid">
+        <label>Cantrips</label>
+        <textarea id="sCantrips" rows="4" placeholder="Un par ligne..."></textarea>
+
+        <label>Niv. 1</label>
+        <textarea id="sL1" rows="4"></textarea>
+
+        <label>Niv. 2</label>
+        <textarea id="sL2" rows="4"></textarea>
+
+        <label>Niv. 3</label>
+        <textarea id="sL3" rows="4"></textarea>
+
+        <label>Niv. 4</label>
+        <textarea id="sL4" rows="4"></textarea>
+
+        <label>Niv. 5</label>
+        <textarea id="sL5" rows="4"></textarea>
+
+        <label>Niv. 6</label>
+        <textarea id="sL6" rows="4"></textarea>
+
+        <label>Niv. 7</label>
+        <textarea id="sL7" rows="4"></textarea>
+
+        <label>Niv. 8</label>
+        <textarea id="sL8" rows="4"></textarea>
+
+        <label>Niv. 9</label>
+        <textarea id="sL9" rows="4"></textarea>
+      </div>
+    </div>
+
+    <div class="modalFooter">
+      <div id="sInfo"></div>
+      <button id="sSave">Enregistrer</button>
+    </div>
+
+  </div>
+</div>  
   
   <!-- Firebase temps réel (TOKENS UNIQUEMENT) -->
   <script type="module">
@@ -1262,23 +1311,25 @@ onSnapshot(mapRef, (snap) => {
   board.style.backgroundRepeat = "no-repeat";
 });
 
-    // ===== Gestion touche F =====
+// ===== Gestion touche F et S =====
 let isFPressed = false;
+let isSPressed = false;
 
 document.addEventListener("keydown", (e) => {
-  if (e.key.toLowerCase() === "f") {
-    isFPressed = true;
-  }
+  const k = e.key.toLowerCase();
+  if (k === "f") isFPressed = true;
+  if (k === "s") isSPressed = true;
 });
 
 document.addEventListener("keyup", (e) => {
-  if (e.key.toLowerCase() === "f") {
-    isFPressed = false;
-  }
+  const k = e.key.toLowerCase();
+  if (k === "f") isFPressed = false;
+  if (k === "s") isSPressed = false;
 });
 
-  window.addEventListener("blur", () => {
+window.addEventListener("blur", () => {
   isFPressed = false;
+  isSPressed = false;
 });
     
     // ===== FICHE TOKEN (modal) =====
@@ -1386,6 +1437,133 @@ const mSkillSteaVal = document.getElementById("mSkillSteaVal");
 const mSkillSurvVal = document.getElementById("mSkillSurvVal");
 const mSkillPerfVal = document.getElementById("mSkillPerfVal");   
 let openedTokenId = null;
+// ===== Modal Sorts =====
+const spellModal = document.getElementById("spellModal");
+const sClose = document.getElementById("sClose");
+const sSave  = document.getElementById("sSave");
+const sTitle = document.getElementById("sTitle");
+const sInfo  = document.getElementById("sInfo");
+
+const sCantrips = document.getElementById("sCantrips");
+const sL1 = document.getElementById("sL1");
+const sL2 = document.getElementById("sL2");
+const sL3 = document.getElementById("sL3");
+const sL4 = document.getElementById("sL4");
+const sL5 = document.getElementById("sL5");
+const sL6 = document.getElementById("sL6");
+const sL7 = document.getElementById("sL7");
+const sL8 = document.getElementById("sL8");
+const sL9 = document.getElementById("sL9");
+
+let openedSpellTokenId = null;
+let openedSpellOwners = [];
+let spellCanEdit = false;
+
+function openSpellModal(){
+  spellModal.classList.remove("modalHidden");
+}
+function closeSpellModal(){
+  spellModal.classList.add("modalHidden");
+  openedSpellTokenId = null;
+  if (sInfo) sInfo.textContent = "";
+}
+
+// bouton X
+sClose.addEventListener("click", closeSpellModal);
+
+// clic en dehors de la carte = fermer
+spellModal.addEventListener("click", (e) => {
+  if (e.target === spellModal) closeSpellModal();
+});
+
+// helpers: textarea <-> array
+function txtToArr(txt){
+  return (txt || "")
+    .split("\n")
+    .map(x => x.trim())
+    .filter(Boolean);
+}
+function arrToTxt(arr){
+  return Array.isArray(arr) ? arr.join("\n") : "";
+}
+
+async function loadSpellsToModal(tokenId){
+  openedSpellTokenId = tokenId;
+  sInfo.textContent = "Chargement…";
+  openSpellModal();
+
+  const ref = doc(db, "rooms", roomId, "tokens", tokenId);
+  const snap = await getDoc(ref);
+
+  if (!snap.exists()){
+    sInfo.textContent = "Token introuvable.";
+    return;
+  }
+
+  const t = snap.data();
+  spellCanEdit = canPlayerControlToken(t);
+
+  openedSpellOwners = Array.isArray(t.owners)
+    ? t.owners
+    : (t.owner ? [String(t.owner).trim()].filter(Boolean) : []);
+
+  sTitle.textContent = t.name ? `Sorts : ${t.name}` : `Sorts : ${tokenId}`;
+
+  const sp = t.spells || {};
+
+  sCantrips.value = arrToTxt(sp.cantrips);
+  sL1.value = arrToTxt(sp.l1);
+  sL2.value = arrToTxt(sp.l2);
+  sL3.value = arrToTxt(sp.l3);
+  sL4.value = arrToTxt(sp.l4);
+  sL5.value = arrToTxt(sp.l5);
+  sL6.value = arrToTxt(sp.l6);
+  sL7.value = arrToTxt(sp.l7);
+  sL8.value = arrToTxt(sp.l8);
+  sL9.value = arrToTxt(sp.l9);
+
+  // active/désactive champs
+  [sCantrips, sL1, sL2, sL3, sL4, sL5, sL6, sL7, sL8, sL9, sSave].forEach(el => {
+    el.disabled = !spellCanEdit;
+  });
+
+  sInfo.textContent = spellCanEdit
+    ? (IS_MJ ? "Modifiable (MJ)" : "Modifiable (propriétaire)")
+    : "Lecture seule";
+}
+
+sSave.addEventListener("click", async () => {
+  if (!openedSpellTokenId) return;
+  if (!spellCanEdit) return;
+
+  const ref = doc(db, "rooms", roomId, "tokens", openedSpellTokenId);
+
+  try {
+    await updateDoc(ref, {
+      spells: {
+        cantrips: txtToArr(sCantrips.value),
+        l1: txtToArr(sL1.value),
+        l2: txtToArr(sL2.value),
+        l3: txtToArr(sL3.value),
+        l4: txtToArr(sL4.value),
+        l5: txtToArr(sL5.value),
+        l6: txtToArr(sL6.value),
+        l7: txtToArr(sL7.value),
+        l8: txtToArr(sL8.value),
+        l9: txtToArr(sL9.value),
+      },
+      // on garde les owners existants (important)
+      owners: openedSpellOwners,
+      owner: (openedSpellOwners[0] || ""),
+      updatedAt: serverTimestamp(),
+    });
+
+    sInfo.textContent = "✅ Enregistré";
+  } catch (err) {
+    console.error(err);
+    sInfo.textContent = "❌ Erreur (permissions Firestore ?)";
+  }
+});
 let openedTokenOwners = []; // ✅ owners du token actuellement ouvert
 function openModal(){
   modal.classList.remove("modalHidden");
@@ -1899,6 +2077,16 @@ el.addEventListener("click", (e) => {
 
   e.stopPropagation();
   loadTokenToModal(id);
+});
+  // 🪄 S + clic = ouvrir la fiche sorts
+el.addEventListener("click", (e) => {
+  if (!isSPressed) return;
+
+  const canOpen = canPlayerControlToken(data);
+  if (!canOpen) return;
+
+  e.stopPropagation();
+  loadSpellsToModal(id);
 });
   return el;
 }
