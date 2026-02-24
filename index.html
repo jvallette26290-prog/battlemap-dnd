@@ -723,6 +723,33 @@ body.grid-off #gridOverlay{
   background-repeat: repeat;
   z-index: 5;               /* au-dessus de la map, en-dessous des tokens (tokens z-index:10) */
 }
+
+/* ===== FICHE SORTS : côté PJ = pas de texte, seulement boutons ===== */
+
+/* 1) PJ : on cache les textareas (le MJ garde tout visible) */
+body:not(.is-mj) #spellModal textarea{
+  display: none;
+}
+
+/* 2) Les containers de boutons doivent être dans la colonne de droite */
+#spellModal .modalGrid > div[id$="Btns"]{
+  grid-column: 2 / -1;         /* colonne 2 (à droite) */
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-bottom: 10px;
+}
+
+/* 3) Optionnel : un peu plus de place à gauche pour les labels */
+#spellModal .modalGrid{
+  grid-template-columns: 110px 1fr;
+}
+
+
+
+
+
+
     
 /* ===== Barre PV ===== */
 
