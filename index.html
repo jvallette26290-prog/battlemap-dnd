@@ -1214,8 +1214,82 @@ body.is-mj #diceMsg{
 body.is-mj #diceMsg:empty{
   display: none;
 }
+/* =========================
+   DICE PANEL - PRO FINAL
+   ========================= */
 
+/* Le panel devient une grille : 
+   - ligne 1 = dés
+   - ligne 2 = HUD (résultat + msg)
+*/
+body.is-mj #dicePanel{
+  display: grid !important;
+  grid-template-columns: 1fr 1fr;              /* HUD sur 2 colonnes */
+  grid-auto-rows: auto;
+  align-items: center;
+  gap: 12px 14px;
+}
 
+/* Tous les boutons de dés = rangée 1 */
+body.is-mj #dicePanel .diceBtn{
+  grid-row: 1;
+  margin: 0 !important;                        /* on enlève les marges */
+}
+
+/* Force l’ordre visuel en une vraie ligne (wrap si manque de place) */
+body.is-mj #dicePanel{
+  /* on autorise le retour à la ligne via la largeur du panel */
+}
+
+/* Résultat = rangée 2, colonne 1 */
+body.is-mj #diceResult{
+  grid-row: 2;
+  grid-column: 1;
+  justify-self: start;
+
+  width: 220px;
+  height: 58px;
+  border-radius: 18px;
+  font-size: 22px;
+  font-weight: 900;
+
+  background: linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.04));
+  border: 1px solid rgba(255,255,255,0.14);
+}
+
+/* Historique = rangée 2, colonne 2 */
+body.is-mj #diceMsg{
+  grid-row: 2;
+  grid-column: 2;
+  justify-self: end;
+
+  width: 100%;
+  max-width: 260px;
+
+  margin: 0 !important;
+  padding: 10px 12px;
+
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(255,255,255,0.04);
+
+  font-size: 13px;
+  color: rgba(255,255,255,0.75);
+  line-height: 1.35;
+}
+
+/* Si l'historique est vide, on le cache pour éviter le bloc vide */
+body.is-mj #diceMsg:empty{
+  display: none !important;
+}
+
+/* ✅ Empêche les dés de partir en colonne en cas de conflit */
+body.is-mj #dicePanel{
+  justify-items: start;
+}
+body.is-mj #dicePanel{
+  flex-direction: row !important; /* au cas où */
+}
 
 
 
