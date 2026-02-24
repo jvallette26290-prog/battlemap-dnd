@@ -613,6 +613,26 @@ body.is-mj #board{
 .diceBtn.rolling img{
   animation: spin 0.6s linear infinite;
 }
+
+/* Quand le MJ coupe la grille */
+body.grid-off #gridOverlay{
+  display: none;
+}
+
+/* Style du bouton toggle (MJ) */
+#toggleGridBtn{
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid #333;
+  background: #222;
+  color: #eee;
+  cursor: pointer;
+}
+
+#toggleGridBtn.active{
+  border-color: rgba(120,180,255,0.55);
+  background: rgba(120,180,255,0.18);
+}
     
 #mAuto{
   padding: 10px 14px;
@@ -1036,6 +1056,40 @@ body.is-mj #board{
     const db = getFirestore(app);
     const HEX_REL = 21 / 800; // ✅ hex ≈ 35px quand board ≈ 800px de large
 const gridOverlay = document.getElementById("gridOverlay");
+
+// ===== Bouton ON/OFF grille (MJ uniquement) =====
+if (IS_MJ) {
+  // où mettre le bouton : idéalement dans mapPanel (à côté des maps)
+  const host = document.getElementById("mapPanel") || document.body;
+
+  const btn = document.createElement("button");
+  btn.id = "toggleGridBtn";
+  btn.type = "button";
+  btn.textContent = "🧩 Grille : ON";
+
+  // restaure l'état mémorisé (MJ seulement)
+  const saved = localStorage.getItem("mj_grid_off") === "1";
+  if (saved) document.body.classList.add("grid-off");
+
+  function refreshBtn(){
+    const off = document.body.classList.contains("grid-off");
+    btn.textContent = off ? "🧩 Grille : OFF" : "🧩 Grille : ON";
+    btn.classList.toggle("active", !off);
+  }
+
+  refreshBtn();
+
+  btn.addEventListener("click", () => {
+    document.body.classList.toggle("grid-off");
+
+    const off = document.body.classList.contains("grid-off");
+    localStorage.setItem("mj_grid_off", off ? "1" : "0");
+
+    refreshBtn();
+  });
+
+  host.appendChild(btn);
+}   
 
 /* Génère une grille hexagonale "flat-top" (hexagones à plat) */
 function setHexGrid(hexSizePx = 35, stroke = "rgba(255,255,255,0.35)", strokeWidth = 1){
