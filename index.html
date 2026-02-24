@@ -1679,7 +1679,7 @@ function escapeHtml(str){
 }
 function createTokenElement(id, data){
   const el = document.createElement("div");
-  const tokenSize = Math.round(CURRENT_HEX_PX * 1.20);
+  const tokenSize = Math.round(CURRENT_HEX_PX * 1.50);
 el.style.width  = tokenSize + "px";
 el.style.height = tokenSize + "px";
   el.className = "token " + (data.type === "pnj" ? "pnj" : "pj1"); // couleur fallback
