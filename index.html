@@ -1562,7 +1562,6 @@ const sL6 = document.getElementById("sL6");
 const sL7 = document.getElementById("sL7");
 const sL8 = document.getElementById("sL8");
 const sL9 = document.getElementById("sL9");
-
 // ===== Mise à jour en live =====
 [
   [sCantrips, sCantripsBtns],
@@ -1579,6 +1578,7 @@ const sL9 = document.getElementById("sL9");
   if (!ta || !box) return;
   ta.addEventListener("input", () => renderSpellButtons(ta, box));
 });
+
     
 let openedSpellTokenId = null;
 let openedSpellOwners = [];
