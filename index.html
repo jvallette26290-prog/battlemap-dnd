@@ -1278,8 +1278,26 @@ body.is-mj #mjLayout{
   max-width: 1400px;
   margin: 0 auto;
 }
+/* =========================
+   MJ — centrage réel de la map
+   ========================= */
 
+/* Le layout peut rester large */
+body.is-mj #mjLayout{
+  max-width: none !important;
+}
 
+/* On centre VRAIMENT la colonne droite */
+body.is-mj #mjRight{
+  width: 820px;              /* largeur réelle de la map */
+  margin: 0 auto !important; /* centre dans la fenêtre */
+  align-items: center;
+}
+/* La sidebar n'influence plus le centrage visuel */
+body.is-mj #mjLeft{
+  position: absolute;
+  left: 20px;
+}
 
 
 
