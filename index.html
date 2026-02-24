@@ -1386,7 +1386,6 @@ const mSkillSteaVal = document.getElementById("mSkillSteaVal");
 const mSkillSurvVal = document.getElementById("mSkillSurvVal");
 const mSkillPerfVal = document.getElementById("mSkillPerfVal");   
 let openedTokenId = null;
-let openedTokenId = null;
 let openedTokenOwners = []; // ✅ owners du token actuellement ouvert
 function openModal(){
   modal.classList.remove("modalHidden");
@@ -1638,23 +1637,6 @@ const owners = (tOwner.value || "")
   .map(s => s.trim())
   .filter(Boolean);
 
-// compat : on garde un champ owner string (le 1er)
-const owner = owners[0] || "";
-[mName, mClass, mSubClass, mRace, mHp, mHpTemp, mHpMax, mAc, mProf, mSpeed, mInsp, mLevel, mXp, mHitDice, mDsS1, mDsS2, mDsS3, mDsF1, mDsF2, mDsF3,
- mStatus, mNotes,
- mAuto, mSave,
- // checkboxes skills
- mSkillAcro, mSkillAnim, mSkillArca, mSkillAthl, mSkillDece, mSkillHist, mSkillInsi, mSkillInti,
- mSkillInve, mSkillMedi, mSkillNatu, mSkillPerc, mSkillPers, mSkillReli, mSkillSlei, mSkillStea,
- mSkillSurv, mSkillPerf,
- // valeurs skills
- mSkillAcroVal, mSkillAnimVal, mSkillArcaVal, mSkillAthlVal, mSkillDeceVal, mSkillHistVal, mSkillInsiVal, mSkillIntiVal,
- mSkillInveVal, mSkillMediVal, mSkillNatuVal, mSkillPercVal, mSkillPersVal, mSkillReliVal, mSkillSleiVal, mSkillSteaVal,
- mSkillSurvVal, mSkillPerfVal
-].forEach(el => el.disabled = !canEdit);
-  mInfo.textContent = canEdit
-  ? (IS_MJ ? "Modifiable (MJ)" : "Modifiable (Ton personnage)")
-    : "Lecture seule";
   
   // ===== ACTIVE / DÉSACTIVE LA FICHE =====
   const fields = modal.querySelectorAll("input, textarea, button");
@@ -2000,15 +1982,6 @@ addBtn.addEventListener("click", async () => {
   } catch (err) {
     console.error(err);
     alert("Erreur ajout token");
-  }
-});
-    tName.value = "";
-    tImg.value = "";
-    tOwner.value = "";
-    tName.focus();
-  } catch (err) {
-    console.error("Erreur addDoc token:", err);
-    alert("Impossible d'ajouter le token (permissions Firestore ?)");
   }
 });
 
