@@ -1026,6 +1026,25 @@ body.grid-off #gridOverlay{
     if (IS_MJ) document.body.classList.add("is-mj");
     const PLAYER_ID = (params.get("p") || "").trim(); // ex: ALICE
     const board = document.getElementById("board");
+    // ===== DROITS : qui peut contrôler un token =====
+function canPlayerControlToken(data){
+  if (IS_MJ) return true;
+
+  const pid = (PLAYER_ID || "").trim();
+  if (!pid) return false;
+
+  // Nouveau système (owners[])
+  if (Array.isArray(data.owners) && data.owners.includes(pid)) {
+    return true;
+  }
+
+  // Ancien système (owner string, rétrocompatibilité)
+  if (typeof data.owner === "string" && data.owner.trim() === pid) {
+    return true;
+  }
+
+  return false;
+}
     let CURRENT_HEX_PX = 35; // valeur par défaut
     if (!IS_MJ && !PLAYER_ID) {
   alert("Lien PJ invalide : ajoute ?p=TON_NOM dans l'URL (ex: ?p=ALICE)");
@@ -1607,7 +1626,6 @@ mSkillPerfVal.value = (s.performanceVal ?? "");
 
 
 const owner = (t.owner || "").trim();
-const canEdit = IS_MJ || (owner && owner === PLAYER_ID);
 [mName, mClass, mSubClass, mRace, mHp, mHpTemp, mHpMax, mAc, mProf, mSpeed, mInsp, mLevel, mXp, mHitDice, mDsS1, mDsS2, mDsS3, mDsF1, mDsF2, mDsF3,
  mStatus, mNotes,
  mAuto, mSave,
@@ -1652,6 +1670,7 @@ mSave.addEventListener("click", async () => {
       profBonus: mProf.value === "" ? null : Number(mProf.value), 
       speed: mSpeed.value === "" ? null : Number(mSpeed.value),
       inspiration: mInsp.value === "" ? 0 : Number(mInsp.value),
+      owners: Array.isArray(t.owners) ? t.owners : (t.owner ? [t.owner] : []),
 
       level: mLevel.value === "" ? null : Number(mLevel.value),
       xp: mXp.value === "" ? null : Number(mXp.value),
@@ -1789,7 +1808,7 @@ el.style.width  = tokenSize + "px";
 el.style.height = tokenSize + "px";
   el.className = "token " + (data.type === "pnj" ? "pnj" : "pj1"); // couleur fallback
   el.dataset.id = id;
-  el.dataset.owner = (data.owner || "").trim();
+  el.dataset.owners = Array.isArray(data.owners) ? data.owners.join(",") : ((data.owner || "").trim());
   // === Position du token (relatif prioritaire) ===
 let px = 0;
 let py = 0;
@@ -1843,10 +1862,9 @@ if (cls || race) {
 
   // 🧲 Drag souris
 el.addEventListener("mousedown", (e) => {
-  const owner = (el.dataset.owner || "").trim();
-  const canMove = IS_MJ || (owner && owner === PLAYER_ID);
-  if (!canMove) return;
-
+ const canMove = canPlayerControlToken(data);
+if (!canMove) return;
+  
   activeEl = el;
   activeId = id;
   dx = e.offsetX;
@@ -1855,8 +1873,7 @@ el.addEventListener("mousedown", (e) => {
 
   // 🧲 Drag tactile
   el.addEventListener("touchstart", (e) => {
-  const owner = (el.dataset.owner || "").trim();
-  const canMove = IS_MJ || (owner && owner === PLAYER_ID);
+  const canMove = canPlayerControlToken(data);
   if (!canMove) return;
 
   const touch = e.touches[0];
@@ -1880,8 +1897,7 @@ el.addEventListener("mousedown", (e) => {
 el.addEventListener("click", (e) => {
   if (!isFPressed) return;
 
-  const owner = (el.dataset.owner || "").trim();
-  const canOpen = IS_MJ || (owner && owner === PLAYER_ID);
+  const canOpen = canPlayerControlToken(data);
   if (!canOpen) return;
 
   e.stopPropagation();
@@ -1931,29 +1947,31 @@ addBtn.addEventListener("click", async () => {
   const name = (tName.value || "").trim() || "TOKEN";
   const img  = (tImg.value  || "").trim();
   const type = tType.value;
-  const owner = (tOwner.value || "").trim(); // ex: ALICE (vide = PNJ ou token libre)
+  const owners = (tOwner.value || "")
+  .split(",")
+  .map(s => s.trim())
+  .filter(Boolean);
 
   const x = Math.floor(board.clientWidth / 2) - 25;
   const y = Math.floor(board.clientHeight / 2) - 25;
 
   try {
-    await addDoc(tokensCol, {
+    const owners = owner
+  ? owner.split(",").map(s => s.trim()).filter(Boolean)
+  : [];
+
+await addDoc(tokensCol, {
   name,
   img,
   type,
-  owner,
-
-  // positions RELATIVES (0 → 1)
+  owners,        // ✅ tableau de propriétaires
+  owner: owners[0] || "", 
   rx: 0.5,
   ry: 0.5,
-
-  // positions pixels (temporaire, compatibilité)
   x,
   y,
-
   createdAt: serverTimestamp(),
 });
-
     tName.value = "";
     tImg.value = "";
     tOwner.value = "";
