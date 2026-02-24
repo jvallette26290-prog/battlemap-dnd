@@ -628,15 +628,19 @@ body.is-mj #board{
 } 
 
 /* Boutons dés (icônes) */
+/* 🎲 Bouton invisible sous le dé */
 .diceBtn{
-  width: 20px;
-  height: 20px;
+  width: 25px;
+  height: 25px;
   padding: 0;
-  border-radius: 14px;
-  border: 1px solid #333;
-  background: #1b1b1b;
+
+  background: transparent;
+  border: none;
+  box-shadow: none;
+
   cursor: pointer;
-overflow: visible;
+  overflow: visible;
+
   display: flex;
   align-items: center;
   justify-content: center;
