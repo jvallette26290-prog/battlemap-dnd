@@ -824,7 +824,20 @@ body:not(.is-mj) #spellModal textarea{
   background: rgba(255,255,255,0.05);
   color:#eee;
 }
+/* ===== Emplacements de sorts : checkboxes ===== */
 
+.slotBoxes{
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.slotChk{
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  accent-color: rgba(120,180,255,0.9); /* couleur moderne */
+}
 
 
 
@@ -1828,6 +1841,7 @@ function getSlotRow(levelKey){
 }
 
 function renderSlotRow(levelKey, slotData, canEditMax, canToggleUsed){
+function renderSlotRow(levelKey, slotData, canEditMax, canToggleUsed){
   const row = getSlotRow(levelKey);
   if (!row) return;
 
@@ -1840,19 +1854,25 @@ function renderSlotRow(levelKey, slotData, canEditMax, canToggleUsed){
   inputMax.value = String(max);
   inputMax.disabled = !canEditMax;
 
-  // rebuild boxes
   boxes.innerHTML = "";
-  for (let i = 1; i <= max; i++){
-    const b = document.createElement("div");
-    b.className = "slotBox" + (i <= used ? " used" : "");
-    b.title = `Slot ${i}/${max}`;
-    b.textContent = ""; // tu peux mettre "•" si tu veux
-    b.addEventListener("click", async () => {
-      if (!openedSpellTokenId) return;
-      if (!canToggleUsed) return;
 
-      // toggle logique : clique sur une case = set used = i (ou i-1 si déjà used)
-      const newUsed = (i === used) ? (i - 1) : i;
+  for (let i = 1; i <= max; i++){
+    const chk = document.createElement("input");
+    chk.type = "checkbox";
+    chk.className = "slotChk";
+    chk.checked = i <= used;
+    chk.title = `Emplacement ${i}/${max}`;
+
+    chk.addEventListener("change", async () => {
+      if (!openedSpellTokenId) return;
+      if (!canToggleUsed) {
+        chk.checked = !chk.checked;
+        return;
+      }
+
+      // Recalcule combien de cases sont cochées
+      const all = boxes.querySelectorAll(".slotChk");
+      const newUsed = [...all].filter(c => c.checked).length;
 
       try{
         const ref = doc(db, "rooms", roomId, "tokens", openedSpellTokenId);
@@ -1863,12 +1883,37 @@ function renderSlotRow(levelKey, slotData, canEditMax, canToggleUsed){
         });
       }catch(err){
         console.error(err);
-        if (sInfo) sInfo.textContent = "❌ Erreur slots (permissions ?)";
+        if (sInfo) sInfo.textContent = "❌ Erreur emplacements";
       }
     });
 
-    boxes.appendChild(b);
+    boxes.appendChild(chk);
   }
+
+  // MJ : modification du nombre max
+  inputMax.onchange = async () => {
+    if (!openedSpellTokenId) return;
+    if (!canEditMax) return;
+
+    let newMax = Number(inputMax.value);
+    if (!Number.isFinite(newMax)) newMax = 0;
+    newMax = Math.max(0, Math.min(10, Math.round(newMax)));
+
+    const newUsed = Math.min(used, newMax);
+
+    try{
+      const ref = doc(db, "rooms", roomId, "tokens", openedSpellTokenId);
+      await updateDoc(ref, {
+        [`spellSlots.${levelKey}.max`]: newMax,
+        [`spellSlots.${levelKey}.used`]: newUsed,
+        updatedAt: serverTimestamp(),
+      });
+    }catch(err){
+      console.error(err);
+      if (sInfo) sInfo.textContent = "❌ Erreur emplacements";
+    }
+  };
+}
 
   // changement max (MJ)
   inputMax.onchange = async () => {
