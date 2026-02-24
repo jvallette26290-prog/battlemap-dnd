@@ -117,7 +117,7 @@ body.is-mj #board{
     
     /* Tokens */
     .token{
-  /* on enlève le rond */
+  z-index: 10;
   border-radius: 0;
 
   /* HEXAGONE "flat-top" (haut plat) */
@@ -717,7 +717,7 @@ body.grid-off #gridOverlay{
   cursor: not-allowed;
 }
 /* ===== Grille hexagonale (overlay) ===== */
-#board{ position: relative; }  /* important : pour que l'overlay se place dedans */
+#board{ position: relative; overflow: hidden; }  /* important : pour que l'overlay se place dedans */
 
 #gridOverlay{
   position: absolute;
@@ -1016,19 +1016,6 @@ body:not(.is-mj) .diceHistory{
   visibility: hidden !important;
   opacity: 0 !important;
 }
-/* ✅ MJ : battlemap en haut à droite, taille inchangée */
-body.is-mj #board{
-  position: fixed;     /* sort du flux normal */
-  top: 16px;           /* marge haut */
-  right: 16px;         /* marge droite */
-  margin: 0 !important;
-
-  width: 800px;        /* on garde ta taille MJ */
-  height: 550px;
-
-  z-index: 20;         /* au-dessus de l'UI, sous les modales (9999) */
-}
-
 /* ✅ MJ : les panneaux restent à gauche (optionnel mais conseillé) */
 body.is-mj #dicePanel,
 body.is-mj #mapPanel,
@@ -1312,76 +1299,6 @@ body.is-mj #board{
   z-index: 20;
 }
 
-/* ✅ Ligne des dés : sous la map */
-body.is-mj #dicePanel{
-  position: fixed;
-  top: calc(var(--mjGap) + var(--mjBoardH) + 10px);
-  right: var(--mjGap);
-  width: var(--mjHudW);
-  margin: 0;
-
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 18px;
-  flex-wrap: nowrap;
-
-  padding: 10px 12px;
-  border-radius: 18px;
-  border: 1px solid rgba(255,255,255,0.10);
-  background: rgba(10,10,10,0.55);
-  box-shadow: 0 20px 60px rgba(0,0,0,0.55);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-
-  z-index: 30;
-}
-
-/* ✅ Résultat + historique : juste sous la ligne des dés */
-body.is-mj #diceResult{
-  position: fixed;
-  top: calc(var(--mjGap) + var(--mjBoardH) + 10px + 84px);
-  right: calc(var(--mjGap) + (var(--mjHudW) - 240px));
-  width: 240px;
-  height: 56px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  border-radius: 18px;
-  font-size: 22px;
-  font-weight: 900;
-
-  background: linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.04));
-  border: 1px solid rgba(255,255,255,0.14);
-  box-shadow: 0 18px 50px rgba(0,0,0,0.55);
-
-  z-index: 30;
-}
-
-/* Historique MJ à côté du résultat */
-body.is-mj #diceMsg{
-  position: fixed;
-  top: calc(var(--mjGap) + var(--mjBoardH) + 10px + 84px);
-  right: var(--mjGap);
-  width: calc(var(--mjHudW) - 260px);
-  min-height: 56px;
-
-  margin: 0 !important;
-  padding: 12px 14px;
-
-  border-radius: 18px;
-  border: 1px solid rgba(255,255,255,0.10);
-  background: rgba(255,255,255,0.04);
-
-  font-size: 13px;
-  color: rgba(255,255,255,0.75);
-  line-height: 1.35;
-
-  z-index: 30;
-}
-
 /* si vide, on masque */
 body.is-mj #diceMsg:empty{
   display: none !important;
@@ -1396,18 +1313,7 @@ body.is-mj .diceBtn{
 body.is-mj{
   padding-right: calc(var(--mjBoardW) + (var(--mjGap) * 2));
 }
-/* =========================
-   MJ LAYOUT PRO (FINAL CLEAN)
-   ========================= */
-
-/* PJ : on ne touche à rien */
-body:not(.is-mj) #mjLayout,
-body:not(.is-mj) #mjLeft,
-body:not(.is-mj) #mjRight{
-  all: unset;
-}
-
-/* MJ : grille 2 colonnes */
+/* ===== MJ Layout propre (avec #mjLayout) ===== */
 body.is-mj{
   --gap: 16px;
   --leftW: 520px;
@@ -1418,7 +1324,6 @@ body.is-mj{
   padding: var(--gap);
 }
 
-/* Conteneur global */
 body.is-mj #mjLayout{
   display: grid;
   grid-template-columns: var(--leftW) var(--boardW);
@@ -1426,171 +1331,29 @@ body.is-mj #mjLayout{
   align-items: start;
 }
 
-/* Colonne gauche */
 body.is-mj #mjLeft{
   display: flex;
   flex-direction: column;
   gap: var(--gap);
 }
 
-/* Colonne droite */
 body.is-mj #mjRight{
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
 
-/* ✅ Battlemap fixe haut-droite (dans sa colonne) */
+/* board normal (pas fixed) */
 body.is-mj #board{
   width: var(--boardW);
   height: var(--boardH);
   margin: 0 !important;
-  border-radius: 18px;
-  overflow: hidden;
-  position: sticky;      /* reste visible en haut si scroll */
-  top: var(--gap);
-  z-index: 10;
 }
 
-/* ✅ Cartes UI */
-body.is-mj #mapPanel,
-body.is-mj #tokenPanel{
-  width: 100%;
-  margin: 0;
-  padding: 14px;
-  border-radius: 18px;
-  border: 1px solid rgba(255,255,255,0.10);
-  background: rgba(10,10,10,0.55);
-  box-shadow: 0 20px 60px rgba(0,0,0,0.55);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-}
-
-/* Map panel : boutons alignés */
-body.is-mj #mapPanel{
-  justify-content: flex-start;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-/* Token panel : compact */
-body.is-mj #tokenPanel{
-  justify-content: flex-start;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-/* =========================
-   DICE BAR (sous la map)
-   ========================= */
+/* dicePanel normal (pas fixed) */
 body.is-mj #dicePanel{
   width: var(--boardW);
   margin: 0;
-  padding: 12px 14px;
-
-  border-radius: 18px;
-  border: 1px solid rgba(255,255,255,0.10);
-  background: rgba(10,10,10,0.55);
-  box-shadow: 0 20px 60px rgba(0,0,0,0.55);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-
-  display: grid;
-  grid-template-columns: 1fr 220px;  /* dés | résultat */
-  align-items: center;
-  gap: 14px;
-}
-
-/* Ligne des dés : une rangée propre, scroll horizontal si besoin */
-body.is-mj #dicePanel .diceBtn{
-  margin: 0 !important;
-}
-body.is-mj #dicePanel{
-  overflow: hidden;
-}
-body.is-mj #dicePanel{
-  /* on met les dés dans la 1ère colonne via flex */
-}
-body.is-mj #dicePanel > .diceBtn{
-  grid-column: 1;
-}
-
-/* ⚠️ Comme tes dés sont des éléments directs du panel,
-   on force une "ligne" en wrap via un conteneur virtuel :
-   on transforme #dicePanel en flex pour les dés et on garde le HUD via position.
-   => plus simple : on crée une zone “dés” via :has() n’existe pas partout.
-   Donc on va utiliser une astuce CSS : on remet les dés en inline-flex
-   et on laisse le résultat en fin.
-*/
-body.is-mj #dicePanel{
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 14px;
-}
-body.is-mj #dicePanel{
-  flex-wrap: nowrap;
-}
-
-/* Dés : alignés + espace régulier */
-body.is-mj .diceBtn{
-  display: inline-flex;
-}
-body.is-mj .diceBtn + .diceBtn{
-  margin-left: 18px !important;
-}
-
-/* Résultat : HUD à droite */
-body.is-mj #diceResult{
-  flex: 0 0 auto;
-  width: 220px;
-  height: 58px;
-  border-radius: 18px;
-  font-size: 22px;
-  font-weight: 900;
-
-  background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.05));
-  border: 1px solid rgba(255,255,255,0.14);
-}
-
-/* MJ Historique : on le met dans la colonne gauche (si tu veux l’afficher) */
-body.is-mj #diceMsg{
-  width: 100%;
-  margin: 0;
-  padding: 12px 14px;
-
-  border-radius: 18px;
-  border: 1px solid rgba(255,255,255,0.10);
-  background: rgba(10,10,10,0.55);
-  box-shadow: 0 20px 60px rgba(0,0,0,0.55);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-
-  font-size: 13px;
-  color: rgba(255,255,255,0.75);
-  line-height: 1.35;
-}
-
-/* PJ : historique jamais visible */
-body:not(.is-mj) #diceMsg{
-  display: none !important;
-}
-
-/* Responsive : si écran trop petit */
-@media (max-width: 1250px){
-  body.is-mj #mjLayout{
-    grid-template-columns: 1fr;
-  }
-  body.is-mj #mjRight{
-    order: 1;
-  }
-  body.is-mj #mjLeft{
-    order: 2;
-  }
-  body.is-mj #board,
-  body.is-mj #dicePanel{
-    width: min(96vw, var(--boardW));
-  }
 }
 
 
@@ -1607,25 +1370,55 @@ body:not(.is-mj) #diceMsg{
 
 <body>
 <div id="mjLayout">
+
   <div id="mjLeft">
- <div id="board">
- 
-<div id="diceLog">
-  <div id="diceLogTitle">Historique des jets</div>
-  <div id="diceLogItems"></div>
-</div>
-  <div id="tokenPanel">
-  <input id="tName" placeholder="Nom (ex: GOBELIN)" />
-  <input id="tImg" placeholder="Image (ex: gob.png ou URL)" />
-  <input id="tOwner" placeholder="Propriétaire PJ (ex: ALICE) - vide pour PNJ" />
-  <select id="tType">
-    <option value="pj">PJ</option>
-    <option value="pnj">PNJ</option>
-  </select>
-  <button id="addToken">+ Ajouter token</button>
-</div>
-<div id="mjRight">
-   <div id="gridOverlay"></div>
+
+    <div id="diceLog">
+      <div id="diceLogTitle">Historique des jets</div>
+      <div id="diceLogItems"></div>
+    </div>
+
+    <div id="tokenPanel">
+      <input id="tName" placeholder="Nom (ex: GOBELIN)" />
+      <input id="tImg" placeholder="Image (ex: gob.png ou URL)" />
+      <input id="tOwner" placeholder="Propriétaire PJ (ex: ALICE) - vide pour PNJ" />
+      <select id="tType">
+        <option value="pj">PJ</option>
+        <option value="pnj">PNJ</option>
+      </select>
+      <button id="addToken">+ Ajouter token</button>
+    </div>
+
+    <div id="mapPanel">
+      <button class="mapBtn" data-map="taverne">🍻 Taverne</button>
+      <button class="mapBtn" data-map="donjon">🧱 Donjon</button>
+      <button class="mapBtn" data-map="foret">🌲 Forêt</button>
+    </div>
+
+  </div>
+
+  <div id="mjRight">
+
+    <div id="board">
+      <div id="gridOverlay"></div>
+      <!-- tokens injectés ici par JS -->
+    </div>
+
+    <div id="dicePanel">
+      <button id="rollD4" class="diceBtn" title="Lancer un D4"><img src="d4.png" alt="D4"></button>
+      <button id="rollD6" class="diceBtn" title="Lancer un D6"><img src="d6.png" alt="D6"></button>
+      <button id="rollD8" class="diceBtn" title="Lancer un D8"><img src="d8.png" alt="D8"></button>
+      <button id="rollD10" class="diceBtn" title="Lancer un D10"><img src="d10.png" alt="D10"></button>
+      <button id="rollD12" class="diceBtn" title="Lancer un D12"><img src="d12.png" alt="D12"></button>
+      <button id="rollD20" class="diceBtn" title="Lancer un D20"><img src="d20.png" alt="D20"></button>
+      <button id="rollD100" class="diceBtn" title="Lancer un D100"><img src="d100.png" alt="D100"></button>
+
+      <div id="diceResult">—</div>
+      <div id="diceMsg"></div>
+    </div>
+
+  </div>
+
 </div>
   <div id="mapPanel">
   <button class="mapBtn" data-map="taverne">🍻 Taverne</button>
@@ -2151,41 +1944,38 @@ function canPlayerControlToken(data){
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
-    const HEX_REL = 21 / 800; // ✅ hex ≈ 35px quand board ≈ 800px de large
+    const HEX_REL = 21 / 800; 
 const gridOverlay = document.getElementById("gridOverlay");
 
 // ===== Bouton ON/OFF grille (MJ uniquement) =====
 if (IS_MJ) {
-  // où mettre le bouton : idéalement dans mapPanel (à côté des maps)
-  const host = document.getElementById("mapPanel") || document.body;
+  const host = document.getElementById("mapPanel");
+  if (host) {
+    const btn = document.createElement("button");
+    btn.id = "toggleGridBtn";
+    btn.type = "button";
 
-  const btn = document.createElement("button");
-  btn.id = "toggleGridBtn";
-  btn.type = "button";
-  btn.textContent = "🧩 Grille : ON";
+    // restaure l'état mémorisé
+    const savedOff = localStorage.getItem("mj_grid_off") === "1";
+    if (savedOff) document.body.classList.add("grid-off");
 
-  // restaure l'état mémorisé (MJ seulement)
-  const saved = localStorage.getItem("mj_grid_off") === "1";
-  if (saved) document.body.classList.add("grid-off");
-
-  function refreshBtn(){
-    const off = document.body.classList.contains("grid-off");
-    btn.textContent = off ? "🧩 Grille : OFF" : "🧩 Grille : ON";
-    btn.classList.toggle("active", !off);
-  }
-
-  refreshBtn();
-
-  btn.addEventListener("click", () => {
-    document.body.classList.toggle("grid-off");
-
-    const off = document.body.classList.contains("grid-off");
-    localStorage.setItem("mj_grid_off", off ? "1" : "0");
+    function refreshBtn(){
+      const off = document.body.classList.contains("grid-off");
+      btn.textContent = off ? "🧩 Grille : OFF" : "🧩 Grille : ON";
+      btn.classList.toggle("active", !off);
+    }
 
     refreshBtn();
-  });
 
-  host.appendChild(btn);
+    btn.addEventListener("click", () => {
+      document.body.classList.toggle("grid-off");
+      const off = document.body.classList.contains("grid-off");
+      localStorage.setItem("mj_grid_off", off ? "1" : "0");
+      refreshBtn();
+    });
+
+    host.appendChild(btn);
+  }
 }   
 
 /* Génère une grille hexagonale "flat-top" (hexagones à plat) */
@@ -3210,7 +3000,7 @@ const tokensCol = collection(db, "rooms", roomId, "tokens");
 let activeEl = null;
 let activeId = null;
 let dx = 0, dy = 0;
-
+let wasDragged = false;
 // Crée un élément token HTML
 function escapeHtml(str){
   return String(str)
@@ -3271,7 +3061,7 @@ if (cls || race) {
 el.addEventListener("mousedown", (e) => {
  const canMove = canPlayerControlToken(data);
 if (!canMove) return;
-  
+  wasDragged = false;
   activeEl = el;
   activeId = id;
   dx = e.offsetX;
@@ -3302,6 +3092,7 @@ if (!canMove) return;
   }
 // 📝 F + clic = ouvrir la fiche
 el.addEventListener("click", (e) => {
+  if (wasDragged) return;
   if (!isFPressed) return;
 
   const canOpen = canPlayerControlToken(data);
@@ -3312,6 +3103,7 @@ el.addEventListener("click", (e) => {
 });
   // 🪄 S + clic = ouvrir la fiche sorts
 el.addEventListener("click", (e) => {
+  if (wasDragged) return;
   if (!isSPressed) return;
 
   const canOpen = canPlayerControlToken(data);
@@ -3396,6 +3188,7 @@ addBtn.addEventListener("click", async () => {
 // Déplacement souris
 document.addEventListener("mousemove", (e) => {
   if (!activeEl) return;
+  wasDragged = true;
   const r = board.getBoundingClientRect();
   let x = e.clientX - r.left - dx;
   let y = e.clientY - r.top  - dy;
@@ -3438,6 +3231,7 @@ document.addEventListener("mouseup", async () => {
   const ry = board.clientHeight ? p.y / board.clientHeight : 0;
 
   await updateDoc(doc(db, "rooms", roomId, "tokens", id), { rx, ry, x: p.x, y: p.y });
+  wasDragged = false;
 });
 
 // Déplacement tactile
@@ -3481,6 +3275,7 @@ document.addEventListener("touchend", async () => {
   const ry = board.clientHeight ? p.y / board.clientHeight : 0;
 
   await updateDoc(doc(db, "rooms", roomId, "tokens", id), { rx, ry, x: p.x, y: p.y });
+  wasDragged = false;
 }, { passive: true });
     
 // ===== DÉS synchronisés (D4/D6/D8/D10/D12/D20/D100) + cooldown partagé =====
