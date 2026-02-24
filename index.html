@@ -1606,9 +1606,26 @@ body:not(.is-mj) #diceMsg{
 </head>
 
 <body>
-
+<div id="mjLayout">
+  <div id="mjLeft">
  <div id="board">
-  <div id="gridOverlay"></div>
+ 
+<div id="diceLog">
+  <div id="diceLogTitle">Historique des jets</div>
+  <div id="diceLogItems"></div>
+</div>
+  <div id="tokenPanel">
+  <input id="tName" placeholder="Nom (ex: GOBELIN)" />
+  <input id="tImg" placeholder="Image (ex: gob.png ou URL)" />
+  <input id="tOwner" placeholder="Propriétaire PJ (ex: ALICE) - vide pour PNJ" />
+  <select id="tType">
+    <option value="pj">PJ</option>
+    <option value="pnj">PNJ</option>
+  </select>
+  <button id="addToken">+ Ajouter token</button>
+</div>
+<div id="mjRight">
+   <div id="gridOverlay"></div>
 </div>
   <div id="mapPanel">
   <button class="mapBtn" data-map="taverne">🍻 Taverne</button>
@@ -1629,21 +1646,6 @@ body:not(.is-mj) #diceMsg{
   <div id="diceResult">—</div>
   <div id="diceMsg"></div>
 </div>
-<div id="diceLog">
-  <div id="diceLogTitle">Historique des jets</div>
-  <div id="diceLogItems"></div>
-</div>
-  <div id="tokenPanel">
-  <input id="tName" placeholder="Nom (ex: GOBELIN)" />
-  <input id="tImg" placeholder="Image (ex: gob.png ou URL)" />
-  <input id="tOwner" placeholder="Propriétaire PJ (ex: ALICE) - vide pour PNJ" />
-  <select id="tType">
-    <option value="pj">PJ</option>
-    <option value="pnj">PNJ</option>
-  </select>
-  <button id="addToken">+ Ajouter token</button>
-</div>
-  
 <div id="tokenModal" class="modalHidden">
   <div class="modalCard">
 
@@ -2066,7 +2068,8 @@ body:not(.is-mj) #diceMsg{
 
   </div>
 </div>  
-
+</div>
+</div>
 
 
 
