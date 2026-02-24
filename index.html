@@ -643,13 +643,15 @@ overflow: visible;
 }
 
 .diceBtn img{
-  width: 64px;
-  height: 64px;
+  width: 96px;
+  height: 96px;
   object-fit: contain;
   user-select: none;
   -webkit-user-drag: none;
   pointer-events: none;
-  filter: drop-shadow(0 4px 10px rgba(0,0,0,0.6));
+  filter:
+    drop-shadow(0 6px 14px rgba(0,0,0,0.75))
+    drop-shadow(0 0 18px rgba(255,120,40,0.35));
 }
 .diceBtn:hover{
   background: #222;
