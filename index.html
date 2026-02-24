@@ -1625,7 +1625,13 @@ mSkillPerfVal.value = (s.performanceVal ?? "");
 
 
 
-const owner = (t.owner || "").trim();
+const owners = (tOwner.value || "")
+  .split(",")
+  .map(s => s.trim())
+  .filter(Boolean);
+
+// compat : on garde un champ owner string (le 1er)
+const owner = owners[0] || "";
 [mName, mClass, mSubClass, mRace, mHp, mHpTemp, mHpMax, mAc, mProf, mSpeed, mInsp, mLevel, mXp, mHitDice, mDsS1, mDsS2, mDsS3, mDsF1, mDsF2, mDsF3,
  mStatus, mNotes,
  mAuto, mSave,
@@ -1964,8 +1970,8 @@ await addDoc(tokensCol, {
   name,
   img,
   type,
-  owners,        // ✅ tableau de propriétaires
-  owner: owners[0] || "", 
+  owner,        // ✅ tableau de propriétaires
+  owners,
   rx: 0.5,
   ry: 0.5,
   x,
