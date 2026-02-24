@@ -1038,68 +1038,52 @@ body.is-mj #tokenPanel{
   justify-content: flex-start;
 }
 /* =========================
-   LAYOUT MJ "VTT PRO"
-   Map fixe haut-droite + colonne gauche
+   MJ LAYOUT V2 (NO OVERLAP)
+   Sidebar gauche + map fixe droite
    ========================= */
 
 body.is-mj{
-  /* laisse de la place à droite pour la map */
+  --mjGap: 16px;
   --mjBoardW: 800px;
   --mjBoardH: 550px;
-  --mjGap: 16px;
-  --mjLeftW: 520px; /* largeur colonne outils */
+  --mjSideW: 520px;
+
+  /* 2 colonnes : gauche (sidebar), droite (map) */
+  display: grid;
+  grid-template-columns: minmax(360px, var(--mjSideW)) var(--mjBoardW);
+  grid-template-rows: var(--mjBoardH);
+  gap: var(--mjGap);
+  padding: var(--mjGap);
+  align-items: start;
 }
 
-/* ✅ Map fixe haut-droite */
+/* ✅ Map en haut-droite, taille fixe */
 body.is-mj #board{
-  position: fixed;
-  top: var(--mjGap);
-  right: var(--mjGap);
+  grid-column: 2;
+  grid-row: 1;
   width: var(--mjBoardW);
   height: var(--mjBoardH);
   margin: 0 !important;
+  position: sticky;  /* reste visible en haut si tu scroll */
+  top: var(--mjGap);
   z-index: 20;
 }
 
-/* ✅ Colonne outils à gauche (on ne touche pas au HTML) */
+/* ✅ Sidebar : on empile les blocs sans chevauchement */
 body.is-mj #mapPanel,
 body.is-mj #dicePanel,
 body.is-mj #tokenPanel{
-  width: var(--mjLeftW);
-  max-width: calc(100vw - var(--mjBoardW) - (var(--mjGap) * 3));
+  width: 100%;
   margin: 0;
-}
-
-/* Positionne les panneaux dans une "colonne" fixe */
-body.is-mj #mapPanel{
-  position: fixed;
-  top: var(--mjGap);
-  left: var(--mjGap);
-  z-index: 30;
   justify-content: flex-start;
-  gap: 10px;
 }
 
-body.is-mj #dicePanel{
-  position: fixed;
-  top: calc(var(--mjGap) + 64px);
-  left: var(--mjGap);
-  z-index: 30;
-  justify-content: flex-start;
-  gap: 14px;
-}
+/* Place les 3 panneaux dans la colonne gauche */
+body.is-mj #mapPanel{ grid-column: 1; grid-row: 1; }
+body.is-mj #dicePanel{ grid-column: 1; grid-row: 1; margin-top: 92px; }
+body.is-mj #tokenPanel{ grid-column: 1; grid-row: 1; margin-top: 270px; }
 
-body.is-mj #tokenPanel{
-  position: fixed;
-  top: calc(var(--mjGap) + 64px + 150px);
-  left: var(--mjGap);
-  z-index: 30;
-  justify-content: flex-start;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-/* ✅ "cartes" visuelles (effet pro) */
+/* ✅ “Cartes” visuelles */
 body.is-mj #mapPanel,
 body.is-mj #dicePanel,
 body.is-mj #tokenPanel{
@@ -1112,59 +1096,63 @@ body.is-mj #tokenPanel{
   -webkit-backdrop-filter: blur(10px);
 }
 
-/* ✅ Dice panel: meilleure structure */
+/* ✅ Dice panel : il grandit (dés énormes) sans casser */
 body.is-mj #dicePanel{
+  flex-wrap: wrap;
+  gap: 16px;
+  row-gap: 12px;
   align-items: center;
 }
 
-/* Résultat du jet : plus "HUD" */
+/* ✅ Résultat : style HUD */
 body.is-mj #diceResult{
-  width: 160px;
-  height: 54px;
-  font-size: 20px;
+  width: 180px;
+  height: 56px;
   border-radius: 16px;
-  margin-left: 10px;
+  font-size: 20px;
 }
 
-/* Historique : bien séparé sous le HUD (si #diceMsg est visible MJ) */
+/* ✅ Historique MJ : passe en dessous proprement */
 body.is-mj #diceMsg{
-  margin-left: 14px;
-  padding-left: 14px;
-  border-left: 1px solid rgba(255,255,255,0.10);
-  max-width: 260px;
+  width: 100%;
+  margin: 6px 0 0;
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(255,255,255,0.04);
 }
 
-/* ✅ Token panel: inputs plus compacts */
+/* ✅ Token panel : compact + wrap propre */
+body.is-mj #tokenPanel{
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
 body.is-mj #tokenPanel input,
 body.is-mj #tokenPanel select{
   height: 38px;
 }
 
-/* ✅ Place libre : évite que le contenu “passe sous” la map */
+/* ✅ Si la hauteur du contenu gauche dépasse : scroll page OK, map reste visible */
 body.is-mj{
-  padding-right: calc(var(--mjBoardW) + (var(--mjGap) * 2));
+  overflow-y: auto;
 }
 
-/* ✅ Mobile: si écran trop petit, on repasse en flux normal */
-@media (max-width: 1200px){
+/* ✅ Responsive : si écran trop petit, on repasse en flux normal */
+@media (max-width: 1250px){
   body.is-mj{
-    padding-right: 0;
+    display: block;
+    padding: 10px;
   }
-  body.is-mj #board,
-  body.is-mj #mapPanel,
-  body.is-mj #dicePanel,
-  body.is-mj #tokenPanel{
-    position: static;
+  body.is-mj #board{
+    position: relative;
     width: auto;
-    max-width: none;
-    margin: 10px auto;
+    height: auto;
+    aspect-ratio: 4/3;
+    margin: 10px auto !important;
   }
-}    
-body.is-mj #dicePanel{
-  flex-wrap: wrap;
-  row-gap: 10px;
 }
-
 
 
     
