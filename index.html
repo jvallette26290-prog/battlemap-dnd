@@ -868,7 +868,126 @@ body:not(.is-mj) .slotRow{
   padding-bottom: 14px;
   margin-bottom: 14px;
 }
+/* ===== DICE UI (VTT Pro) ===== */
+#dicePanel{
+  width: min(1100px, calc(100vw - 24px));
+  margin: 14px auto 26px;
+  gap: 18px;
+  padding: 12px 14px;
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: linear-gradient(180deg, rgba(25,25,25,0.92), rgba(14,14,14,0.92));
+  box-shadow: 0 18px 60px rgba(0,0,0,0.55);
+}
 
+/* Boutons dés : plus “cliquables” */
+.diceBtn{
+  width: 44px;
+  height: 44px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(255,255,255,0.06);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
+  transition: transform .08s ease, background .15s ease, border-color .15s ease;
+}
+
+.diceBtn:hover{
+  background: rgba(255,255,255,0.10);
+  border-color: rgba(255,255,255,0.22);
+  transform: translateY(-1px);
+}
+
+.diceBtn:active{
+  transform: translateY(0px) scale(0.98);
+}
+
+/* Important : tes images étaient énormes (120px). On les met propres */
+.diceBtn img{
+  width: 34px;
+  height: 34px;
+}
+
+/* Résultat style “card” */
+#diceResult{
+  width: 190px;
+  height: 54px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(255,255,255,0.05);
+  font-weight: 900;
+  font-size: 18px;
+  letter-spacing: 0.3px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
+}
+
+/* Message (nom du joueur / crit) */
+#diceMsg{
+  min-width: 280px;
+  font-size: 13px;
+  color: rgba(255,255,255,0.75);
+}
+
+/* Animation “pulse” du bouton cliqué */
+@keyframes dicePulse{
+  0%   { transform: scale(1);   filter: brightness(1); }
+  35%  { transform: scale(1.08);filter: brightness(1.25); }
+  100% { transform: scale(1);   filter: brightness(1); }
+}
+.diceBtn.pulsing{
+  animation: dicePulse .35s ease;
+}
+
+/* Effet Crit D20 */
+#diceResult.crit{
+  border-color: rgba(140,255,190,0.55);
+  background: rgba(140,255,190,0.10);
+}
+
+#diceResult.fumble{
+  border-color: rgba(255,160,160,0.55);
+  background: rgba(255,160,160,0.10);
+}
+
+/* Historique des jets */
+#diceLog{
+  width: min(1100px, calc(100vw - 24px));
+  margin: 0 auto 20px;
+  padding: 10px 14px;
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(0,0,0,0.25);
+  color: rgba(255,255,255,0.82);
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+#diceLogTitle{
+  font-weight: 900;
+  margin-bottom: 8px;
+  opacity: .9;
+}
+
+.diceLogItem{
+  display:flex;
+  justify-content:space-between;
+  gap: 12px;
+  padding: 6px 0;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+
+.diceLogItem:first-of-type{
+  border-top: none;
+}
+
+.diceTag{
+  font-weight: 900;
+  opacity: .9;
+}
+
+.diceMeta{
+  opacity: .75;
+  white-space: nowrap;
+}
 
 
 
@@ -910,7 +1029,10 @@ body:not(.is-mj) .slotRow{
   <div id="diceResult">—</div>
   <div id="diceMsg"></div>
 </div>
-
+<div id="diceLog">
+  <div id="diceLogTitle">Historique des jets</div>
+  <div id="diceLogItems"></div>
+</div>
   <div id="tokenPanel">
   <input id="tName" placeholder="Nom (ex: GOBELIN)" />
   <input id="tImg" placeholder="Image (ex: gob.png ou URL)" />
@@ -2746,11 +2868,48 @@ document.addEventListener("touchend", async () => {
 }, { passive: true });
     
 // ===== DÉS synchronisés (D4/D6/D8/D10/D12/D20/D100) + cooldown partagé =====
+    function pulseButton(btn){
+  if (!btn) return;
+
+  btn.classList.remove("pulsing");
+  void btn.offsetWidth; // relance l’animation
+  btn.classList.add("pulsing");
+
+  setTimeout(() => {
+    btn.classList.remove("pulsing");
+  }, 400);
+}
 const diceRef = doc(db, "rooms", roomId, "sync", "dice");
 
 const diceRes = document.getElementById("diceResult");
 const diceMsg = document.getElementById("diceMsg");
+const diceLogItems = document.getElementById("diceLogItems");
 
+function pushDiceLog({label, value, sides, who, isCrit, isFumble}){
+  if (!diceLogItems) return;
+
+  const time = new Date().toLocaleTimeString([], {hour: "2-digit", minute:"2-digit"});
+  const div = document.createElement("div");
+  div.className = "diceLogItem";
+
+  const left = document.createElement("div");
+  left.innerHTML = `<span class="diceTag">${label}</span> → <b>${value}</b>${isCrit ? " ✅ CRIT" : ""}${isFumble ? " ❌ ÉCHEC" : ""}`;
+
+  const right = document.createElement("div");
+  right.className = "diceMeta";
+  right.textContent = `${who || "?"} • ${time}`;
+
+  div.appendChild(left);
+  div.appendChild(right);
+
+  // Ajoute en haut
+  diceLogItems.prepend(div);
+
+  // Garde seulement les 10 derniers
+  while (diceLogItems.children.length > 10){
+    diceLogItems.removeChild(diceLogItems.lastChild);
+  }
+}
 const DICE = [
   { id: "rollD4", sides: 4, label: "D4" },
   { id: "rollD6", sides: 6, label: "D6" },
@@ -2797,26 +2956,50 @@ function setRolling(isRolling){
   });
 }
 
-function playRollAnimation(label, sides, finalValue) {
+function playRollAnimation(label, sides, finalValue, opts = {}) {
   setAllDiceDisabled(true);
-  setRolling(true);
+
+  // reset styles crit/fumble
+  diceRes.classList.remove("crit", "fumble");
 
   const start = Date.now();
-  const duration = 900;
+  const duration = 650;
 
   diceRes.textContent = "…";
-  showMsg(`${label} en cours...`);
+  showMsg(`${label}...`);
 
   const ticker = setInterval(() => {
     diceRes.textContent = `${label} : ${randIntCrypto(1, sides)}`;
+
     if (Date.now() - start > duration) {
       clearInterval(ticker);
-      setRolling(false);
+
       diceRes.textContent = `${label} : ${finalValue}`;
       showMsg("");
+
+      // D20 crit/fumble
+      const isD20 = sides === 20;
+      const isCrit = isD20 && finalValue === 20;
+      const isFumble = isD20 && finalValue === 1;
+
+      if (isCrit) diceRes.classList.add("crit");
+      if (isFumble) diceRes.classList.add("fumble");
+
+      // Historique (si tu as fait le point 2 + B)
+      if (typeof pushDiceLog === "function") {
+        pushDiceLog({
+          label,
+          value: finalValue,
+          sides,
+          who: opts.who,
+          isCrit,
+          isFumble
+        });
+      }
+
       setAllDiceDisabled(false);
     }
-  }, 60);
+  }, 55);
 }
 
 // Tout le monde écoute Firestore : affiche le même résultat
@@ -2834,7 +3017,7 @@ onSnapshot(diceRef, (snap) => {
   if (!Number.isFinite(sides) || sides < 2) return;
   if (!Number.isFinite(value) || value < 1 || value > sides) return;
 
-  playRollAnimation(label, sides, value);
+  playRollAnimation(label, sides, value, { who: data.by || "" });
 });
 
 // Clic sur n’importe quel dé => tente un nouveau jet (cooldown partagé)
@@ -2843,9 +3026,12 @@ DICE.forEach(d => {
   if (!btn) return;
 
   btn.addEventListener("click", async () => {
+
+    pulseButton(btn);
+    
     if (btn.disabled) return;
     showMsg("");
-
+    const whoName = IS_MJ ? "MJ" : (PLAYER_ID || "PJ");
     const value = randIntCrypto(1, d.sides);
     const rollId = (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random());
 
@@ -2868,7 +3054,7 @@ DICE.forEach(d => {
           label: d.label,
           value,
           rollId,
-          by: clientId,
+          by: whoName,
           lastRollMs: now,
           at: serverTimestamp(),
         }, { merge: true });
