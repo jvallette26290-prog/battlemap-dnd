@@ -1101,21 +1101,35 @@ body.is-mj #gridOverlay{
   opacity: 0.28;
 }
 
-/* Dés : vraie barre HUD sous la map */
 body.is-mj #dicePanel{
-  width: 100% !important;
-  margin: 0 !important;
-
-  display: grid;
-  grid-template-columns: 1fr;
+  width: var(--boardW);
+  margin: 0;
+  display: flex;
+  flex-direction: column;
   gap: 12px;
-
-  padding: 12px 14px;
-  border-radius: 18px;
-  border: 1px solid rgba(255,255,255,0.12);
-  background: linear-gradient(180deg, rgba(22,22,26,0.85), rgba(12,12,14,0.75));
-  box-shadow: 0 18px 60px rgba(0,0,0,0.55);
 }
+
+/* ✅ rangée horizontale des dés */
+body.is-mj #diceRow{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+/* ✅ HUD résultat + message sur une ligne */
+body.is-mj #diceHud{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+body.is-mj #diceMsg{
+  flex: 1;
+  max-width: none; /* on laisse respirer */
+}
+
 
 /* Ligne des boutons de dés (bien alignés) */
 body.is-mj #dicePanel .diceBtn{
@@ -1287,15 +1301,21 @@ body.is-mj .mapBtn{
     <div id="gridOverlay"></div>
     </div>
     <div id="dicePanel">
-  <button id="rollD4" class="diceBtn" title="Lancer un D4"><img src="d4.png" alt="D4"></button>
-  <button id="rollD6" class="diceBtn" title="Lancer un D6"><img src="d6.png" alt="D6"></button>
-  <button id="rollD8" class="diceBtn" title="Lancer un D8"><img src="d8.png" alt="D8"></button>
-  <button id="rollD10" class="diceBtn" title="Lancer un D10"><img src="d10.png" alt="D10"></button>
-  <button id="rollD12" class="diceBtn" title="Lancer un D12"><img src="d12.png" alt="D12"></button>
-  <button id="rollD20" class="diceBtn" title="Lancer un D20"><img src="d20.png" alt="D20"></button>
-  <button id="rollD100" class="diceBtn" title="Lancer un D100"><img src="d100.png" alt="D100"></button>
-  <div id="diceResult">—</div>
-  <div id="diceMsg"></div>
+    <div id="diceRow">
+    <button id="rollD4" class="diceBtn" title="Lancer un D4"><img src="d4.png" alt="D4"></button>
+    <button id="rollD6" class="diceBtn" title="Lancer un D6"><img src="d6.png" alt="D6"></button>
+    <button id="rollD8" class="diceBtn" title="Lancer un D8"><img src="d8.png" alt="D8"></button>
+    <button id="rollD10" class="diceBtn" title="Lancer un D10"><img src="d10.png" alt="D10"></button>
+    <button id="rollD12" class="diceBtn" title="Lancer un D12"><img src="d12.png" alt="D12"></button>
+    <button id="rollD20" class="diceBtn" title="Lancer un D20"><img src="d20.png" alt="D20"></button>
+    <button id="rollD100" class="diceBtn" title="Lancer un D100"><img src="d100.png" alt="D100"></button>
+  </div>
+
+  <div id="diceHud">
+    <div id="diceResult">—</div>
+    <div id="diceMsg"></div>
+  </div>
+
 </div>
 
 
