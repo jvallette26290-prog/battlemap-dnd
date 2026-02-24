@@ -1193,76 +1193,95 @@ body:not(.is-mj) #spellModal textarea{
        <label>Sorts Mineurs</label>
 <textarea id="sCantrips" rows="4"></textarea>
 <div id="sCantripsBtns" class="spellBtns"></div>
-        
-        <label>Niv. 1</label>
+
+<label>Niv. 1</label>
 <textarea id="sL1" rows="4"></textarea>
-<div id="sL3Btns" class="spellBtns"></div>
+<div id="sL1Btns" class="spellBtns"></div>
 
 <label>Emplacements de sort (Niv. 1)</label>
-<div id="sL3Slots" class="spellSlots"></div>
-        
-        <label>Niv. 2</label>
+<div class="slotRow" data-level="l1">
+  <input class="slotMax" type="number" min="0" max="10" value="0">
+  <div class="slotBoxes"></div>
+</div>
+
+<label>Niv. 2</label>
 <textarea id="sL2" rows="4"></textarea>
-<div id="sL3Btns" class="spellBtns"></div>
+<div id="sL2Btns" class="spellBtns"></div>
 
 <label>Emplacements de sort (Niv. 2)</label>
-<div id="sL3Slots" class="spellSlots"></div>
-      
+<div class="slotRow" data-level="l2">
+  <input class="slotMax" type="number" min="0" max="10" value="0">
+  <div class="slotBoxes"></div>
+</div>
 
-        <label>Niv. 3</label>
+<label>Niv. 3</label>
 <textarea id="sL3" rows="4"></textarea>
 <div id="sL3Btns" class="spellBtns"></div>
 
 <label>Emplacements de sort (Niv. 3)</label>
-<div id="sL3Slots" class="spellSlots"></div>
-        
+<div class="slotRow" data-level="l3">
+  <input class="slotMax" type="number" min="0" max="10" value="0">
+  <div class="slotBoxes"></div>
+</div>
 
         <label>Niv. 4</label>
 <textarea id="sL4" rows="4"></textarea>
-<div id="sL3Btns" class="spellBtns"></div>
+<div id="sL4Btns" class="spellBtns"></div>
 
 <label>Emplacements de sort (Niv. 4)</label>
-<div id="sL3Slots" class="spellSlots"></div>
-        
-
+<div class="slotRow" data-level="l4">
+  <input class="slotMax" type="number" min="0" max="10" value="0">
+  <div class="slotBoxes"></div>
+</div>
         <label>Niv. 5</label>
 <textarea id="sL5" rows="4"></textarea>
-<div id="sL3Btns" class="spellBtns"></div>
+<div id="sL5Btns" class="spellBtns"></div>
 
 <label>Emplacements de sort (Niv. 5)</label>
-<div id="sL3Slots" class="spellSlots"></div>
-        
+<div class="slotRow" data-level="l5">
+  <input class="slotMax" type="number" min="0" max="10" value="0">
+  <div class="slotBoxes"></div>
+</div>
 
         <label>Niv. 6</label>
 <textarea id="sL6" rows="4"></textarea>
-<div id="sL3Btns" class="spellBtns"></div>
+<div id="sL6Btns" class="spellBtns"></div>
 
-<label>Emplacements de sort (Niv. 3)</label>
-<div id="sL3Slots" class="spellSlots"></div>
-        
+<label>Emplacements de sort (Niv. 6)</label>
+<div class="slotRow" data-level="l6">
+  <input class="slotMax" type="number" min="0" max="10" value="0">
+  <div class="slotBoxes"></div>
+</div>
 
         <label>Niv. 7</label>
 <textarea id="sL7" rows="4"></textarea>
-<div id="sL3Btns" class="spellBtns"></div>
+<div id="sL7Btns" class="spellBtns"></div>
 
 <label>Emplacements de sort (Niv. 7)</label>
-<div id="sL3Slots" class="spellSlots"></div>
-        
+<div class="slotRow" data-level="l7">
+  <input class="slotMax" type="number" min="0" max="10" value="0">
+  <div class="slotBoxes"></div>
+</div>
 
-        <label>Niv. 8</label>
+       <label>Niv. 8</label>
 <textarea id="sL8" rows="4"></textarea>
-<div id="sL3Btns" class="spellBtns"></div>
+<div id="sL8Btns" class="spellBtns"></div>
 
 <label>Emplacements de sort (Niv. 8)</label>
-<div id="sL3Slots" class="spellSlots"></div>
+<div class="slotRow" data-level="l8">
+  <input class="slotMax" type="number" min="0" max="10" value="0">
+  <div class="slotBoxes"></div>
+</div> 
         
-
-        <label>Niv. 9</label>
+<label>Niv. 9</label>
 <textarea id="sL9" rows="4"></textarea>
-<div id="sL3Btns" class="spellBtns"></div>
+<div id="sL9Btns" class="spellBtns"></div>
 
 <label>Emplacements de sort (Niv. 9)</label>
-<div id="sL3Slots" class="spellSlots"></div>
+<div class="slotRow" data-level="l9">
+  <input class="slotMax" type="number" min="0" max="10" value="0">
+  <div class="slotBoxes"></div>
+</div>
         
       </div>
     </div>
@@ -1830,7 +1849,6 @@ function getSlotRow(levelKey){
   return spellModal.querySelector(`.slotRow[data-level="${levelKey}"]`);
 }
 
-function renderSlotRow(levelKey, slotData, canEditMax, canToggleUsed){
 function renderSlotRow(levelKey, slotData, canEditMax, canToggleUsed){
   const row = getSlotRow(levelKey);
   if (!row) return;
