@@ -1006,7 +1006,16 @@ body:not(.is-mj) #diceMsg{
 .diceBtn{
   margin: 0 18px;
 }
-
+/* 🔒 Historique MJ uniquement : cache tout ce qui ressemble à un log */
+body:not(.is-mj) #diceMsg,
+body:not(.is-mj) #diceLog,
+body:not(.is-mj) #diceHistory,
+body:not(.is-mj) .diceLog,
+body:not(.is-mj) .diceHistory{
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+}
 
     
 
@@ -2918,6 +2927,7 @@ const diceMsg = document.getElementById("diceMsg");
 const diceLogItems = document.getElementById("diceLogItems");
 
 function pushDiceLog({label, value, sides, who, isCrit, isFumble}){
+  if (!IS_MJ) return;
   if (!diceLogItems) return;
 
   const time = new Date().toLocaleTimeString([], {hour: "2-digit", minute:"2-digit"});
