@@ -636,20 +636,21 @@ body.is-mj #board{
   border: 1px solid #333;
   background: #1b1b1b;
   cursor: pointer;
-
+overflow: visible;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .diceBtn img{
-  width: 400px;
-  height: 400px;
+  width: 64px;
+  height: 64px;
   object-fit: contain;
   user-select: none;
   -webkit-user-drag: none;
+  pointer-events: none;
+  filter: drop-shadow(0 4px 10px rgba(0,0,0,0.6));
 }
-
 .diceBtn:hover{
   background: #222;
 }
