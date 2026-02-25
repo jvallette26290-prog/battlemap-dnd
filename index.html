@@ -4084,29 +4084,7 @@ DICE.forEach(d => {
     }
   });
 });
-/*************************************************
- * CHARGEMENT DE LA BASE DE SORTS (spells.json)
- *************************************************/
 
-let SPELLS_DB = [];
-let SPELLS_LOADED = false;
-
-async function loadSpellsDB(){
-  try{
-    const res = await fetch("spells.json");
-    if (!res.ok) throw new Error("HTTP " + res.status);
-
-    SPELLS_DB = await res.json();
-    SPELLS_LOADED = true;
-
-    console.log("✅ Sorts chargés :", SPELLS_DB.length);
-  }catch(err){
-    console.error("❌ Base de sorts non chargée (spells.json manquant ?)", err);
-  }
-}
-
-// ⚠️ IMPORTANT : on lance le chargement AU DÉMARRAGE
-loadSpellsDB();
   </script>
 </body>
 </html>
