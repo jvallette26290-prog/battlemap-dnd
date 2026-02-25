@@ -976,25 +976,6 @@ body:not(.is-mj) .slotRow{
   opacity: .75;
   white-space: nowrap;
 }
-/* 🔒 Historique des jets : MJ uniquement */
-body:not(.is-mj) #diceMsg{
-  display: none;
-}
-/* MAIS si un message existe → on l’affiche */
-body:not(.is-mj) #diceMsg:not(:empty){
-  display: block;
-
-  margin-left: 16px;
-  padding: 8px 12px;
-
-  border-radius: 12px;
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.18);
-
-  font-size: 13px;
-  font-weight: 700;
-  color: rgba(255,200,120,0.95);
-}    
 
 
 /* ===== MJ Layout propre (avec #mjLayout) ===== */
@@ -1445,10 +1426,6 @@ body:not(.is-mj) #diceMsg{
   font-weight: 700;
   color: rgba(255,200,120,0.95);
 }
-
-body:not(.is-mj) #diceMsg:not(:empty){
-  display: block;
-}
 /* =========================
    PJ — MESSAGE COOLDOWN PRO
    ========================= */
@@ -1494,11 +1471,6 @@ body:not(.is-mj) #diceMsg::before{
 /* Apparition animée */
 body:not(.is-mj) #diceMsg.cooldownShow{
   animation: cooldownIn 0.25s ease-out forwards;
-}
-
-/* Disparition douce */
-body:not(.is-mj) #diceMsg:empty{
-  display: none;
 }
 
 @keyframes cooldownIn{
@@ -1594,7 +1566,7 @@ body:not(.is-mj) #diceMsg.cooldownShow{
       <button class="mapBtn" data-map="donjon">🧱 Donjon</button>
       <button class="mapBtn" data-map="foret">🌲 Forêt</button>
     </div>
-
+ </div>
   <div id="mjRight">
     <div id="board">
     <div id="gridOverlay"></div>
@@ -1613,8 +1585,9 @@ body:not(.is-mj) #diceMsg.cooldownShow{
   <div id="diceHud">
     <div id="diceResult">—</div>
     <div id="diceMsg"></div>
+   </div>
   </div>
-
+ </div>
 </div>
 
 
@@ -2205,7 +2178,7 @@ function updateHexGrid(){
   setHexGrid(hexPx);
 
   // ✅ met à jour la taille de TOUS les tokens déjà affichés
-  const tokenSize = Math.round(CURRENT_HEX_PX * 1.05); // 1.0 = même taille que hex, 1.05 un poil plus grand
+  const tokenSize = Math.round(CURRENT_HEX_PX * 1.90); 
   board.querySelectorAll(".token").forEach(t => {
     t.style.width  = tokenSize + "px";
     t.style.height = tokenSize + "px";
@@ -3523,34 +3496,36 @@ const clientId = localStorage.getItem("battlemap_clientId") || (() => {
   return id;
 })();
 
-function showMsg(txt){
-  let cooldownTimer = null;
+const diceRes = document.getElementById("diceResult");
+const diceMsg = document.getElementById("diceMsg");
+// ===== COOLDOWN UI (minuterie live) =====
+let cooldownTimer = null;
 let cooldownUntil = 0;
 
-/* Affiche un message PJ/MJ dans #diceMsg (sans spam) */
 function setDiceMsg(txt){
   if (!diceMsg) return;
   diceMsg.textContent = txt || "";
   diceMsg.classList.toggle("cooldownShow", !!txt);
 }
 
-/* Lance une minuterie live “Attente… 5s, 4s, 3s…” */
+function showMsg(txt){
+  // message simple (pas la minuterie)
+  setDiceMsg(txt);
+}
+
 function startCooldown(seconds){
   if (!diceMsg) return;
 
-  // stop ancienne minuterie
   if (cooldownTimer) clearInterval(cooldownTimer);
 
-  const startMs = Date.now();
-  cooldownUntil = startMs + (Math.max(1, seconds) * 1000);
+  const totalMs = Math.max(1, Number(seconds) || 1) * 1000;
+  cooldownUntil = Date.now() + totalMs;
 
-  diceMsg.dataset.totalMs = String(Math.max(1, seconds) * 1000);
-diceMsg.style.setProperty("--p", "0%");
+  diceMsg.dataset.totalMs = String(totalMs);
+  diceMsg.style.setProperty("--p", "0%");
 
-  // 1er affichage immédiat
   tickCooldown();
-
-  cooldownTimer = setInterval(tickCooldown, 200); // 5 fois/sec pour être fluide
+  cooldownTimer = setInterval(tickCooldown, 200);
 }
 
 function tickCooldown(){
@@ -3560,11 +3535,19 @@ function tickCooldown(){
   if (remainMs <= 0){
     if (cooldownTimer) clearInterval(cooldownTimer);
     cooldownTimer = null;
-    if (diceMsg) diceMsg.style.setProperty("--p", "100%");
+    diceMsg.style.setProperty("--p", "100%");
     setDiceMsg("");
     return;
   }
 
+  const remainS = Math.ceil(remainMs / 1000);
+  setDiceMsg(`Attente… ${remainS}s`);
+
+  const totalMs = Number(diceMsg.dataset.totalMs) || (remainS * 1000);
+  const elapsed = Math.max(0, totalMs - remainMs);
+  const p = Math.min(100, Math.round((elapsed / totalMs) * 100));
+  diceMsg.style.setProperty("--p", p + "%");
+}
   const remainS = Math.ceil(remainMs / 1000);
   setDiceMsg(`Attente… ${remainS}s`);
 
