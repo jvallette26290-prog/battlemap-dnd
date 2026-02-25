@@ -1392,7 +1392,24 @@ body:not(.is-mj) #dicePanel{
   gap: 14px;
   flex-wrap: nowrap;                /* pas de retour ligne */
 }
-    
+/* =========================
+   PJ – DÉS ALIGNÉS HORIZONTALEMENT (FORCE)
+   ========================= */
+
+body:not(.is-mj) #dicePanel{
+  display: flex !important;          /* 🔥 on écrase GRID */
+  flex-direction: row !important;    /* 🔥 horizontal */
+  align-items: center !important;
+  justify-content: center !important;
+
+  gap: 18px;
+  width: auto;
+}
+
+/* sécurité : aucun retour ligne */
+body:not(.is-mj) #dicePanel *{
+  flex-shrink: 0;
+}    
 
 
 
