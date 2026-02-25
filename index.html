@@ -1449,7 +1449,68 @@ body:not(.is-mj) #diceMsg{
 body:not(.is-mj) #diceMsg:not(:empty){
   display: block;
 }
+/* =========================
+   PJ — MESSAGE COOLDOWN PRO
+   ========================= */
 
+body:not(.is-mj) #diceMsg{
+  position: relative;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 8px 14px;
+  margin-left: 16px;
+
+  border-radius: 999px; /* pill shape */
+  background: linear-gradient(
+    180deg,
+    rgba(255,180,90,0.18),
+    rgba(255,140,40,0.12)
+  );
+
+  border: 1px solid rgba(255,180,90,0.45);
+  box-shadow:
+    0 6px 18px rgba(0,0,0,0.35),
+    inset 0 1px 0 rgba(255,255,255,0.35);
+
+  font-size: 13px;
+  font-weight: 800;
+  color: rgba(255,235,200,0.95);
+
+  opacity: 0;
+  transform: translateY(6px) scale(0.96);
+  pointer-events: none;
+}
+
+/* Icône avant le texte */
+body:not(.is-mj) #diceMsg::before{
+  content: "⏳";
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+/* Apparition animée */
+body:not(.is-mj) #diceMsg.cooldownShow{
+  animation: cooldownIn 0.25s ease-out forwards;
+}
+
+/* Disparition douce */
+body:not(.is-mj) #diceMsg:empty{
+  display: none;
+}
+
+@keyframes cooldownIn{
+  from{
+    opacity: 0;
+    transform: translateY(6px) scale(0.96);
+  }
+  to{
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
 
 
 
@@ -3415,9 +3476,17 @@ const clientId = localStorage.getItem("battlemap_clientId") || (() => {
 })();
 
 function showMsg(txt){
-  if (diceMsg) diceMsg.textContent = txt || "";
-}
+  if (!diceMsg) return;
 
+  diceMsg.textContent = txt || "";
+  diceMsg.classList.remove("cooldownShow");
+
+  if (txt) {
+    // force le reflow pour relancer l’animation
+    void diceMsg.offsetWidth;
+    diceMsg.classList.add("cooldownShow");
+  }
+}
 function randIntCrypto(min, max) {
   const range = max - min + 1;
   const arr = new Uint32Array(1);
