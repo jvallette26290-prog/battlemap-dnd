@@ -3434,73 +3434,20 @@ document.addEventListener("touchend", async () => {
 }, { passive: true });
     
 // ===== DÉS synchronisés (D4/D6/D8/D10/D12/D20/D100) + cooldown partagé =====
-    function pulseButton(btn){
+
+function pulseButton(btn){
   if (!btn) return;
-
   btn.classList.remove("pulsing");
-  void btn.offsetWidth; // relance l’animation
+  void btn.offsetWidth;
   btn.classList.add("pulsing");
-
-  setTimeout(() => {
-    btn.classList.remove("pulsing");
-  }, 400);
+  setTimeout(() => btn.classList.remove("pulsing"), 400);
 }
+
 const diceRef = doc(db, "rooms", roomId, "sync", "dice");
 
 const diceRes = document.getElementById("diceResult");
 const diceMsg = document.getElementById("diceMsg");
 const diceLogItems = document.getElementById("diceLogItems");
-
-function pushDiceLog({label, value, sides, who, isCrit, isFumble}){
-  if (!IS_MJ) return;
-  if (!diceLogItems) return;
-
-  const time = new Date().toLocaleTimeString([], {hour: "2-digit", minute:"2-digit"});
-  const div = document.createElement("div");
-  div.className = "diceLogItem";
-
-  const left = document.createElement("div");
-  left.innerHTML = `<span class="diceTag">${label}</span> → <b>${value}</b>${isCrit ? " ✅ CRIT" : ""}${isFumble ? " ❌ ÉCHEC" : ""}`;
-
-  const right = document.createElement("div");
-  right.className = "diceMeta";
-  right.textContent = `${who || "?"} • ${time}`;
-
-  div.appendChild(left);
-  div.appendChild(right);
-
-  // Ajoute en haut
-  diceLogItems.prepend(div);
-
-  // Garde seulement les 10 derniers
-  while (diceLogItems.children.length > 10){
-    diceLogItems.removeChild(diceLogItems.lastChild);
-  }
-}
-const DICE = [
-  { id: "rollD4", sides: 4, label: "D4" },
-  { id: "rollD6", sides: 6, label: "D6" },
-  { id: "rollD8", sides: 8, label: "D8" },
-  { id: "rollD10", sides: 10, label: "D10" },
-  { id: "rollD12", sides: 12, label: "D12" },
-  { id: "rollD20", sides: 20, label: "D20" },
-  { id: "rollD100", sides: 100, label: "D100" },
-];
-
-const COOLDOWN_MS = 5000;
-let lastRollId = null;
-
-const clientId = localStorage.getItem("battlemap_clientId") || (() => {
-  const id = (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random());
-  localStorage.setItem("battlemap_clientId", id);
-  return id;
-})();
-
-const diceRes = document.getElementById("diceResult");
-const diceMsg = document.getElementById("diceMsg");
-// ===== COOLDOWN UI (minuterie live) =====
-let cooldownTimer = null;
-let cooldownUntil = 0;
 
 function setDiceMsg(txt){
   if (!diceMsg) return;
@@ -3509,9 +3456,12 @@ function setDiceMsg(txt){
 }
 
 function showMsg(txt){
-  // message simple (pas la minuterie)
   setDiceMsg(txt);
 }
+
+// ===== COOLDOWN UI (minuterie live) =====
+let cooldownTimer = null;
+let cooldownUntil = 0;
 
 function startCooldown(seconds){
   if (!diceMsg) return;
@@ -3548,47 +3498,51 @@ function tickCooldown(){
   const p = Math.min(100, Math.round((elapsed / totalMs) * 100));
   diceMsg.style.setProperty("--p", p + "%");
 }
-  const remainS = Math.ceil(remainMs / 1000);
-  setDiceMsg(`Attente… ${remainS}s`);
 
-  // barre : % écoulé (de 0 à 100)
-  // On déduit la durée totale depuis la première valeur “seconds”
-  // => on stocke la durée totale dans un dataset la première fois
-  if (!diceMsg.dataset.totalMs){
-    // total = difference entre now et cooldownUntil + remainMs (au premier tick)
-    diceMsg.dataset.totalMs = String(remainMs);
-  }
-
-  const totalMs = Number(diceMsg.dataset.totalMs) || remainMs;
-  const elapsed = Math.max(0, totalMs - remainMs);
-  const p = Math.min(100, Math.round((elapsed / totalMs) * 100));
-
-  diceMsg.style.setProperty("--p", p + "%");
-}
-
-  const remainS = Math.ceil(remainMs / 1000);
-  setDiceMsg(`Attente… ${remainS}s`);
-
-  // Optionnel : barre de progression (CSS ci-dessous)
-  const totalMs = Math.max(1000, (cooldownUntil - (cooldownUntil - remainMs))); // pas utile, on calcule autrement :
-}
-  if (!diceMsg) return;
-
-  diceMsg.textContent = txt || "";
-  diceMsg.classList.remove("cooldownShow");
-
-  if (txt) {
-    // force le reflow pour relancer l’animation
-    void diceMsg.offsetWidth;
-    diceMsg.classList.add("cooldownShow");
-  }
-}
 function randIntCrypto(min, max) {
   const range = max - min + 1;
   const arr = new Uint32Array(1);
   crypto.getRandomValues(arr);
   return min + (arr[0] % range);
 }
+
+function pushDiceLog({label, value, sides, who, isCrit, isFumble}){
+  if (!IS_MJ) return;
+  if (!diceLogItems) return;
+
+  const time = new Date().toLocaleTimeString([], {hour: "2-digit", minute:"2-digit"});
+  const div = document.createElement("div");
+  div.className = "diceLogItem";
+
+  const left = document.createElement("div");
+  left.innerHTML = `<span class="diceTag">${label}</span> → <b>${value}</b>${isCrit ? " ✅ CRIT" : ""}${isFumble ? " ❌ ÉCHEC" : ""}`;
+
+  const right = document.createElement("div");
+  right.className = "diceMeta";
+  right.textContent = `${who || "?"} • ${time}`;
+
+  div.appendChild(left);
+  div.appendChild(right);
+
+  diceLogItems.prepend(div);
+
+  while (diceLogItems.children.length > 10){
+    diceLogItems.removeChild(diceLogItems.lastChild);
+  }
+}
+
+const DICE = [
+  { id: "rollD4", sides: 4, label: "D4" },
+  { id: "rollD6", sides: 6, label: "D6" },
+  { id: "rollD8", sides: 8, label: "D8" },
+  { id: "rollD10", sides: 10, label: "D10" },
+  { id: "rollD12", sides: 12, label: "D12" },
+  { id: "rollD20", sides: 20, label: "D20" },
+  { id: "rollD100", sides: 100, label: "D100" },
+];
+
+const COOLDOWN_MS = 5000;
+let lastRollId = null;
 
 function setAllDiceDisabled(disabled){
   DICE.forEach(d => {
@@ -3597,21 +3551,10 @@ function setAllDiceDisabled(disabled){
   });
 }
 
-function setRolling(isRolling){
-  DICE.forEach(d => {
-    const btn = document.getElementById(d.id);
-    if (!btn) return;
-    if (isRolling) btn.classList.add("rolling");
-    else btn.classList.remove("rolling");
-  });
-}
-
 function playRollAnimation(label, sides, finalValue, opts = {}) {
   setAllDiceDisabled(true);
 
-  // reset styles crit/fumble
   diceRes.classList.remove("crit", "fumble");
-
   const start = Date.now();
   const duration = 650;
 
@@ -3627,7 +3570,6 @@ function playRollAnimation(label, sides, finalValue, opts = {}) {
       diceRes.textContent = `${label} : ${finalValue}`;
       showMsg("");
 
-      // D20 crit/fumble
       const isD20 = sides === 20;
       const isCrit = isD20 && finalValue === 20;
       const isFumble = isD20 && finalValue === 1;
@@ -3635,17 +3577,14 @@ function playRollAnimation(label, sides, finalValue, opts = {}) {
       if (isCrit) diceRes.classList.add("crit");
       if (isFumble) diceRes.classList.add("fumble");
 
-      // Historique (si tu as fait le point 2 + B)
-      if (typeof pushDiceLog === "function") {
-        pushDiceLog({
-          label,
-          value: finalValue,
-          sides,
-          who: opts.who,
-          isCrit,
-          isFumble
-        });
-      }
+      pushDiceLog({
+        label,
+        value: finalValue,
+        sides,
+        who: opts.who,
+        isCrit,
+        isFumble
+      });
 
       setAllDiceDisabled(false);
     }
@@ -3670,16 +3609,15 @@ onSnapshot(diceRef, (snap) => {
   playRollAnimation(label, sides, value, { who: data.by || "" });
 });
 
-// Clic sur n’importe quel dé => tente un nouveau jet (cooldown partagé)
+// Clic sur un dé => nouveau jet (cooldown partagé)
 DICE.forEach(d => {
   const btn = document.getElementById(d.id);
   if (!btn) return;
 
   btn.addEventListener("click", async () => {
-
     pulseButton(btn);
-    
     if (btn.disabled) return;
+
     showMsg("");
     const whoName = IS_MJ ? "MJ" : (PLAYER_ID || "PJ");
     const value = randIntCrypto(1, d.sides);
@@ -3711,17 +3649,17 @@ DICE.forEach(d => {
       });
     } catch (err) {
       const msg = String(err?.message || err);
-
-     if (msg.startsWith("COOLDOWN_")) {
-  const remain = Number(msg.split("_")[1] || "5");
-  startCooldown(remain);
-} else {
-  showMsg("❌ Erreur de lancer (permissions / réseau ?)");
-  console.error(err);
-}
+      if (msg.startsWith("COOLDOWN_")) {
+        const remain = Number(msg.split("_")[1] || "5");
+        startCooldown(remain);
+      } else {
+        showMsg("❌ Erreur de lancer (permissions / réseau ?)");
+        console.error(err);
+      }
     }
   });
 });
+
   </script>
 </body>
 </html>
