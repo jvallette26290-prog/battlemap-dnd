@@ -2382,6 +2382,148 @@ function canPlayerControlToken(data){
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+    // =========================
+// SPELL PICKER (MJ only) — UI + base spells.json
+// =========================
+const spellPicker   = document.getElementById("spellPicker");
+const spellSearch   = document.getElementById("spellSearch");
+const spellDatalist = document.getElementById("spellDatalist");
+const spellAddBtn   = document.getElementById("spellAddBtn");
+const spellAddInfo  = document.getElementById("spellAddInfo");
+
+let SPELLS = []; // {name, level, url}
+
+// Afficher le bloc seulement pour le MJ
+if (IS_MJ && spellPicker) {
+  spellPicker.style.display = "flex";
+}
+
+// Normalisation (gère accents + casse)
+function norm(str){
+  return (str || "")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .trim();
+}
+
+// Charge spells.json et remplit la datalist
+async function loadSpellDb(){
+  try{
+    const res = await fetch("spells.json", { cache: "no-store" });
+    if (!res.ok) throw new Error("spells.json introuvable");
+    SPELLS = await res.json();
+
+    if (spellDatalist){
+      spellDatalist.innerHTML = "";
+      SPELLS.forEach(s => {
+        const opt = document.createElement("option");
+        opt.value = s.name;
+        spellDatalist.appendChild(opt);
+      });
+    }
+
+    if (spellAddInfo) spellAddInfo.textContent = `✅ ${SPELLS.length} sorts chargés`;
+  }catch(err){
+    console.warn(err);
+    if (spellAddInfo) spellAddInfo.textContent = "⚠️ Base de sorts non chargée (spells.json manquant ?)";
+  }
+}
+loadSpellDb();
+
+// Ajoute une ligne dans la bonne textarea selon le niveau
+function addSpellToTextArea(spell){
+  if (!spell) return false;
+
+  const target = (spell.level === 0) ? sCantrips
+    : (spell.level === 1) ? sL1
+    : (spell.level === 2) ? sL2
+    : (spell.level === 3) ? sL3
+    : (spell.level === 4) ? sL4
+    : (spell.level === 5) ? sL5
+    : (spell.level === 6) ? sL6
+    : (spell.level === 7) ? sL7
+    : (spell.level === 8) ? sL8
+    : (spell.level === 9) ? sL9
+    : null;
+
+  if (!target) return false;
+
+  const line = spell.url ? `${spell.name}|${spell.url}` : spell.name;
+
+  const lines = target.value
+    .split("\n")
+    .map(x => x.trim())
+    .filter(Boolean);
+
+  // évite doublon (par nom)
+  if (lines.some(l => norm(l.split("|")[0]) === norm(spell.name))) return true;
+
+  lines.push(line);
+  target.value = lines.join("\n");
+  return true;
+}
+
+// Quand MJ clique "+ Ajouter"
+spellAddBtn?.addEventListener("click", async () => {
+  if (!IS_MJ) return;
+
+  if (!openedSpellTokenId){
+    if (spellAddInfo) spellAddInfo.textContent = "⚠️ Ouvre d’abord les sorts d’un token (S + clic)";
+    return;
+  }
+
+  const name = (spellSearch?.value || "").trim();
+  if (!name) return;
+
+  const spell = SPELLS.find(s => norm(s.name) === norm(name));
+  if (!spell){
+    if (spellAddInfo) spellAddInfo.textContent = "❌ Sort introuvable dans ta base";
+    return;
+  }
+
+  addSpellToTextArea(spell);
+
+  // Refresh boutons (comme tu fais déjà)
+  renderSpellButtons(sCantrips, sCantripsBtns);
+  renderSpellButtons(sL1, sL1Btns);
+  renderSpellButtons(sL2, sL2Btns);
+  renderSpellButtons(sL3, sL3Btns);
+  renderSpellButtons(sL4, sL4Btns);
+  renderSpellButtons(sL5, sL5Btns);
+  renderSpellButtons(sL6, sL6Btns);
+  renderSpellButtons(sL7, sL7Btns);
+  renderSpellButtons(sL8, sL8Btns);
+  renderSpellButtons(sL9, sL9Btns);
+
+  // Enregistre direct dans Firestore (pas besoin de cliquer Enregistrer)
+  try{
+    const ref = doc(db, "rooms", roomId, "tokens", openedSpellTokenId);
+    await updateDoc(ref, {
+      spells: {
+        cantrips: txtToArr(sCantrips.value),
+        l1: txtToArr(sL1.value),
+        l2: txtToArr(sL2.value),
+        l3: txtToArr(sL3.value),
+        l4: txtToArr(sL4.value),
+        l5: txtToArr(sL5.value),
+        l6: txtToArr(sL6.value),
+        l7: txtToArr(sL7.value),
+        l8: txtToArr(sL8.value),
+        l9: txtToArr(sL9.value),
+      },
+      updatedAt: serverTimestamp(),
+    });
+
+    if (spellAddInfo) spellAddInfo.textContent = `✅ Ajouté : ${spell.name}`;
+    if (spellSearch) spellSearch.value = "";
+  }catch(err){
+    console.error(err);
+    if (spellAddInfo) spellAddInfo.textContent = "❌ Erreur Firestore";
+  }
+});
+
+    
     const HEX_REL = 21 / 800; 
 const gridOverlay = document.getElementById("gridOverlay");
 
