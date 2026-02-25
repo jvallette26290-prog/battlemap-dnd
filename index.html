@@ -2159,6 +2159,26 @@ body.is-mj #diceHud{
     </div>
 
     <div class="modalBody" style="overflow:auto;">
+
+  <!-- MJ only : Ajouter un sort -->
+  <div id="spellPicker" style="display:none; gap:10px; align-items:center; margin: 0 0 12px 0; flex-wrap:wrap;">
+    <label style="font-weight:900; opacity:.85;">Ajouter un sort</label>
+
+    <input id="spellSearch" list="spellDatalist" placeholder="Tape le nom (ex: Boule de feu)"
+           style="min-width:260px; padding:10px 12px; border-radius:12px; border:1px solid rgba(255,255,255,.15); background:rgba(255,255,255,.06); color:#eee;">
+
+    <datalist id="spellDatalist"></datalist>
+
+    <button id="spellAddBtn" type="button"
+            style="padding:10px 12px; border-radius:12px; border:1px solid rgba(255,255,255,.18); background:rgba(120,180,255,.18); color:#fff; font-weight:900; cursor:pointer;">
+      + Ajouter
+    </button>
+
+    <span id="spellAddInfo" style="font-size:12px; opacity:.75;"></span>
+  </div>
+
+  <div class="modalGrid">
+    ...
       <div class="modalGrid">
 
         <label>Sorts Mineurs</label>
