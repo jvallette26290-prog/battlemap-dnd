@@ -1380,7 +1380,19 @@ body:not(.is-mj) #diceResult{
   font-weight: 900;
   letter-spacing: 0.4px;
 }
+/* =========================
+   FORCE ALIGNEMENT HORIZONTAL DES DÉS (PJ)
+   ========================= */
 
+body:not(.is-mj) #dicePanel{
+  display: flex !important;
+  flex-direction: row !important;   /* 🔥 LA CLÉ */
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  flex-wrap: nowrap;                /* pas de retour ligne */
+}
+    
 
 
 
