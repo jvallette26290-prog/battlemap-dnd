@@ -1511,7 +1511,55 @@ body:not(.is-mj) #diceMsg:empty{
     transform: translateY(0) scale(1);
   }
 }
+/* =========================
+   PJ — COOLDOWN PRO + BARRE
+   ========================= */
 
+body:not(.is-mj) #diceMsg{
+  --p: 0%;
+
+  display: none; /* caché quand vide */
+
+  margin-left: 16px;
+  padding: 10px 14px;
+
+  border-radius: 999px;
+  border: 1px solid rgba(255,180,90,0.45);
+
+  /* fond + barre de progression via background */
+  background:
+    linear-gradient(90deg, rgba(255,170,80,0.28) var(--p), rgba(255,255,255,0.06) var(--p)),
+    linear-gradient(180deg, rgba(255,180,90,0.16), rgba(255,140,40,0.10));
+
+  box-shadow:
+    0 8px 22px rgba(0,0,0,0.35),
+    inset 0 1px 0 rgba(255,255,255,0.20);
+
+  font-size: 13px;
+  font-weight: 900;
+  color: rgba(255,235,205,0.95);
+
+  opacity: 0;
+  transform: translateY(6px) scale(0.98);
+  pointer-events: none;
+}
+
+body:not(.is-mj) #diceMsg::before{
+  content: "⏳";
+  margin-right: 8px;
+  opacity: 0.9;
+}
+
+body:not(.is-mj) #diceMsg.cooldownShow{
+  display: inline-flex;
+  align-items: center;
+  animation: cooldownIn 0.22s ease-out forwards;
+}
+
+@keyframes cooldownIn{
+  from{ opacity: 0; transform: translateY(6px) scale(0.98); }
+  to  { opacity: 1; transform: translateY(0)  scale(1); }
+}
 
 
 
@@ -3476,6 +3524,71 @@ const clientId = localStorage.getItem("battlemap_clientId") || (() => {
 })();
 
 function showMsg(txt){
+  let cooldownTimer = null;
+let cooldownUntil = 0;
+
+/* Affiche un message PJ/MJ dans #diceMsg (sans spam) */
+function setDiceMsg(txt){
+  if (!diceMsg) return;
+  diceMsg.textContent = txt || "";
+  diceMsg.classList.toggle("cooldownShow", !!txt);
+}
+
+/* Lance une minuterie live “Attente… 5s, 4s, 3s…” */
+function startCooldown(seconds){
+  if (!diceMsg) return;
+
+  // stop ancienne minuterie
+  if (cooldownTimer) clearInterval(cooldownTimer);
+
+  const startMs = Date.now();
+  cooldownUntil = startMs + (Math.max(1, seconds) * 1000);
+
+  diceMsg.dataset.totalMs = String(Math.max(1, seconds) * 1000);
+diceMsg.style.setProperty("--p", "0%");
+
+  // 1er affichage immédiat
+  tickCooldown();
+
+  cooldownTimer = setInterval(tickCooldown, 200); // 5 fois/sec pour être fluide
+}
+
+function tickCooldown(){
+  const now = Date.now();
+  const remainMs = cooldownUntil - now;
+
+  if (remainMs <= 0){
+    if (cooldownTimer) clearInterval(cooldownTimer);
+    cooldownTimer = null;
+    if (diceMsg) diceMsg.style.setProperty("--p", "100%");
+    setDiceMsg("");
+    return;
+  }
+
+  const remainS = Math.ceil(remainMs / 1000);
+  setDiceMsg(`Attente… ${remainS}s`);
+
+  // barre : % écoulé (de 0 à 100)
+  // On déduit la durée totale depuis la première valeur “seconds”
+  // => on stocke la durée totale dans un dataset la première fois
+  if (!diceMsg.dataset.totalMs){
+    // total = difference entre now et cooldownUntil + remainMs (au premier tick)
+    diceMsg.dataset.totalMs = String(remainMs);
+  }
+
+  const totalMs = Number(diceMsg.dataset.totalMs) || remainMs;
+  const elapsed = Math.max(0, totalMs - remainMs);
+  const p = Math.min(100, Math.round((elapsed / totalMs) * 100));
+
+  diceMsg.style.setProperty("--p", p + "%");
+}
+
+  const remainS = Math.ceil(remainMs / 1000);
+  setDiceMsg(`Attente… ${remainS}s`);
+
+  // Optionnel : barre de progression (CSS ci-dessous)
+  const totalMs = Math.max(1000, (cooldownUntil - (cooldownUntil - remainMs))); // pas utile, on calcule autrement :
+}
   if (!diceMsg) return;
 
   diceMsg.textContent = txt || "";
@@ -3616,13 +3729,13 @@ DICE.forEach(d => {
     } catch (err) {
       const msg = String(err?.message || err);
 
-      if (msg.startsWith("COOLDOWN_")) {
-        const remain = msg.split("_")[1] || "5";
-        showMsg(`⏳ Cooldown : attends encore ${remain}s`);
-      } else {
-        showMsg("❌ Erreur de lancer (permissions / réseau ?)");
-        console.error(err);
-      }
+     if (msg.startsWith("COOLDOWN_")) {
+  const remain = Number(msg.split("_")[1] || "5");
+  startCooldown(remain);
+} else {
+  showMsg("❌ Erreur de lancer (permissions / réseau ?)");
+  console.error(err);
+}
     }
   });
 });
