@@ -1713,7 +1713,10 @@ body.is-mj #mjLeft > #dicePanel{
   box-shadow: none !important;
   border-radius: 0 !important;
 }
-
+/* ✅ PJ : les dés doivent être visibles */
+body:not(.is-mj) #dicePanel{
+  display: flex !important;
+}
 
 
 
