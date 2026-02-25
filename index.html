@@ -1291,7 +1291,6 @@ body.is-mj #mjRight{
 }
 /* La sidebar n'influence plus le centrage visuel */
 body.is-mj #mjLeft{
-  position: absolute;
   left: 20px;
 }
 /* =========================
@@ -1532,7 +1531,22 @@ body:not(.is-mj) #diceMsg.cooldownShow{
   from{ opacity: 0; transform: translateY(6px) scale(0.98); }
   to  { opacity: 1; transform: translateY(0)  scale(1); }
 }
+/* ===== MJ : panels dans la colonne droite ===== */
+body.is-mj #tokenPanel,
+body.is-mj #mapPanel{
+  width: var(--boardW, 800px);
+  margin: 0;
+  justify-content: center;
+}
 
+body.is-mj #tokenPanel{
+  flex-wrap: wrap;
+}
+
+body.is-mj #tokenPanel input,
+body.is-mj #tokenPanel select{
+  min-width: 160px;
+}
 
 
 
@@ -1568,6 +1582,22 @@ body:not(.is-mj) #diceMsg.cooldownShow{
     </div>
  </div>
   <div id="mjRight">
+    <div id="tokenPanel">
+      <input id="tName" placeholder="Nom (ex: GOBELIN)" />
+      <input id="tImg" placeholder="Image (ex: gob.png ou URL)" />
+      <input id="tOwner" placeholder="Propriétaire PJ (ex: ALICE) - vide pour PNJ" />
+      <select id="tType">
+        <option value="pj">PJ</option>
+        <option value="pnj">PNJ</option>
+      </select>
+      <button id="addToken">+ Ajouter token</button>
+    </div>
+
+    <div id="mapPanel">
+      <button class="mapBtn" data-map="taverne">🍻 Taverne</button>
+      <button class="mapBtn" data-map="donjon">🧱 Donjon</button>
+      <button class="mapBtn" data-map="foret">🌲 Forêt</button>
+    </div>
     <div id="board">
     <div id="gridOverlay"></div>
     </div>
