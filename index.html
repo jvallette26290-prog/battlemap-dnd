@@ -1433,7 +1433,22 @@ body:not(.is-mj) #dicePanel{
 body:not(.is-mj) #dicePanel *{
   flex-shrink: 0;
 }    
+/* ✅ PJ : afficher le message seulement s'il y a du texte */
+body:not(.is-mj) #diceMsg{
+  display: none;
+  margin-left: 12px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.18);
+  font-size: 13px;
+  font-weight: 700;
+  color: rgba(255,200,120,0.95);
+}
 
+body:not(.is-mj) #diceMsg:not(:empty){
+  display: block;
+}
 
 
 
@@ -3400,7 +3415,6 @@ const clientId = localStorage.getItem("battlemap_clientId") || (() => {
 })();
 
 function showMsg(txt){
-  if (!IS_MJ) return;   // 🔒 PJ ne voient JAMAIS l’historique
   if (diceMsg) diceMsg.textContent = txt || "";
 }
 
