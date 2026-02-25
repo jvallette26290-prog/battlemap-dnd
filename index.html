@@ -1319,7 +1319,67 @@ body.is-mj #mjLeft > div{
 body:not(.is-mj) #diceLog{
   display: none !important;
 }
+/* =========================
+   PAGE PJ – DICE CLEAN
+   ========================= */
 
+/* Layout simple : dés + résultat */
+body:not(.is-mj) #dicePanel{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+
+  padding: 0;
+  margin: 12px auto;
+  background: none;
+  border: none;
+  box-shadow: none;
+}
+
+/* ❌ Supprime les cadres fantômes */
+body:not(.is-mj) #dicePanel::before,
+body:not(.is-mj) #dicePanel::after{
+  display: none !important;
+}
+
+/* Boutons = taille réelle de l’image */
+body:not(.is-mj) .diceBtn{
+  all: unset;
+  cursor: pointer;
+
+  width: 64px;
+  height: 64px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+body:not(.is-mj) .diceBtn img{
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+}
+
+/* Résultat à droite, sans carte */
+body:not(.is-mj) #diceResult{
+  margin-left: 20px;
+
+  width: auto;
+  min-width: 90px;
+  height: auto;
+
+  padding: 8px 14px;
+  border-radius: 14px;
+
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.15);
+
+  font-size: 16px;
+  font-weight: 900;
+  letter-spacing: 0.4px;
+}
 
 
 
