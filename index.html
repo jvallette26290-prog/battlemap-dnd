@@ -1547,7 +1547,41 @@ body.is-mj #tokenPanel input,
 body.is-mj #tokenPanel select{
   min-width: 160px;
 }
+/* =========================
+   LAYOUT MJ – DÉS À GAUCHE
+   ========================= */
 
+/* PJ : pas de colonne gauche */
+body:not(.is-mj) #mjLeft{
+  display: none;
+}
+
+/* MJ : grille principale */
+body.is-mj #mjLayout{
+  display: grid;
+  grid-template-columns: 420px 1fr;
+  grid-template-rows: auto 1fr;
+  grid-template-areas:
+    "left  right"
+    "dice  right";
+  gap: 16px;
+  align-items: start;
+}
+
+/* zones */
+body.is-mj #mjLeft{
+  grid-area: left;
+}
+
+body.is-mj #mjRight{
+  grid-area: right;
+}
+
+body.is-mj #dicePanel{
+  grid-area: dice;
+  width: 100%;
+  margin: 0;
+}
 
 
     
@@ -1558,7 +1592,6 @@ body.is-mj #tokenPanel select{
 <body>
 <div id="mjLayout">
   <div id="mjLeft">
-
     <div id="diceLog">
       <div id="diceLogTitle">Historique des jets</div>
       <div id="diceLogItems"></div>
@@ -1581,11 +1614,13 @@ body.is-mj #tokenPanel select{
       <button class="mapBtn" data-map="donjon">🧱 Donjon</button>
       <button class="mapBtn" data-map="foret">🌲 Forêt</button>
     </div>
+    
     <div id="board">
-    <div id="gridOverlay"></div>
+      <div id="gridOverlay"></div>
     </div>
+    
     <div id="dicePanel">
-    <div id="diceRow">
+      <div id="diceRow">
     <button id="rollD4" class="diceBtn" title="Lancer un D4"><img src="d4.png" alt="D4"></button>
     <button id="rollD6" class="diceBtn" title="Lancer un D6"><img src="d6.png" alt="D6"></button>
     <button id="rollD8" class="diceBtn" title="Lancer un D8"><img src="d8.png" alt="D8"></button>
