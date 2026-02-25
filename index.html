@@ -1552,9 +1552,19 @@ body.is-mj #tokenPanel select{
    LAYOUT MJ – DÉS À GAUCHE
    ========================= */
 
-/* PJ : pas de colonne gauche */
+/* PJ : on garde mjLeft pour afficher les dés, mais on cache juste les blocs MJ */
 body:not(.is-mj) #mjLeft{
-  display: none;
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+/* PJ : cache seulement les blocs MJ */
+body:not(.is-mj) #tokenPanel,
+body:not(.is-mj) #mapPanel,
+body:not(.is-mj) #diceLog{
+  display: none !important;
 }
 
 /* MJ : grille principale */
@@ -1687,6 +1697,16 @@ body.is-mj #mapPanel{
 body.is-mj #mapPanel button:last-child{
   margin-bottom: 30px;
 }
+/* PJ : layout vertical (map puis dés) */
+body:not(.is-mj) #mjLayout{
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+body:not(.is-mj) #mjRight{ order: 1; }
+body:not(.is-mj) #mjLeft{ order: 2; }
 /* =========================
    MJ — IMAGE DES DÉS PLUS GRANDE
    ========================= */
