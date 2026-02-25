@@ -2449,7 +2449,7 @@ function addSpellToTextArea(spell){
 
   if (!target) return false;
 
-  const line = spell.url ? `${spell.name}|${spell.url}` : spell.name;
+  const line = spell.url ? `${spell.name} | ${spell.url}` : spell.name;
 
   const lines = target.value
     .split("\n")
