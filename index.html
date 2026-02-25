@@ -1737,7 +1737,36 @@ body.is-mj #mjLeft > #dicePanel{
 body:not(.is-mj) #dicePanel{
   display: flex !important;
 }
+/* =========================
+   MJ — SUPPRESSION TOTALE DU "CADRE"
+   ========================= */
 
+/* Fond global uniforme (plus de bande sombre) */
+body.is-mj{
+  background: #0f0f12 !important;
+}
+
+/* Plus aucun fond ou padding parasite */
+body.is-mj #mjLayout,
+body.is-mj #mjRight{
+  background: none !important;
+  padding: 0 !important;
+  margin: 0 auto !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+/* La map doit être le SEUL élément visible */
+body.is-mj #board{
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Sécurité : rien ne déborde derrière */
+body.is-mj{
+  overflow-x: hidden;
+}
 
 
 
