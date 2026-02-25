@@ -1336,7 +1336,15 @@ body:not(.is-mj) #dicePanel{
   border: none;
   box-shadow: none;
 }
-
+/* ✅ PJ : la ligne des dés doit être en flex (horizontal) */
+body:not(.is-mj) #diceRow{
+  display: flex;
+  flex-direction: row;
+  gap: 14px;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: nowrap;
+}
 /* ❌ Supprime les cadres fantômes */
 body:not(.is-mj) #dicePanel::before,
 body:not(.is-mj) #dicePanel::after{
@@ -1351,7 +1359,7 @@ body:not(.is-mj) .diceBtn{
   width: 64px;
   height: 64px;
 
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
 }
