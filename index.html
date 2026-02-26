@@ -2044,7 +2044,36 @@ body.is-mj #diceHud{
   pointer-events: none;
   z-index: 50;
 }
+/* ===============================
+   HALO PJ / PNJ (glow)
+   =============================== */
 
+/* base : halo doux */
+.token .tokenFace{
+  filter: drop-shadow(0 0 10px rgba(0,0,0,0.55));
+  transition: filter .12s ease, transform .12s ease;
+}
+
+/* PJ = bleu */
+.token.pj1 .tokenFace,
+.token.pj2 .tokenFace,
+.token.pj3 .tokenFace{
+  filter:
+    drop-shadow(0 0 10px rgba(80,160,255,0.55))
+    drop-shadow(0 0 22px rgba(80,160,255,0.30));
+}
+
+/* PNJ = rouge */
+.token.pnj .tokenFace{
+  filter:
+    drop-shadow(0 0 10px rgba(255,90,90,0.55))
+    drop-shadow(0 0 22px rgba(255,90,90,0.30));
+}
+
+/* un petit "pop" au survol */
+.token:hover .tokenFace{
+  transform: scale(1.02);
+}
 
     
 
@@ -3849,7 +3878,10 @@ function createTokenElement(id, data){
   const tokenSize = Math.round(CURRENT_HEX_PX * 1.90);
 el.style.width  = tokenSize + "px";
 el.style.height = tokenSize + "px";
-  el.className = "token " + (data.type === "pnj" ? "pnj" : "pj1"); // couleur fallback
+ const pjClasses = ["pj1","pj2","pj3"];
+const pjClass = pjClasses[Math.abs((id || "").split("").reduce((a,c)=>a+c.charCodeAt(0),0)) % pjClasses.length];
+
+el.className = "token " + (data.type === "pnj" ? "pnj" : pjClass);
   el.dataset.id = id;
   el.dataset.owners = Array.isArray(data.owners) ? data.owners.join(",") : ((data.owner || "").trim());
   // === Position du token ===
