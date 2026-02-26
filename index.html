@@ -1865,7 +1865,55 @@ body.is-mj #diceHud{
   transform: translateY(-1px) scale(1.03);
   filter: brightness(1.08);
 }
+/* ===== Nom au-dessus du token ===== */
+.token{
+  position: absolute;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  overflow: visible;          /* IMPORTANT : autorise le texte hors hex */
+}
 
+/* label au-dessus */
+.tokenName{
+  position: absolute;
+  left: 50%;
+  bottom: 100%;               /* se place au-dessus du token */
+  transform: translate(-50%, -8px);
+
+  max-width: 140px;
+  padding: 4px 8px;
+  border-radius: 999px;
+
+  background: rgba(0,0,0,0.65);
+  border: 1px solid rgba(255,255,255,0.18);
+
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.3px;
+  color: #fff;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  text-shadow: 0 2px 6px rgba(0,0,0,0.95);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.45);
+  pointer-events: none;       /* ne gêne pas le drag */
+}
+
+/* petit "pointe" sous le label */
+.tokenName::after{
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  transform: translateX(-50%);
+  width: 0; height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 7px solid rgba(0,0,0,0.65);
+}
 
 
 
