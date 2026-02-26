@@ -1786,9 +1786,85 @@ body.is-mj #diceHud{
 .tokenLabel .tokenMeta{
   display: none;
 }
+.token{
+  position:absolute;
+  display:flex;
+  align-items:flex-end;
+  justify-content:center;
+  padding: 6px;                 /* un peu d’air */
+}
 
+.tokenName{
+  max-width: 92%;
+  padding: 3px 8px;
+  border-radius: 999px;
 
+  background: rgba(0,0,0,0.45);
+  border: 1px solid rgba(255,255,255,0.18);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
 
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.3px;
+  line-height: 1;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  text-shadow: 0 2px 6px rgba(0,0,0,0.9);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.35);
+}
+/* ===== TOKEN NAMEPLATE — STYLE 2 (Bandeau VTT) ===== */
+
+.token{
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 6px; /* espace pour le bandeau */
+}
+
+/* Bandeau nom */
+.tokenName{
+  width: 92%;
+  text-align: center;
+
+  padding: 4px 6px;
+  border-radius: 10px;
+
+  background: linear-gradient(
+    to top,
+    rgba(0,0,0,0.78),
+    rgba(0,0,0,0.25)
+  );
+
+  border: 1px solid rgba(255,255,255,0.18);
+
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.4px;
+  line-height: 1.05;
+
+  color: #fff;
+  text-shadow: 0 2px 6px rgba(0,0,0,0.9);
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  box-shadow:
+    0 4px 14px rgba(0,0,0,0.45),
+    inset 0 1px 0 rgba(255,255,255,0.15);
+}
+    .token{
+  transition: transform .12s ease, filter .12s ease;
+}
+
+.token:hover{
+  transform: translateY(-1px) scale(1.03);
+  filter: brightness(1.08);
+}
 
 
 
@@ -3620,7 +3696,7 @@ el.style.height = tokenSize + "px";
 
   if (data.img) el.style.backgroundImage = `url('${data.img}')`;
   const name = (data.name || id).trim();
-el.textContent = name;
+el.innerHTML = `<div class="tokenName">${escapeHtml(name)}</div>`;
 
   // 🧲 Drag souris
 el.addEventListener("mousedown", (e) => {
