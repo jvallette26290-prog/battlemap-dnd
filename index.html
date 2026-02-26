@@ -3619,25 +3619,8 @@ el.style.height = tokenSize + "px";
   el.style.top  = py + "px";
 
   if (data.img) el.style.backgroundImage = `url('${data.img}')`;
-  const name = data.name || id;
-const cls  = (data.class || "").trim();
-const sub  = (data.subClass || "").trim();
-const race = (data.race || "").trim();
-
-const classLine = cls ? (sub ? `${cls} (${sub})` : cls) : "";
-const line2 = [classLine, race].filter(Boolean).join(" · ");
-
-if (cls || race) {
-  // 2 lignes : Nom puis "Classe · Race"
-  el.innerHTML = `
-    <div style="line-height:1.05; text-align:center;">
-      <div>${escapeHtml(name)}</div>
-      <div style="font-size:9px; opacity:.9;">${escapeHtml(line2)}</div>
-    </div>
-  `;
-} else {
-  el.textContent = name;
-}
+  const name = (data.name || id).trim();
+el.textContent = name;
 
   // 🧲 Drag souris
 el.addEventListener("mousedown", (e) => {
