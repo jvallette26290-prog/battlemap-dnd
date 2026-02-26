@@ -2074,7 +2074,84 @@ body.is-mj #diceHud{
 .token:hover .tokenFace{
   transform: scale(1.02);
 }
+/* ===============================
+   MAP BUTTONS — PRO LOOK
+   =============================== */
 
+#mapPanel{
+  width: 1000px;
+  margin: 10px auto 10px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* boutons */
+#mapPanel .mapBtn{
+  appearance: none;
+  border: 1px solid rgba(255,255,255,0.14);
+  background: linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.04));
+  color: rgba(255,255,255,0.92);
+
+  padding: 10px 14px;
+  border-radius: 999px;
+
+  font-weight: 900;
+  font-size: 13px;
+  letter-spacing: .2px;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  cursor: pointer;
+  user-select: none;
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.10),
+    0 10px 28px rgba(0,0,0,0.35);
+
+  transition: transform .10s ease, background .15s ease, border-color .15s ease, filter .15s ease;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+#mapPanel .mapBtn:hover{
+  transform: translateY(-1px);
+  border-color: rgba(255,255,255,0.22);
+  background: linear-gradient(180deg, rgba(255,255,255,0.14), rgba(255,255,255,0.06));
+  filter: brightness(1.08);
+}
+
+#mapPanel .mapBtn:active{
+  transform: translateY(0px) scale(0.98);
+}
+
+/* état actif (map sélectionnée) */
+#mapPanel .mapBtn.is-active{
+  border-color: rgba(120,180,255,0.55);
+  background: linear-gradient(180deg, rgba(120,180,255,0.26), rgba(120,180,255,0.10));
+  box-shadow:
+    0 0 0 3px rgba(120,180,255,0.12),
+    0 12px 30px rgba(0,0,0,0.40);
+}
+
+/* petit "badge" emoji plus clean */
+#mapPanel .mapBtn .ico{
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  background: rgba(0,0,0,0.25);
+  border: 1px solid rgba(255,255,255,0.10);
+
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
+}
     
 
 
@@ -2101,9 +2178,9 @@ body.is-mj #diceHud{
     </div>
 
     <div id="mapPanel">
-      <button class="mapBtn" data-map="taverne">🍻 Taverne</button>
-      <button class="mapBtn" data-map="donjon">🧱 Donjon</button>
-      <button class="mapBtn" data-map="foret">🌲 Forêt</button>
+      <button class="mapBtn" data-map="taverne"><span class="ico">🍻</span> Taverne</button>
+      <button class="mapBtn" data-map="donjon"><span class="ico">🧱</span> Donjon</button>
+      <button class="mapBtn" data-map="foret"><span class="ico">🌲</span> Forêt</button>
       <!-- ton bouton grille MJ est ajouté en JS ici, il restera OK -->
     </div>
 
@@ -2991,6 +3068,10 @@ onSnapshot(mapRef, (snap) => {
   board.style.backgroundPosition = "center";
   board.style.backgroundSize = "cover";
   board.style.backgroundRepeat = "no-repeat";
+
+  document.querySelectorAll("#mapPanel .mapBtn").forEach(btn => {
+    btn.classList.toggle("is-active", btn.dataset.map === data.key);
+  });
 });
 
 // ===== Gestion touche F et S =====
