@@ -682,9 +682,19 @@ body.grid-off #gridOverlay{
   cursor: pointer;
 }
 
+/* ON = “actif” (léger bleu magique) */
 #toggleGridBtn.active{
-  border-color: rgba(120,180,255,0.55);
-  background: rgba(120,180,255,0.18);
+  border-color: rgba(90,160,255,0.55);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.55),
+    0 8px 22px rgba(40,120,255,0.18),
+    0 6px 14px rgba(0,0,0,0.25);
+}
+
+/* OFF = plus “éteint” */
+body.grid-off #toggleGridBtn{
+  filter: saturate(0.85) brightness(0.95);
+  opacity: 0.92;
 }
     
 #mAuto{
@@ -2330,7 +2340,42 @@ body.is-mj{
 #addToken:active{
   transform: translateY(1px);
 }
+/* ===== Bouton Grille (style parchemin / médiéval) ===== */
+#toggleGridBtn{
+  padding: 10px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(120,80,40,0.45);
 
+  background:
+    radial-gradient(circle at top, rgba(255,255,255,0.30), transparent 60%),
+    linear-gradient(180deg, #e8b97a, #d39b5a);
+
+  color: #2b1a0a;
+  font-size: 14px;
+  font-weight: 900;
+  letter-spacing: 0.3px;
+
+  cursor: pointer;
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.55),
+    0 6px 14px rgba(0,0,0,0.25);
+
+  transition: transform .12s ease, box-shadow .12s ease, filter .12s ease;
+}
+
+#toggleGridBtn:hover{
+  filter: brightness(1.05);
+  transform: translateY(-1px);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.65),
+    0 8px 18px rgba(0,0,0,0.35);
+}
+
+#toggleGridBtn:active{
+  transform: translateY(0);
+  box-shadow: inset 0 2px 6px rgba(0,0,0,0.35);
+}
 
 
 
@@ -3094,7 +3139,7 @@ if (IS_MJ) {
 
     function refreshBtn(){
       const off = document.body.classList.contains("grid-off");
-      btn.textContent = off ? "🧩 Grille : OFF" : "🧩 Grille : ON";
+      btn.textContent = off ? "⛓ Grille scellée" : "✨ Grille active";
       btn.classList.toggle("active", !off);
     }
 
