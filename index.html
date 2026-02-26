@@ -120,16 +120,6 @@ body.is-mj #board{
   z-index: 10;
   border-radius: 0;
 
-  /* HEXAGONE "flat-top" (haut plat) */
-  clip-path: polygon(
-    25% 6.7%,
-    75% 6.7%,
-    100% 50%,
-    75% 93.3%,
-    25% 93.3%,
-    0% 50%
-  );
-
   /* garde tes styles */
   position: absolute;
   z-index: 10;
@@ -1958,29 +1948,6 @@ body.is-mj #diceHud{
   overflow: visible !important;  /* le label peut sortir */
 }
 
-/* ===== L'hexagone (clip-path ici, pas sur .token) ===== */
-.tokenFace{
-  width: 100%;
-  height: 100%;
-
-  /* HEXAGONE "flat-top" */
-  clip-path: polygon(
-    25% 6.7%,
-    75% 6.7%,
-    100% 50%,
-    75% 93.3%,
-    25% 93.3%,
-    0% 50%
-  );
-
-  background-size: 130%;
-  background-position: center;
-  background-repeat: no-repeat;
-
-  border: 2px solid white;
-  box-shadow: 0 0 6px rgba(0,0,0,0.6);
-}
-
 /* ===== Nom au-dessus ===== */
 .tokenName{
   position: absolute;
@@ -2010,7 +1977,73 @@ body.is-mj #diceHud{
   pointer-events: none;
   z-index: 50;
 }
+/* ===============================
+   TOKENS (VERSION PRO, UNIQUE)
+   =============================== */
 
+/* conteneur token : NON CLIPÉ */
+.token{
+  position: absolute;
+  z-index: 10;
+  cursor: grab;
+  user-select: none;
+  overflow: visible !important; /* le nom peut dépasser */
+  background: none !important;  /* important : pas d'image ici */
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+/* l'hexagone (image + contour) */
+.tokenFace{
+  width: 100%;
+  height: 100%;
+  clip-path: polygon(
+    25% 6.7%,
+    75% 6.7%,
+    100% 50%,
+    75% 93.3%,
+    25% 93.3%,
+    0% 50%
+  );
+
+  background-size: 130%;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  border: 2px solid rgba(255,255,255,0.95);
+  box-shadow: 0 0 10px rgba(0,0,0,0.65);
+}
+
+/* nom AU-DESSUS */
+.tokenName{
+  position: absolute;
+  left: 50%;
+  bottom: 100%;
+  transform: translate(-50%, -10px);
+
+  max-width: 160px;
+  padding: 4px 10px;
+  border-radius: 999px;
+
+  background: rgba(0,0,0,0.70);
+  border: 1px solid rgba(255,255,255,0.20);
+  color: #fff;
+
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.3px;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  text-shadow: 0 2px 6px rgba(0,0,0,0.95);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.45);
+
+  pointer-events: none;
+  z-index: 50;
+}
 
 
     
