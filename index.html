@@ -1746,11 +1746,6 @@ body:not(.is-mj) #dicePanel{
    MJ — SUPPRESSION TOTALE DU "CADRE"
    ========================= */
 
-/* Fond global uniforme (plus de bande sombre) */
-body.is-mj{
-  background: #0f0f12 !important;
-}
-
   
 /* Plus aucun fond ou padding parasite */
 body.is-mj #mjLayout,
@@ -2186,7 +2181,24 @@ body.is-mj #diceHud{
 
   color: #2b1e12;
 }   
+/* ✅ MJ : fond parchemin aussi (écrase tes anciens backgrounds MJ) */
+body.is-mj{
+  background-color: #d6c4a1 !important;
 
+  background-image:
+    radial-gradient(
+      circle at center,
+      rgba(255,255,255,0.35),
+      rgba(0,0,0,0.18)
+    ),
+    url("assets/parchment.jpg") !important;
+
+  background-repeat: repeat !important;
+  background-size: 900px !important;
+  background-attachment: fixed !important;
+
+  color: #2b1e12;
+}
 
     
 
