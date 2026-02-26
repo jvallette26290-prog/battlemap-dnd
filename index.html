@@ -2214,91 +2214,121 @@ body.is-mj{
    TOKEN PANEL — PRO UI
    ========================= */
 
-body.is-mj #tokenPanel{
-  width: 100%;
-  max-width: 420px;
-  margin: 0;
+/* Le bloc complet */
+#tokenPanel{
+  width: min(520px, 100%);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
 
   padding: 14px;
   border-radius: 18px;
 
-  /* carte translucide sur parchemin */
-  background: rgba(20, 16, 12, 0.55);
-  border: 1px solid rgba(255, 230, 190, 0.22);
-  box-shadow: 0 14px 36px rgba(0,0,0,0.35);
+  /* “carte” sur parchemin */
+  background: rgba(255,255,255,0.14);
+  border: 1px solid rgba(0,0,0,0.10);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.18);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
 }
 
-/* grille 2 colonnes */
-body.is-mj #tokenPanel{
-  display: grid !important;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  align-items: center;
+/* Le titre prend toute la largeur */
+#tokenPanelTitle{
+  grid-column: 1 / -1;
+  font-weight: 900;
+  font-size: 18px;
+  letter-spacing: 0.2px;
+  color: rgba(35,20,5,0.9);
+  text-shadow: 0 1px 0 rgba(255,255,255,0.35);
+  margin-bottom: 2px;
 }
 
-/* inputs / select */
-body.is-mj #tokenPanel input,
-body.is-mj #tokenPanel select{
-  width: 100%;
+/* Inputs */
+#tokenPanel input{
+  grid-column: 1 / -1; /* par défaut plein largeur */
+  height: 42px;
   padding: 10px 12px;
 
   border-radius: 14px;
-  border: 1px solid rgba(255,255,255,0.14);
-  background: rgba(0,0,0,0.35);
+  border: 1px solid rgba(0,0,0,0.18);
+  background: rgba(30,20,10,0.18);
+  color: rgba(15,10,5,0.92);
 
-  color: rgba(255,245,230,0.95);
+  outline: none;
+}
+
+/* Placeholders plus lisibles */
+#tokenPanel input::placeholder{
+  color: rgba(20,12,6,0.55);
+  font-weight: 700;
+}
+
+/* Propriétaire + Type sur la même ligne */
+#tOwner{
+  grid-column: 1 / 2;
+}
+#tType{
+  grid-column: 2 / 3;
+}
+
+/* SELECT : suppression du rendu natif qui crée ton “ovale” */
+#tokenPanel select{
+  height: 42px;
+  padding: 10px 42px 10px 12px;
+
+  border-radius: 14px;
+  border: 1px solid rgba(0,0,0,0.18);
+  background: rgba(30,20,10,0.18);
+  color: rgba(15,10,5,0.92);
+
   outline: none;
 
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  /* petite flèche custom */
+  background-image:
+    linear-gradient(45deg, transparent 50%, rgba(30,20,10,0.65) 50%),
+    linear-gradient(135deg, rgba(30,20,10,0.65) 50%, transparent 50%);
+  background-position:
+    calc(100% - 18px) 17px,
+    calc(100% - 12px) 17px;
+  background-size: 6px 6px, 6px 6px;
+  background-repeat: no-repeat;
 }
 
-/* placeholder plus doux */
-body.is-mj #tokenPanel input::placeholder{
-  color: rgba(255,240,215,0.55);
+/* Focus propre */
+#tokenPanel input:focus,
+#tokenPanel select:focus{
+  border-color: rgba(120,80,30,0.55);
+  box-shadow: 0 0 0 4px rgba(120,80,30,0.18);
 }
 
-/* focus pro */
-body.is-mj #tokenPanel input:focus,
-body.is-mj #tokenPanel select:focus{
-  border-color: rgba(255,200,120,0.55);
-  box-shadow: 0 0 0 4px rgba(255,190,110,0.14);
-}
-
-/* le bouton prend toute la largeur (sur 2 colonnes) */
-body.is-mj #addToken{
+/* Bouton full width */
+#addToken{
   grid-column: 1 / -1;
-  padding: 12px 14px;
-  border-radius: 16px;
+  height: 44px;
 
-  border: 1px solid rgba(255,205,120,0.55);
-  background: linear-gradient(180deg, rgba(255,190,110,0.30), rgba(255,140,40,0.18));
+  border-radius: 14px;
+  border: 1px solid rgba(120,80,30,0.35);
 
-  color: rgba(255,250,240,0.95);
+  background: linear-gradient(180deg, rgba(255,190,120,0.55), rgba(210,140,70,0.35));
+  color: rgba(30,15,5,0.95);
+
   font-weight: 900;
   letter-spacing: 0.2px;
   cursor: pointer;
 
-  box-shadow: 0 10px 24px rgba(0,0,0,0.35),
-              inset 0 1px 0 rgba(255,255,255,0.20);
-
-  transition: transform .08s ease, filter .15s ease;
+  box-shadow:
+    0 10px 24px rgba(0,0,0,0.18),
+    inset 0 1px 0 rgba(255,255,255,0.35);
 }
-
-body.is-mj #addToken:hover{
-  filter: brightness(1.08);
-  transform: translateY(-1px);
+#addToken:hover{
+  filter: brightness(1.05);
 }
-
-body.is-mj #addToken:active{
-  transform: translateY(0px) scale(0.99);
-}
-
-/* Optionnel : certains champs en pleine largeur */
-body.is-mj #tName,
-body.is-mj #tImg{
-  grid-column: 1 / -1;
+#addToken:active{
+  transform: translateY(1px);
 }
 
 
