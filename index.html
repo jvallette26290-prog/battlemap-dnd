@@ -1952,7 +1952,64 @@ body.is-mj #diceHud{
   pointer-events: none;       /* 🔥 n’empêche PAS le drag */
   z-index: 20;
 }
+/* ===== Token = conteneur (NON clipé) ===== */
+.token{
+  position: absolute;
+  overflow: visible !important;  /* le label peut sortir */
+}
 
+/* ===== L'hexagone (clip-path ici, pas sur .token) ===== */
+.tokenFace{
+  width: 100%;
+  height: 100%;
+
+  /* HEXAGONE "flat-top" */
+  clip-path: polygon(
+    25% 6.7%,
+    75% 6.7%,
+    100% 50%,
+    75% 93.3%,
+    25% 93.3%,
+    0% 50%
+  );
+
+  background-size: 130%;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  border: 2px solid white;
+  box-shadow: 0 0 6px rgba(0,0,0,0.6);
+}
+
+/* ===== Nom au-dessus ===== */
+.tokenName{
+  position: absolute;
+  left: 50%;
+  bottom: 100%;
+  transform: translate(-50%, -10px);
+
+  max-width: 160px;
+  padding: 4px 8px;
+  border-radius: 10px;
+
+  background: rgba(0,0,0,0.70);
+  border: 1px solid rgba(255,255,255,0.20);
+  color: #fff;
+
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.3px;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  text-shadow: 0 2px 6px rgba(0,0,0,0.95);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.45);
+
+  pointer-events: none;
+  z-index: 50;
+}
 
 
 
@@ -3781,7 +3838,14 @@ el.style.height = tokenSize + "px";
 
   if (data.img) el.style.backgroundImage = `url('${data.img}')`;
   const name = (data.name || id).trim();
-el.innerHTML = `<div class="tokenName">${escapeHtml(name)}</div>`;
+
+el.innerHTML = `
+  <div class="tokenFace"></div>
+  <div class="tokenName">${escapeHtml(name)}</div>
+`;
+
+const face = el.querySelector(".tokenFace");
+if (data.img) face.style.backgroundImage = `url('${data.img}')`;
 
   // 🧲 Drag souris
 el.addEventListener("mousedown", (e) => {
